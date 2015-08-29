@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:fab="http://schemas.android.com/apk/res-auto">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyList"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/relativeLayout6" />
+
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="20dp">
+
+        <ImageView
+            android:id="@+id/imgNoCart"
+            android:layout_width="wrap_content"
+            android:layout_height="85dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="14dp"
+            android:src="@drawable/ic_nocommand"/>
+
+        <TextView
+            android:layout_below="@id/imgNoCart"
+            android:id="@+id/tvListNothing"
+            android:gravity="center"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="14dp"
+            android:text="@string/empty_header_cart"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_below="@id/tvListNothing"
+            android:id="@+id/tvListNothing2"
+            android:gravity="center"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/empty_desc_cart"
+            android:textColor="@color/text_light_header" />
+
+    </RelativeLayout>
+
+    <com.melnykov.fab.FloatingActionButton
+        android:id="@+id/fabCommand"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:src="@drawable/ic_shopping_cart"
+        fab:fab_colorNormal="@color/fab_valid_button_nrm"
+        fab:fab_colorPressed="@color/fab_valid_button_prs"
+        fab:fab_colorRipple="@color/fab_valid_button_rpl"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="20dp"
+        android:layout_above="@+id/relativeLayout6"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="-28dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/abc_action_bar_default_height_material"
+        android:background="@color/md_blue_700"
+        android:id="@+id/relativeLayout6"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+
+        <TextView
+            android:id="@+id/tvCart01"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/md_white_1000"
+            android:textSize="16sp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_centerVertical="true"
+            android:text="TOTAL : "/>
+
+        <TextView
+            android:id="@+id/tvCartPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/md_white_1000"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:text="0.00€"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/tvCart01"
+            android:layout_toEndOf="@+id/tvCart01"
+            android:layout_marginLeft="2dp"
+            android:layout_marginStart="2dp" />
+
+
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

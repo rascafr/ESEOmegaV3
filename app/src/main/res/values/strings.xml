@@ -1,0 +1,89 @@
+<resources>
+    <string name="app_name">ESEOmega</string>
+    <string name="app_version_name">2.0</string>
+    <string name="app_version_code">13</string>
+
+    <string name="desc_list_item_icon">Item Icon</string>
+
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_example">Info</string>
+    <string name="text_example">I\'m an example text inside an example fragment !</string>
+    <string name="action_settings">Settings</string>
+    <string name="draweritemTest">Pietra B</string>
+    <string name="draweritemTest_2">pietrabiere@eseo.fr</string>
+    <string name="drawer_profile_edit">Editer le profil</string>
+    <string name="text_edit_profile">Votre profil ESEO est nécessaire pour pouvoir accéder à certaines fonctionnalités, comme la commande à la caféteria.\nUne fois la connexion validée, uniquement votre identifiant, nom et prénom sont conservés jusqu\'à votre déconnexion, rien de plus.</string>
+    <string name="loading_text">Chargement des données ...</string>
+    <string name="text_offline_mode">Lecture hors-ligne</string>
+    <string name="text_warning_nopaid">La déconnexion de votre compte provoquera l\'arrêt des services proposés, tels que la commande à la cafétéria. Attention : dans tous les cas, si vous avez une commande en statut "non payée", vous déconnecter ne vous empêchera pas de devoir nous régler le repas en question.</string>
+
+    <string name="lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent rutrum, urna a suscipit efficitur, nisl felis laoreet tellus, non gravida enim nisl sed ex. Mauris posuere metus et enim pretium venenatis. In neque diam, sodales sit amet porta quis, rhoncus ac dolor. Aliquam id lectus viverra, gravida erat non, cursus dolor. Quisque vel consequat odio, eu placerat tellus. Aliquam eleifend diam ac lacus posuere dictum. Aliquam ipsum nisi, consectetur eu est et, consequat varius magna. In risus nisl, dictum id ante molestie, sagittis suscipit justo. Aliquam erat volutpat. Nulla eu ligula nulla. Maecenas commodo massa ut odio condimentum tincidunt. Aliquam eu urna a ex gravida porta. Morbi porta imperdiet dapibus. Duis ultrices id ipsum eget rutrum.
+
+Phasellus facilisis condimentum nisi, sit amet vulputate elit. Nulla venenatis ornare odio, eget sollicitudin erat consectetur sed. Etiam nec tempor magna. Duis ut varius turpis. Suspendisse iaculis consequat justo, in venenatis sem fringilla non. In fermentum quam sed feugiat vehicula. Aliquam faucibus gravida erat, vel porttitor libero dignissim ac. Etiam dapibus tortor vestibulum, blandit diam sit amet, semper quam. Nunc et ornare dui, eu posuere lorem. Integer consectetur metus quis massa porttitor volutpat. Aenean sapien nisl, rhoncus id sem id, vestibulum interdum arcu. Integer condimentum nisl ligula, id pretium neque porttitor in. Fusce tellus mauris, finibus et elit vitae, sodales tempus ipsum. Morbi nec leo maximus, rutrum nisl sed, sollicitudin erat.
+
+Maecenas viverra nisl sit amet nibh maximus vestibulum. Vivamus et arcu non enim consectetur placerat. In rhoncus in diam at hendrerit. Quisque vitae malesuada tellus, sed condimentum ligula. Etiam viverra posuere massa. Sed quis risus at metus cursus rhoncus. In ultricies fermentum ligula sit amet convallis. Morbi sollicitudin vel eros eget laoreet. Integer convallis ullamcorper orci, id condimentum nisl viverra et. Curabitur id interdum dui, vel viverra nunc. Aenean sed ullamcorper diam. Curabitur efficitur vehicula nunc et sodales. Cras dignissim magna eget bibendum molestie. Ut condimentum hendrerit nunc, a mollis nibh pellentesque id.
+
+Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. Nulla varius fermentum fringilla. Praesent turpis tellus, feugiat sit amet eros sed, luctus commodo odio. Nunc pulvinar mollis molestie. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nunc pretium, risus quis vulputate dapibus, justo sem suscipit sapien, eu mollis orci ex mattis purus. Integer id orci sit amet mi maximus lobortis ac nec diam.</string>
+
+    <string-array name="nav_drawer_items">
+        <item >Mon profil</item>
+        <item >News</item>
+        <item >Événements</item>
+        <item >Clubs &amp; Vie Asso</item>
+        <item >Caféteria</item>
+        <item >Bons plans</item>
+    </string-array>
+
+    <!-- Nav Drawer List Item Icons -->
+    <!-- Keep them in order as the titles are in -->
+    <array name="nav_drawer_icons">
+        <item/>
+        <item>@drawable/ic_mail</item>
+        <item>@drawable/ic_event</item>
+        <item>@drawable/ic_team</item>
+        <item>@drawable/ic_pizza</item>
+        <item>@drawable/ic_offer</item>
+    </array>
+
+    <!-- Bullshit for user's EditText hint -->
+    <string-array name="bullshitHintUser">
+        <item >sagetbob</item>
+        <item >plantierguy</item>
+        <item >longetdur</item>
+        <item >durdentyler</item>
+        <item >android>iOS</item>
+        <item >f(x)=x²/x</item>
+        <item >printf("oklm")</item>
+        <item >JSONenforce</item>
+        <item >petitspoiscarottes</item>
+        <item >heisenberg</item>
+    </string-array>
+
+    <!-- Security -->
+    <string name="SALT_GET_TOKEN">simu+42+DePêche</string>
+    <string name="SALT_SYNC_USER">ri3nN3Vo1b0NePurée</string>
+    <string name="SALT_SYNC_SCORES">ellepèse3Go|DeuxMégas</string>
+    <string name="SALT_SYNC_SINGLE">l3v3ntESTp3t3y</string>
+
+    <!-- UI -->
+    <string name="empty_header_event">Aucun évenement trouvé</string>
+    <string name="empty_desc_event">Vérifiez votre connexion internet, puis rafraîchissez cette onglet. Sinon, c\'est qu\'on a décidé de pas faire de soirées dans les jours à venir\n(vous allez pouvoir réviser !)</string>
+
+    <string name="empty_header_cart">Vous n\'avez encore rien ajouté\n à votre panier !</string>
+    <string name="empty_desc_cart">Vous n\'avez pas faim ?\n\nHey ! Le jour de votre anniversaire,\n un menu vous est offert :)</string>
+    <string name="empty_header_tips">Aucun bon plan n\'a été trouvé</string>
+    <string name="empty_desc_tips">On a du faire une erreur quelque part.\nSinon, vous pouvez tenter de faire deux tours sur vous même (et de vérifiez votre connexion réseau)</string>
+    <string name="empty_header_history">Vous n\'avez encore rien commandé</string>
+    <string name="empty_desc_history">Tapez sur le bouton + pour commander, vos commandes s\'afficheront ici.</string>
+
+    <string name="empty_header_news">Aucune actualité trouvée</string>
+    <string name="empty_desc_news">Vérifiez l\'état de votre connexion internet, puis rafraîchissez cette onglet.\nSinon, c\'est que cette semaine, on a rien trouvé à dire.</string>
+
+
+</resources>

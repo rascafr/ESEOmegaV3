@@ -1,0 +1,237 @@
+package fr.bde_eseo.eseomega.lacommande;
+
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.rascafr.test.matdesignfragment.R;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+
+import fr.bde_eseo.eseomega.Constants;
+import fr.bde_eseo.eseomega.lacommande.model.LacmdElement;
+import fr.bde_eseo.eseomega.lacommande.model.LacmdIngredient;
+import fr.bde_eseo.eseomega.lacommande.model.LacmdMenu;
+import fr.bde_eseo.eseomega.lacommande.model.LacmdRoot;
+
+/**
+ * Created by Rascafr on 24/08/2015.
+ * Displays a list of items associated with bundled data
+ * Used to display checkboxes with elements inside
+ */
+public class SecoElementChooserActivity extends AppCompatActivity {
+/*
+    private RecyclerView recList;
+    private CheckboxListAdapter mAdapter;
+    private TextView tvIngredients, tvAdd, tvStackMorePrice, tvStackMoreText;
+    private ArrayList<CheckboxItem> checkboxItems;
+    private Toolbar toolbar;
+    private LacmdMenu menu
+    private String menuID;
+    private int maxElements, currentElements, elemPos;
+    private double supplMore;
+    private final static String TITLE_BASE = "Choisissez vos éléments";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_ingredients);
+        toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
+        setSupportActionBar(toolbar);
+
+        // Objets & UI
+        tvAdd = (TextView) findViewById(R.id.tvValid);
+        tvIngredients = (TextView) findViewById(R.id.tv_act_ingr_desc);
+        tvStackMorePrice = (TextView) findViewById(R.id.tvStackMorePrice);
+        tvStackMoreText = (TextView) findViewById(R.id.tvStackMoreText);
+        checkboxItems = new ArrayList<>();
+        mAdapter = new CheckboxListAdapter();
+        recList = (RecyclerView) findViewById(R.id.recyList);
+        recList.setAdapter(mAdapter);
+        recList.setHasFixedSize(false);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        recList.setLayoutManager(llm);
+
+        // Add ingredients to list's dataset
+        for (int i=0;i<DataManager.getInstance().getIngredients().size();i++) {
+            checkboxItems.add(
+                new CheckboxItem(
+                    DataManager.getInstance().getIngredients().get(i).getName(),
+                    DataManager.getInstance().getIngredients().get(i).getIdstr(),
+                    DataManager.getInstance().getIngredients().get(i).getPrice()
+                )
+            );
+        }
+
+        supplMore = 0;
+        mAdapter.notifyDataSetChanged();
+        tvStackMoreText.setVisibility(View.INVISIBLE);
+        tvStackMorePrice.setVisibility(View.INVISIBLE);
+
+        // Get parameters
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                Toast.makeText(SecoElementChooserActivity.this, "Erreur de l'application (c'est pas normal)", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                menuID = extras.getString(Constants.KEY_MENU_ID);
+                elemPos = extras.getInt(Constants.KEY_ELEMENT_POSITION);
+                element = new LacmdElement(DataManager.getInstance().getElementFromID(elementID));
+                getSupportActionBar().setTitle(TITLE_BASE + element.getName());
+                Log.d("INTENT", elementID + " - " + elemPos);
+            }
+        } else {
+            elementID = (String) savedInstanceState.getSerializable(Constants.KEY_ELEMENT_ID);
+            elemPos = (int) savedInstanceState.getSerializable(Constants.KEY_ELEMENT_POSITION);
+            element = new LacmdElement(DataManager.getInstance().getElementFromID(elementID));
+            getSupportActionBar().setTitle(TITLE_BASE + element.getName());
+        }
+
+        maxElements = element.hasIngredients();
+        currentElements = 0;
+        tvIngredients.setText("Vous devez choisir " + maxElements +
+                " élément" + (maxElements>0?"s":"") +
+                " dans la liste ci-dessous.");
+
+        // Validation
+        tvAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tvAdd.setBackgroundColor(0x2fffffff);
+                // Add all checked items
+                ArrayList<LacmdRoot> items = new ArrayList<LacmdRoot>();
+                for (int i=0;i<checkboxItems.size();i++) {
+                    if (checkboxItems.get(i).isChecked())
+                        items.add(checkboxItems.get(i));
+                }
+                element.setItems(items);
+
+                if (elemPos == -1) {
+                    Toast.makeText(SecoElementChooserActivity.this, "\"" + element.getName() + "\" a été ajouté au panier", Toast.LENGTH_SHORT).show();
+                    DataManager.getInstance().addCartItem(element);
+                } else {
+                    DataManager.getInstance().getMenu().getItems().set(elemPos, element);
+                }
+                SecoElementChooserActivity.this.finish();
+            }
+        });
+    }
+
+
+    private class CheckboxListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            CheckBoxHolder cbh = new CheckBoxHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_check, parent, false));
+
+            return cbh;
+        }
+
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+            if (checkboxItems != null) {
+                final CheckBoxHolder cbh = (CheckBoxHolder) holder;
+                cbh.checkBox.setChecked(checkboxItems.get(position).isChecked());
+                cbh.checkBox.setText(checkboxItems.get(position).getName());
+                cbh.checkBox.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        CheckBox cb = (CheckBox) v;
+                        checkboxItems.get(position).setChecked(cb.isChecked());
+                        boolean isfree = checkboxItems.get(position).getPrice() == 0;
+                        currentElements += cb.isChecked()?1:-1;
+                        if (currentElements > maxElements) {
+                            supplMore = checkboxItems.get(position).getPrice()*(currentElements - maxElements);
+                            tvStackMorePrice.setVisibility(View.VISIBLE);
+                            tvStackMorePrice.setText(new DecimalFormat("0.00").format(supplMore) + "€");
+                            tvStackMoreText.setVisibility(View.VISIBLE);
+                        } else {
+                            tvStackMorePrice.setVisibility(View.INVISIBLE);
+                            tvStackMoreText.setVisibility(View.INVISIBLE);
+                        }
+                    }
+                });
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return checkboxItems.size();
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return 0;
+        }
+
+        // Holder for checkbox item
+        public class CheckBoxHolder extends RecyclerView.ViewHolder {
+
+            protected CheckBox checkBox;
+            protected TextView tvMore;
+
+            public CheckBoxHolder(View itemView) {
+                super(itemView);
+                checkBox = (CheckBox) itemView.findViewById(R.id.checkBox);
+                tvMore = (TextView) itemView.findViewById(R.id.tvSuppl);
+            }
+        }
+    }
+
+    private class CheckboxItem extends LacmdRoot {
+        private boolean checked;
+        private String more;
+        private boolean visible;
+
+        public CheckboxItem (String name, String id, double price) {
+            super(name, id, 0, 0, price, LacmdIngredient.ID_CAT_INGREDIENT);
+            checked = false;
+            this.visible = false;
+            this.more = this.price == 0.0?"":"+" + new DecimalFormat("0.00").format(this.price) + "€";
+        }
+
+        public boolean isVisible() {
+            return visible;
+        }
+
+        public String getMore() {
+            return more;
+        }
+
+        public void setChecked(boolean checked) {
+            this.checked = checked;
+        }
+
+        public void setVisible(boolean visible) {
+            this.visible = visible;
+        }
+
+        public boolean isChecked() {
+
+            return checked;
+        }
+    }
+
+    // A method to find height of the status bar
+    public int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }*/
+}

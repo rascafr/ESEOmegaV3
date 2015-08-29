@@ -1,0 +1,117 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/container_dropshadow"
+        android:id="@+id/linearLayout">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/eseo_wide"/>
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_marginTop="-7dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/linearLayout">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/rlFillProfile"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:paddingBottom="@dimen/activity_vertical_margin">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Connecté en tant que"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:id="@+id/tv1"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textSize="28dp"
+                android:text="François LEPAROUX"
+                android:textColor="@color/circle_preparing"
+                android:layout_marginTop="14dp"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:typeface="serif"
+                android:layout_below="@id/tv1"
+                android:id="@+id/tvUserName"/>
+
+            <View
+                android:id="@+id/vw1"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="16dp"
+                android:background="@android:color/darker_gray"
+                android:layout_below="@id/tvUserName"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Vous voulez personnaliser votre image de profil ?\n(C'est plus sympa, vous avez un beau visage)"
+                android:gravity="center"
+                android:layout_below="@id/vw1"
+                android:id="@+id/tvUserPicture"/>
+
+            <Button
+                android:layout_marginTop="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Changer ma photo"
+                android:layout_below="@+id/tvUserPicture"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/button_change"/>
+
+            <View
+                android:layout_marginTop="16dp"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"
+                android:layout_below="@+id/button_change"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/vw2"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Se déconnecter"
+                android:id="@+id/button_disconnect"
+                android:layout_below="@+id/vw2"
+                android:layout_margin="14dp"
+                android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:text="@string/text_warning_nopaid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvRemoveProfile"
+                android:layout_below="@id/button_disconnect"
+                android:layout_centerHorizontal="true" />
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

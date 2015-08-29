@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="180dp"
+    android:layout_width="match_parent"
+    card_view:cardCornerRadius="4dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:layout_marginBottom="8dp"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#ff0a0a0a"
+        android:text="ESEO&apos;KLM"
+        android:id="@+id/textView2"
+        android:layout_toLeftOf="@+id/newsPicture"
+        android:layout_toStartOf="@+id/newsPicture"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#ff0c0c0c"
+        android:typeface="serif"
+        android:textSize="24sp"
+        android:maxLines="2"
+        android:text="Nouveaux menus à la Caféteria !"
+        android:layout_below="@+id/textView2"
+        android:id="@+id/newsTitle"
+        android:layout_alignRight="@+id/newsDesc"
+        android:layout_alignEnd="@+id/newsDesc"
+        android:layout_alignLeft="@+id/textView2"
+        android:layout_alignStart="@+id/textView2"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#ff5f5f5f"
+        android:textSize="15sp"
+        android:text="Par BDE ESEO"
+        android:id="@+id/newsAuthorDate"
+        android:layout_below="@+id/newsTitle"
+        android:layout_alignLeft="@+id/newsTitle"
+        android:layout_alignStart="@+id/newsTitle"
+        android:layout_marginTop="9dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#3f4a72"
+        android:textSize="14sp"
+        android:layout_marginLeft="4dp"
+        android:text="MARDI 8 NOV"
+        android:layout_alignBottom="@+id/newsAuthorDate"
+        android:layout_toRightOf="@+id/newsAuthorDate"
+        android:layout_toEndOf="@+id/newsAuthorDate"
+        android:id="@+id/textView8" />
+
+    <ImageView
+        android:layout_width="82dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/sandwcap"
+        android:id="@+id/newsPicture"
+        android:layout_marginLeft="16dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#ff505050"
+        android:textSize="14.5sp"
+        android:text="@string/lorem"
+        android:layout_marginTop="7dp"
+        android:id="@+id/newsDesc"
+        android:layout_below="@+id/newsAuthorDate"
+        android:layout_toLeftOf="@+id/newsPicture"
+        android:ellipsize="none"
+        android:scrollHorizontally="false"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="18dp"
+        android:elegantTextHeight="true"
+        android:layout_alignLeft="@+id/textView2"
+        android:layout_alignStart="@+id/textView2"/>
+
+
+</RelativeLayout>
+    </android.support.v7.widget.CardView>
