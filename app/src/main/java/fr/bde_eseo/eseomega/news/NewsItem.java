@@ -2,6 +2,7 @@ package fr.bde_eseo.eseomega.news;
 
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,6 +20,7 @@ import fr.bde_eseo.eseomega.Constants;
 public class NewsItem {
     private String name, strDate, author, link, data, shData, frenchStr, headerImg;
     private boolean isFooter;
+    private boolean isHeader;
     private Date date;
 
     public boolean isFooter() {
@@ -29,10 +31,22 @@ public class NewsItem {
 
     public NewsItem() {
         isFooter = true;
+        isHeader = false;
+    }
+
+    public boolean isHeader() {
+        return isHeader;
+    }
+
+    public NewsItem(String text) {
+        isFooter = false;
+        isHeader = true;
+        name = text;
     }
 
     public NewsItem(String name, String strDate, String author, String link, String shData, String data, String headerImg) {
         this.isFooter = false;
+        this.isHeader = false;
         this.name = name;
         this.strDate = strDate;
         this.author = author;
@@ -49,22 +63,48 @@ public class NewsItem {
         // All img are like <img ... >
         if (this.data != null) {
             int stPos = 0;
-            int endPos = 0;
+            int endPos = 0, ipos = 0;
             while (stPos != -1) {
-                stPos = this.data.indexOf("<img src=");
+                stPos = this.data.indexOf("<img ");
                 if (stPos != -1) {
                     endPos = this.data.indexOf(">", stPos);
                     if (endPos != -1 && stPos < endPos) {
 
                         // We found an image link : remove st...end
-                        String imgLink = Constants.URL_SERVERBIS + data.substring(stPos+10, endPos-1);
+                        int fst = data.indexOf("src=\"", stPos)+5;
+                        String imgLink = data.substring(fst, data.indexOf("\"", fst+1));
                         imgLinks.add(imgLink);
+                        ipos++;
                         this.data = this.data.substring(0, stPos) + this.data.substring(endPos+1);
                         stPos = 0; // restart from zero -> we remove string in length
                     }
                 }
             }
         }
+    }
+
+    public NewsItem (String name, String author, String html, String link, ArrayList<String> imgLinks) {
+        this.name = name;
+        this.author = author;
+        this.data = html;
+        this.link = link;
+        this.imgLinks = imgLinks;
+    }
+
+    public String toJSONstr () {
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("titre",name);
+            obj.put("auteur",author);
+            obj.put("date",getFrenchStr());
+            JSONArray array = new JSONArray();
+            obj.put("imgarray", imgLinks);
+            obj.put("html",data);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return obj.toString();
     }
 
     @Override

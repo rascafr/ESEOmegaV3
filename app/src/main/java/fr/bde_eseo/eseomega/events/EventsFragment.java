@@ -1,7 +1,11 @@
 package fr.bde_eseo.eseomega.events;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,12 +24,15 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.rascafr.test.matdesignfragment.R;
 
+import org.apache.http.util.EncodingUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 
 import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.hintsntips.DividerItemDecoration;
@@ -33,6 +40,7 @@ import fr.bde_eseo.eseomega.hintsntips.MyTipsAdapter;
 import fr.bde_eseo.eseomega.hintsntips.SponsorItem;
 import fr.bde_eseo.eseomega.listeners.RecyclerItemClickListener;
 import fr.bde_eseo.eseomega.utils.JSONUtils;
+import fr.bde_eseo.eseomega.utils.Utilities;
 
 /**
  * Created by Rascafr on 14/08/2015.
@@ -61,8 +69,12 @@ public class EventsFragment extends Fragment {
     private final static String JSON_KEY_ITEM_CLUB = "club";
     private final static String JSON_KEY_ITEM_URL = "url";
     private final static String JSON_KEY_ITEM_LIEU = "lieu";
+    private final static String JSON_KEY_ITEM_DATEFIN = "dateFin";
     private final static String JSON_KEY_ARRAY_COLOR = "color";
     private final static int LATENCY_REFRESH = 8; // 8 sec min between 2 refreshs
+
+    private String cachePath;
+    private File cacheFileEseo;
 
     public EventsFragment () {}
 
@@ -83,13 +95,16 @@ public class EventsFragment extends Fragment {
         img.setVisibility(View.GONE);
         disabler = new RecyclerViewDisabler();
 
+        // I/O cache data
+        cachePath = getActivity().getCacheDir() + "/";
+        cacheFileEseo = new File(cachePath + "events.json");
+
         // Model / objects
         eventItems = new ArrayList<>();
         mAdapter = new MyEventsAdapter(getActivity(), eventItems);
         recList = (RecyclerView) rootView.findViewById(R.id.recyList);
         recList.setAdapter(mAdapter);
         recList.setHasFixedSize(false);
-        recList.addItemDecoration(new DividerItemDecoration(getActivity(), R.drawable.drawer_divider));
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recList.setLayoutManager(llm);
@@ -104,33 +119,57 @@ public class EventsFragment extends Fragment {
         recList.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                EventItem ei = eventItems.get(position);
+                final EventItem ei = eventItems.get(position);
                 if (!ei.isHeader()) {
                     boolean hasUrl = ei.getUrl() != null && ei.getUrl().length() != 0;
                     boolean hasPlace = ei.getLieu() != null && ei.getLieu().length() != 0;
-                    MaterialDialog md = new MaterialDialog.Builder(getActivity())
+                    boolean isAllDay = false;
+                    MaterialDialog.Builder mdb = new MaterialDialog.Builder(getActivity())
                             .customView(R.layout.dialog_event, false)
-                            .positiveText("Ajouter au calendrier")
-                            .neutralText("Consulter le site")
-                            .negativeText("Y aller")
-                            .show();
+                            .positiveText("Ajouter au calendrier");
+
+                    if (hasUrl)
+                        mdb.neutralText("Consulter le site");
+                    if (hasPlace)
+                        mdb.negativeText("Y aller");
+
+                    mdb.callback(new MaterialDialog.ButtonCallback() {
+                        @Override
+                        public void onNegative(MaterialDialog dialog) { // Intent : go to address
+                            super.onNegative(dialog);
+                            try {
+                                Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + Uri.encode(ei.getLieu()));
+                                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                                mapIntent.setPackage("com.google.android.apps.maps");
+                                startActivity(mapIntent);
+                            } catch (ActivityNotFoundException ex) {
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.apps.maps"));
+                                startActivity(intent);
+                            }
+                        }
+
+                        @Override
+                        public void onPositive(MaterialDialog dialog) { // Intent : add to calendar
+                            super.onPositive(dialog);
+                            startActivity(ei.toCalendarIntent());
+                        }
+
+                        @Override
+                        public void onNeutral(MaterialDialog dialog) { // Intent : go to website
+                            super.onNeutral(dialog);
+                            String url = ei.getUrl();
+                            Intent i = new Intent(Intent.ACTION_VIEW);
+                            i.setData(Uri.parse(url));
+                            startActivity(i);
+                        }
+                    });
+
+                    MaterialDialog md = mdb.show();
 
                     View mdView = md.getView();
                     ((TextView)mdView.findViewById(R.id.tvEventName)).setText(ei.getName());
                     (mdView.findViewById(R.id.rlBackDialogEvent)).setBackgroundColor(ei.getColor());
 
-
-                        /*
-                        .title(ei.getName())
-                        .theme(Theme.DARK)
-                        //.contentColor(ei.getColor())
-                        .backgroundColor(ei.getColor())
-                        .negativeColor(0xffffffff)
-                        .neutralColor(0xffffffff)
-                        .positiveColor(0xffffffff)
-                        .content("Que souhaitez vous faire ?")
-
-                        .show();*/
                 }
 
             }
@@ -181,6 +220,7 @@ public class EventsFragment extends Fragment {
     public class AsyncJSON extends AsyncTask<String, String, JSONObject> {
 
         boolean displayCircle;
+        private boolean onLine;
 
         public AsyncJSON (boolean displayCircle) {
             this.displayCircle = displayCircle;
@@ -221,6 +261,7 @@ public class EventsFragment extends Fragment {
                                 obj.getString(JSON_KEY_ITEM_NAME),
                                 obj.getString(JSON_KEY_ITEM_DETAIL),
                                 obj.getString(JSON_KEY_ITEM_DATE),
+                                obj.getString(JSON_KEY_ITEM_DATEFIN),
                                 colors);
                         ei.setAdditionnal(
                                 obj.getString(JSON_KEY_ITEM_CLUB),
@@ -256,7 +297,23 @@ public class EventsFragment extends Fragment {
 
         @Override
         protected JSONObject doInBackground(String... params) {
-            return JSONUtils.getJSONFromUrl(params[0], getActivity());
+            JSONObject obj = null;
+            onLine = Utilities.isPingOnline(getActivity());
+            if (onLine) {
+                obj = JSONUtils.getJSONFromUrl(params[0], getActivity());
+                if (obj != null) {
+                    Utilities.writeStringToFile(cacheFileEseo, obj.toString());
+                }
+            } else {
+                if (cacheFileEseo.exists()) {
+                    try {
+                        obj = new JSONObject(Utilities.getStringFromFile(cacheFileEseo));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return obj;
         }
     }
 }

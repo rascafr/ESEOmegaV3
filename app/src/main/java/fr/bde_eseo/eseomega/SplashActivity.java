@@ -7,13 +7,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.rascafr.test.matdesignfragment.R;
 
-import fr.bde_eseo.eseomega.model.UserProfile;
+import fr.bde_eseo.eseomega.profile.UserProfile;
 
 /**
  * Created by François on 20/04/2015.
@@ -21,7 +20,7 @@ import fr.bde_eseo.eseomega.model.UserProfile;
 public class SplashActivity extends Activity {
 
     private final static int SPLASH_TIME_OUT = 1900;
-    private final static int MIN_TRICK = 1;
+    private final static int MIN_TRICK = 5;
     private int trick = 0;
     private UserProfile profile;
 
@@ -74,4 +73,8 @@ public class SplashActivity extends Activity {
         }, SPLASH_TIME_OUT);
     }
 
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+    }
 }

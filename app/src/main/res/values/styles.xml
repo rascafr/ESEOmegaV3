@@ -24,4 +24,12 @@
         <item name="colorAccent">@color/color_primary</item>
     </style>
 
+    <!-- Splash activity theme. -->
+    <style name="ImageViewTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/md_grey_800</item>
+        <item name="colorPrimaryDark">@color/md_grey_900</item>
+        <item name="colorAccent">@color/color_primary</item>
+    </style>
+
 </resources>

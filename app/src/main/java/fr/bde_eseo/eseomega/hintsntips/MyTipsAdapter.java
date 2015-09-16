@@ -55,7 +55,6 @@ public class MyTipsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 .bitmapConfig(Bitmap.Config.ALPHA_8)
                 .build();
         myGetter = new MyGetter();
-        Log.d("Size","px = " + px);
     }
 
     public void setSponsorItems(ArrayList<SponsorItem> sponsorItems) {

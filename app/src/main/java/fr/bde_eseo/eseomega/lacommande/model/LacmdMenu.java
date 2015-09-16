@@ -48,6 +48,13 @@ public class LacmdMenu extends LacmdRoot {
         return maxSecoElem;
     }
 
+    public LacmdMenu(LacmdMenu obj) {
+        super(obj.getName(), obj.getIdstr(), obj.hasIngredients(), obj.hasElements(), obj.getPrice(), ID_CAT_MENU);
+        mainElemStr = obj.getMainElemStr();
+        maxMainElem = obj.getMaxMainElem();
+        maxSecoElem = obj.getMaxSecoElem();
+    }
+
     /*
 
     @Override

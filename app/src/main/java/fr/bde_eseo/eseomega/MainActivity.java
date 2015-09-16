@@ -1,6 +1,7 @@
 package fr.bde_eseo.eseomega;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.BitmapFactory;
@@ -29,26 +30,30 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.rascafr.test.matdesignfragment.BuildConfig;
 import com.rascafr.test.matdesignfragment.R;
 
 import fr.bde_eseo.eseomega.adapter.NavDrawerListAdapter;
+import fr.bde_eseo.eseomega.community.CommunityFragment;
 import fr.bde_eseo.eseomega.events.EventsFragment;
-import fr.bde_eseo.eseomega.fragment.ConnectProfileFragment;
-import fr.bde_eseo.eseomega.fragment.NewsFragment;
+import fr.bde_eseo.eseomega.profile.ConnectProfileFragment;
 import fr.bde_eseo.eseomega.lacommande.DataManager;
 import fr.bde_eseo.eseomega.lacommande.OrderTabsFragment;
-import fr.bde_eseo.eseomega.fragment.TeamFragment;
-import fr.bde_eseo.eseomega.fragment.ViewProfileFragment;
+import fr.bde_eseo.eseomega.profile.ViewProfileFragment;
 import fr.bde_eseo.eseomega.hintsntips.TipsFragment;
 import fr.bde_eseo.eseomega.interfaces.OnItemAddToCart;
 import fr.bde_eseo.eseomega.interfaces.OnUserProfileChange;
 import fr.bde_eseo.eseomega.model.NavDrawerItem;
-import fr.bde_eseo.eseomega.model.UserProfile;
+import fr.bde_eseo.eseomega.profile.UserProfile;
 import fr.bde_eseo.eseomega.lacommande.OrderListFragment;
 import fr.bde_eseo.eseomega.news.NewsListFragment;
+import fr.bde_eseo.eseomega.utils.EncryptUtils;
 import fr.bde_eseo.eseomega.utils.ImageUtils;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity implements OnUserProfileChange, OnItemAddToCart {
 
@@ -71,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
     private static final String MAIL_DIALOG = "developers.eseomega@gmail.com";
 
     // Others constant values
-    private static final int MAX_PROFILE_SIZE = 256; // seems good
+    public static final int MAX_PROFILE_SIZE = 256; // seems good
 
     // Version app
     private String appVersion = "2.0";
@@ -84,6 +89,10 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
 
     // Profile item
     UserProfile profile = new UserProfile();
+
+    // Preferences
+    private SharedPreferences prefs_Read;
+    private SharedPreferences.Editor prefs_Write;
 
     // slide menu items
     private String[] navMenuTitles;
@@ -138,7 +147,9 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         // EDIT : It's ok, getResizedBitmap has been modified to survive to that kind of mistake
         // TODO : correct photo orientation
         // @see http://stackoverflow.com/questions/7286714/android-get-orientation-of-a-camera-bitmap-and-rotate-back-90-degrees
-        navAdapter.setBitmap(ImageUtils.getResizedBitmap(BitmapFactory.decodeFile(profile.getPicturePath()), MAX_PROFILE_SIZE));
+        File fp = new File(profile.getPicturePath());
+        if (fp.exists())
+            navAdapter.setBitmap(ImageUtils.getResizedBitmap(BitmapFactory.decodeFile(profile.getPicturePath()), MAX_PROFILE_SIZE));
 
         // set data adapter to our listview
         mDrawerList.setAdapter(navAdapter);
@@ -191,7 +202,54 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         ImageLoader.getInstance().init(config);
         // END - UNIVERSAL IMAGE LOADER SETUP
 
+        // If needed, show a welcome message
+        prefs_Read = getSharedPreferences(Constants.PREFS_APP_WELCOME, 0);
+        prefs_Write = prefs_Read.edit();
 
+        if (prefs_Read.getBoolean(Constants.PREFS_APP_WELCOME_DATA, true)) {
+            new MaterialDialog.Builder(this)
+                    .title("Bienvenue !")
+                    .content("Merci d'avoir téléchargé notre application !\n" +
+                            "Prenez le temps de la découvrir, et n'oubliez pas de vous y connecter à l'aide de votre profil ESEO !\n\nL'équipe ESEOmega Ω")
+                    .negativeText("Allons-y !")
+                    .cancelable(false)
+                    .callback(new MaterialDialog.ButtonCallback() {
+                        @Override
+                        public void onNegative(MaterialDialog dialog) {
+                            super.onNegative(dialog);
+                            mDrawerLayout.openDrawer(mDrawerList);
+                            prefs_Write.putBoolean(Constants.PREFS_APP_WELCOME_DATA, false);
+                            prefs_Write.putString(Constants.PREFS_APP_VERSION, BuildConfig.VERSION_NAME); // prevent next message
+                            prefs_Write.commit();
+                        }
+                    })
+                    .show();
+        } else {
+
+            // App already installed
+            // Check if app is updated
+            if ((!(prefs_Read.getString(Constants.PREFS_APP_VERSION, "").equals(BuildConfig.VERSION_NAME))) && profile.isCreated()) {
+                new MaterialDialog.Builder(this)
+                        .title("Re-bonjour !")
+                        .content("Merci d'avoir pris le temps de faire cette mise à jour ! " +
+                                "Elle apporte des correctifs de sécurité aux différentes fonctions de l'application.\n" +
+                                "Pour accéder à l'ensemble de ces services, nous vous demandons de bien vouloir vous reconnecter avec votre profil ESEO.\n\nL'équipe ESEOmega Ω")
+                        .negativeText("OK")
+                        .cancelable(false)
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+                                super.onNegative(dialog);
+                                profile.removeProfileFromPrefs(MainActivity.this);
+                                profile.readProfilePromPrefs(MainActivity.this);
+                                OnUserProfileChange(profile);
+                                prefs_Write.putString(Constants.PREFS_APP_VERSION, BuildConfig.VERSION_NAME);
+                                prefs_Write.commit();
+                            }
+                        })
+                        .show();
+            }
+        }
     }
 
 
@@ -228,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         }
         // Handle action bar actions click
         switch (item.getItemId()) {
-            case R.id.action_example:
+            case R.id.action_info:
 
                 MaterialDialog md = new MaterialDialog.Builder(this)
                     .title("A propos")
@@ -281,7 +339,7 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
                 fragment = new EventsFragment();
                 break;
             case 3: // Clubs & Vie Asso
-                fragment = new TeamFragment();
+                fragment = new CommunityFragment();
                 break;
             case 4: // Commande Cafet
                 fragment = new OrderListFragment();
@@ -333,7 +391,8 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
             navDrawerItems.set(0, profile.getDrawerProfile());
             navAdapter.notifyDataSetChanged();
             mDrawerLayout.openDrawer(mDrawerList);
-            navAdapter.setBitmap(ImageUtils.getResizedBitmap(BitmapFactory.decodeFile(profile.getPicturePath()), MAX_PROFILE_SIZE));
+            navAdapter.setBitmap(profile.getPicturePath().length()==0?null:
+                    ImageUtils.getResizedBitmap(BitmapFactory.decodeFile(profile.getPicturePath()), MAX_PROFILE_SIZE));
         }
     }
 

@@ -2,7 +2,7 @@
 <android.support.v7.widget.CardView
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="wrap_content"
+    android:layout_height="72dp"
     android:layout_width="match_parent"
     card_view:cardCornerRadius="4dp"
     android:layout_marginTop="8dp"
@@ -61,11 +61,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/linlayout7"
-            android:layout_margin="8dp"
             android:orientation="vertical"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/rlEventColor"
-            android:layout_toEndOf="@+id/rlEventColor">
+            android:layout_toEndOf="@+id/rlEventColor"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp">
 
             <TextView
                 android:id="@+id/tvNameEvent"
@@ -82,9 +83,9 @@
                 android:id="@+id/tvDetailsEvent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="21h50 - Rue Maillé - Grosses basses !"
-                android:maxLines="1"
-                android:textSize="14sp" />
+                android:text="21h50 - Rue Maillé - Grosses basses ! C&apos;est une vrai chaudière"
+                android:maxLines="2"
+                android:textSize="13sp" />
 
         </LinearLayout>
     </RelativeLayout>

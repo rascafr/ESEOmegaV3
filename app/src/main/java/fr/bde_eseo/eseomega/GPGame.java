@@ -18,7 +18,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -33,12 +32,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import fr.bde_eseo.eseomega.model.UserProfile;
+import fr.bde_eseo.eseomega.profile.UserProfile;
 import fr.bde_eseo.eseomega.utils.ConnexionUtils;
 import fr.bde_eseo.eseomega.utils.EncryptUtils;
 
@@ -184,8 +182,6 @@ public class GPGame extends Activity implements SensorEventListener {
             // update sensor output in GUI
             //mHandler.post(updateOreintationDisplayTask);
 
-            //Log.d("ORIEN", "Value X = " +  (int)(fusedOrientation[0]* 180/Math.PI) + ", Value Y = " +  (int)(fusedOrientation[1]* 180/Math.PI) + ", Value Z = " +  (int)(fusedOrientation[2]* 180/Math.PI));
-
             // -30 ... +30
             if (view != null && view.getThread() != null)
                 //if (Math.abs(x) > 0.2)
@@ -224,7 +220,6 @@ public class GPGame extends Activity implements SensorEventListener {
             float y = event.values[1];
             float z = event.values[2];
 
-            //Log.d("GYRO", "x="+x+",y="+y+",z="+z);
             if (view != null && view.getThread() != null)
                 if (Math.abs(x) > 0.2)
                     view.getThread().moveSprite_x(-x);
@@ -398,11 +393,12 @@ public class GPGame extends Activity implements SensorEventListener {
         private static final double RATIO_BOMB = 0.1201;
         private static final double RATIO_LIFE = 0.1201;
         private static final double RATIO_MISSILE = 0.035;
+        private static final double RATIO_PATROL = 0.15;
         private static final double RATIO_HEART = 0.090;
         private static final double RATIO_HEART_SPACE = 0.055;
         private static final double RATIO_BUTTON = 0.25788;
         private static final double RATIO_BUG = 0.5;
-        private static final int COEF_MOVE_SENSOR = 180;
+        private static final int COEF_MOVE_SENSOR = 70;
         private static final double COEF_ORIENTATION_SENSOR = 0.050;
         private static final int MAX_MISSILES = 4;
         private static final int MAX_BOMBS = 4;
@@ -420,7 +416,7 @@ public class GPGame extends Activity implements SensorEventListener {
         private final Paint scorePaint = new Paint();
         private final Paint bluePaint = new Paint();
         private Random rand = new Random();
-        private Bitmap mainPlaneLeft, mainPlaneRight, background, bomb, missile, missile_red, heart, life, bpRestart, bpQuit, bug;
+        private Bitmap mainPlaneLeft, mainPlaneRight, background, bomb, missile, missile_red, heart, life, bpRestart, bpQuit, bug, patrol;
         private MainPlane mainPlane;
         private BombSprite [] bombSprites = new BombSprite[MAX_BOMBS];
         private MissileSprite [] missileSprites = new MissileSprite[MAX_MISSILES];
@@ -465,15 +461,15 @@ public class GPGame extends Activity implements SensorEventListener {
 
             mainPlaneLeft = getResizedBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.trick_gp_left), (int) (screen_w * RATIO_MAIN_PLANE));
             mainPlaneRight = getResizedBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.trick_gp_right), (int) (screen_w * RATIO_MAIN_PLANE));
-            background = getResizedBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.trick_sky), screen_h);
-            bomb = getResizedBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.pixel), (int) (screen_w * RATIO_BOMB));
-            missile = getResizedBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.missile), (int) (screen_w * RATIO_MISSILE));
-            missile_red = getResizedBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.missile_red), (int) (screen_w * RATIO_MISSILE));
-            heart = getResizedBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.heart), (int) (screen_w * RATIO_HEART));
-            life = getResizedBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.matlab), (int) (screen_w * RATIO_LIFE));
+            background = getResizedBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.trick_sky_better), screen_h);
+            bomb = getResizedBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.trick_bomb), (int) (screen_w * RATIO_BOMB));
+            missile = getResizedBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.trick_missile), (int) (screen_w * RATIO_MISSILE));
+            heart = getResizedBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.trick_heart), (int) (screen_w * RATIO_HEART));
+            life = getResizedBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.trick_matlab), (int) (screen_w * RATIO_LIFE));
             bpRestart = getResizedBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.btn_retry), (int) (screen_w * RATIO_BUTTON));
             bpQuit = getResizedBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.btn_quit), (int) (screen_w * RATIO_BUTTON));
             bug = getResizedBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.trick_bug), (int) (screen_w * RATIO_BUG));
+            patrol = getResizedBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.trick_patrol), (int) (screen_w * RATIO_PATROL));
 
             mainPlane = new MainPlane();
             mainPlane.x = screen_w/2;
@@ -577,6 +573,7 @@ public class GPGame extends Activity implements SensorEventListener {
             private boolean stOnce = false;
             private String strJson = null;
             private long lastLive = 0;
+            private long delayBomb = 0;
             private boolean netError = false;
 
             public int getStatus () {
@@ -630,8 +627,12 @@ public class GPGame extends Activity implements SensorEventListener {
                         bombSprites[i] = new BombSprite();
                         bombSprites[i].x = screen_w/2;
                         bombSprites[i].y = 0;
-                        bombSprites[i].w = bomb.getWidth();
-                        bombSprites[i].h = bomb.getHeight();
+                        bombSprites[i].wb = bomb.getWidth();
+                        bombSprites[i].hb = bomb.getHeight();
+                        bombSprites[i].hp = patrol.getWidth();
+                        bombSprites[i].wp = patrol.getHeight();
+                        bombSprites[i].step = (int)(screen_h/67.37);
+                        bombSprites[i].stepAlien = (int)(screen_h/202.11);
                     }
 
                     for (int i=0;i<MAX_MISSILES;i++) {
@@ -642,17 +643,20 @@ public class GPGame extends Activity implements SensorEventListener {
                         missileSprites[i].visible = false;
                         missileSprites[i].w = missile.getWidth();
                         missileSprites[i].h = missile.getHeight();
+                        missileSprites[i].step = (int)(screen_h/58);
                     }
 
                     lifeSprite.visible = false;
                     lifeSprite.y = 0;
                     lifeSprite.w = life.getWidth();
                     lifeSprite.h = life.getHeight();
+                    lifeSprite.step = (int)(screen_h/141);
                     stOnce = false;
                     lives = 3;
                     score = 0;
                     strJson = null;
                     netError = false;
+                    delayBomb = System.currentTimeMillis();
                 }
             }
 
@@ -664,7 +668,7 @@ public class GPGame extends Activity implements SensorEventListener {
                 // Draw background
                 //canvas.drawPaint(backgrPaint);
                 //canvas.drawPaint(bluePaint);
-                canvas.drawBitmap(background, 0, -screen_h+backgrY, null);
+                canvas.drawBitmap(background, 0, - screen_h+backgrY, null);
                 canvas.drawBitmap(background, 0, backgrY, null);
 
                 // Draw life
@@ -675,7 +679,10 @@ public class GPGame extends Activity implements SensorEventListener {
                 // Draw bombs
                 for (int i=0;i<MAX_BOMBS;i++) {
                     if (bombSprites[i].visible) {
-                        canvas.drawBitmap(bomb, bombSprites[i].x-bombSprites[i].w/2, bombSprites[i].y-bombSprites[i].h/2, null);
+                        if (bombSprites[i].isAlien())
+                            canvas.drawBitmap(patrol, bombSprites[i].x-bombSprites[i].getWidth()/2, bombSprites[i].y-bombSprites[i].getHeight()/2, null);
+                        else
+                            canvas.drawBitmap(bomb, bombSprites[i].x-bombSprites[i].getWidth()/2, bombSprites[i].y-bombSprites[i].getHeight()/2, null);
 
                         // Debug
                         //canvas.drawText("Missile" + i, missileSprites[i].x+100, missileSprites[i].y, textPaint);
@@ -685,12 +692,7 @@ public class GPGame extends Activity implements SensorEventListener {
                 // Draw missiles
                 for (int i=0;i<MAX_MISSILES;i++) {
                     if (missileSprites[i].visible) {
-                        canvas.drawBitmap(missile, missileSprites[i].x-missileSprites[i].w/2, missileSprites[i].y-missileSprites[i].h/2, null);
-
-                        // Debug
-                        //canvas.drawText("Missile" + i, missileSprites[i].x+100, missileSprites[i].y, textPaint);
-                    } else if (missileSprites[i].destroyed) {
-                        //canvas.drawBitmap(missile_red, missileSprites[i].x-missileSprites[i].w/2, missileSprites[i].y-missileSprites[i].h/2, null);
+                        canvas.drawBitmap(missile, missileSprites[i].x - missileSprites[i].w / 2, missileSprites[i].y - missileSprites[i].h / 2, null);
                     }
                 }
 
@@ -733,23 +735,25 @@ public class GPGame extends Activity implements SensorEventListener {
                             Paint paintHigh = new Paint(textPaint);
                             paintHigh.setColor(0xc0e5e5e5);
                             double dy = screen_h * 0.0375;
-
+                            boolean inRank = false;
                             for (int i = 0; i < 10; i++) {
 
                                 if (i < array.length()) {
                                     JSONObject o = array.getJSONObject(i);
                                     int scoreUser = o.getInt("score");
                                     String user = o.getString("login");
-                                    if (user.equals(profile.getId()))
+                                    if (user.equals(profile.getId())) {
+                                        inRank = true;
                                         canvas.drawText(String.format("%02d", i + 1) + "  " + String.format("%05d", scoreUser) + "  " + user, (int) (screen_w * 0.124), (int) (screen_h * 0.224 + dy * i), textPaint);
-                                    else
+                                    }else
                                         canvas.drawText(String.format("%02d", i + 1) + "  " + String.format("%05d", scoreUser) + "  " + user, (int) (screen_w * 0.124), (int) (screen_h * 0.224 + dy * i), paintHigh);
                                 } else {
-                                    canvas.drawText(String.format("%02d", i + 1) + "  -----  ", (int) (screen_w * 0.124), (int) (screen_h * 0.224 + dy * i), paintHigh);
+                                    canvas.drawText(String.format("%02d", i + 1) + "  -----  ---------", (int) (screen_w * 0.124), (int) (screen_h * 0.224 + dy * i), paintHigh);
                                 }
-
-                                //best += o.getString("login") + "  " + o.getInt("score") + "\n";
                             }
+
+                            if (!inRank) canvas.drawText(String.format("%02d", rank) + "  " + String.format("%05d", bscore) + "  " + profile.getId(), (int) (screen_w * 0.124), (int) (screen_h * 0.224 + dy * 11), textPaint);
+
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -767,7 +771,7 @@ public class GPGame extends Activity implements SensorEventListener {
             }
 
             public final static int     MAX_FPS = 58;
-            private final static int    MAX_FRAME_SKIPS = 5;
+            private final static int    MAX_FRAME_SKIPS = 0;
             private final static int    FRAME_PERIOD = 1000 / MAX_FPS;
 
 
@@ -801,7 +805,7 @@ public class GPGame extends Activity implements SensorEventListener {
                                 }
 
                                 while (sleepTime < 0 && framesSkipped < MAX_FRAME_SKIPS) {
-                                    if (status == GAME_PLAY) {
+                                    if (status == GAME_PLAY || status == GAME_LOOSE) {
                                         updatePhysics();
                                     }
                                     sleepTime += FRAME_PERIOD;
@@ -815,8 +819,6 @@ public class GPGame extends Activity implements SensorEventListener {
                         }
                     }
                     if (System.currentTimeMillis() - s1 > 1000) {
-                        //Log.d("GAME2", "FPS rate is " + cnt);
-
                         latchCnt = cnt;
                         s1 = System.currentTimeMillis();
                         cnt = 0;
@@ -846,22 +848,26 @@ public class GPGame extends Activity implements SensorEventListener {
                         dist = Math.sqrt((missileSprites[i].x - bombSprites[j].x) * (missileSprites[i].x - bombSprites[j].x) +
                                          (missileSprites[i].y - bombSprites[j].y) * (missileSprites[i].y - bombSprites[j].y));
 
-                        if (bombSprites[j].visible && isThereCollision(bombSprites[j].x, bombSprites[j].y, bombSprites[j].w, bombSprites[j].h)) { // Alien attack
+                        if (bombSprites[j].visible && isThereCollision(bombSprites[j].x, bombSprites[j].y, bombSprites[j].getWidth(), bombSprites[j].getHeight())) { // Alien attack
                             bombSprites[j].visible = false;
-                            lives--;
+                            lives --;
                             if (lives == -1) {
                                 status = GAME_LOOSE;
                             }
                             v.vibrate(100);
                         }
 
-                        if (missileSprites[i].visible && bombSprites[j].visible && dist < bombSprites[i].w/1.8) {
-                            score++;
+                        if (missileSprites[i].visible && bombSprites[j].visible && dist < bombSprites[i].getWidth()/1.8) {
+                            bombSprites[j].actionMissile();
+                            if (bombSprites[j].isDead()) {
+                                score += bombSprites[j].addedLifes();
+                                bombSprites[j].visible = false;
+                                bombSprites[j].y = 0;
+                            }
                             missileSprites[i].destroyed = true;
                             missileSprites[i].visible = false;
                             //missileSprites[i].y = marginB;
-                            bombSprites[j].visible = false;
-                            bombSprites[j].y = 0;
+
                         }
                     }
                 }
@@ -875,7 +881,7 @@ public class GPGame extends Activity implements SensorEventListener {
 
                 // Lives bonus : appears if not visible, random boolean agreed and more than 15+ delay and +15 score
                 if (lifeSprite.visible){ // life bonus is visible : move it down
-                    lifeSprite.y += 12;
+                    lifeSprite.y += lifeSprite.step;
 
                     if (lifeSprite.y > screen_h) {
                         lifeSprite.visible = false;
@@ -905,7 +911,6 @@ public class GPGame extends Activity implements SensorEventListener {
                         boolean isFirst = (!missileSprites[0].visible && !missileSprites[1].visible && !missileSprites[2].visible && !missileSprites[3].visible);
 
                         // Make missile out only if destroy = false
-                        //Log.d("PHYSICS", "marginB = " + marginB + ", missileSprites[prev].y = " + missileSprites[prev].y + ", >= " + (screen_h/4-marginB));
                         if ((isFirst || (marginB - missileSprites[prev].y) >= (marginB/MAX_MISSILES)) && runGun && !missileSprites[i].destroyed) {
                             missileSprites[i].visible = true; // Set active
                             missileSprites[i].destroyed = false; // Fully functional
@@ -913,7 +918,7 @@ public class GPGame extends Activity implements SensorEventListener {
                             missileSprites[i].y = marginB;
                         }
                     } else if (missileSprites[i].visible || (!missileSprites[i].visible && missileSprites[i].destroyed)) { // Missile is visible
-                        missileSprites[i].y -= 22;
+                        missileSprites[i].y -= missileSprites[i].step;
 
                         // Missile is out of screen
                         if (missileSprites[i].y < 0) {
@@ -937,15 +942,15 @@ public class GPGame extends Activity implements SensorEventListener {
 
                         boolean isFirst = (!bombSprites[0].visible && !bombSprites[1].visible && !bombSprites[2].visible);
 
-                        if ((isFirst || (bombSprites[prev].y) > marginB/4)) {
+                        boolean timeoutOk = (System.currentTimeMillis() - delayBomb) > 2000;
+                        if (timeoutOk && (isFirst || (bombSprites[prev].y) > marginB/4)) {
 
                             // If score > 40 et random ~ score 1000% : new kind of alien
-                            /*
                             if (score > 40 && rand.nextInt(1000) < score) {
-                                alien[i].setPatrol();
+                                bombSprites[i].setIsAlien(true);
                             } else {
-                                alien[i].resetPatrol();
-                            }*/
+                                bombSprites[i].setIsAlien(false);
+                            }
                             bombSprites[i].visible = true; // Set active
                             bombSprites[i].x = marginL+rand.nextInt(marginR); // Set at the bottom of screen, at the top of main sprite
                             bombSprites[i].y = 0;
@@ -954,7 +959,7 @@ public class GPGame extends Activity implements SensorEventListener {
                         //if (alien[i].isPatrol)
                             //alien[i].my += PATROL_STEP_PX;
                         //else
-                            bombSprites[i].y += 18;
+                            bombSprites[i].y += bombSprites[i].getStep();
 
                         // Alien is out of screen
                         if (bombSprites[i].y > screen_h) {
@@ -1012,19 +1017,56 @@ public class GPGame extends Activity implements SensorEventListener {
     }
 
     private class BombSprite {
-        public int x, y, w, h;
+        public int x, y, wb, hb, wp, hp;
         public boolean visible;
+        public boolean isAlien = false;
+        private int step, stepAlien;
+        private int bombLife = 1;
+        public void actionMissile () {
+            bombLife--;
+        }
+        public boolean isDead() {
+            return bombLife == 0;
+        }
+        public int addedLifes () {
+            return isAlien?4:1;
+        }
+        public void setSteps (int step, int stepAlien) {
+            this.step = step;
+            this.stepAlien = stepAlien;
+        }
+        public boolean isAlien() {
+            return isAlien;
+        }
+        public void setIsAlien(boolean isAlien) {
+            this.isAlien = isAlien;
+            if (isAlien)
+                bombLife = 4;
+            else
+                bombLife = 1;
+        }
+        public int getStep () {
+            return isAlien?stepAlien:step;
+        }
+        public int getWidth () {
+            return isAlien?wp:wb;
+        }
+        public int getHeight () {
+            return isAlien?hp:hb;
+        }
     }
 
     private class LifeSprite {
         public int x, y, w, h;
         public boolean visible;
+        public int step = 12;
     }
 
     private class MissileSprite {
         public int x, y, w, h;
         public boolean visible;
         public boolean destroyed;
+        public int step = 22;
     }
 
     // width scaling

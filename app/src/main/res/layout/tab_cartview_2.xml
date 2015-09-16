@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/relativeLayout6" />
+        />
 
 
     <RelativeLayout
@@ -18,7 +18,8 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_margin="20dp">
+        android:layout_margin="20dp"
+        android:id="@+id/relativeLayout2">
 
         <ImageView
             android:id="@+id/imgNoCart"
@@ -50,21 +51,7 @@
 
     </RelativeLayout>
 
-    <com.melnykov.fab.FloatingActionButton
-        android:id="@+id/fabCommand"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:src="@drawable/ic_shopping_cart"
-        fab:fab_colorNormal="@color/fab_valid_button_nrm"
-        fab:fab_colorPressed="@color/fab_valid_button_prs"
-        fab:fab_colorRipple="@color/fab_valid_button_rpl"
-        android:layout_marginRight="16dp"
-        android:layout_marginEnd="20dp"
-        android:layout_above="@+id/relativeLayout6"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="-28dp" />
+
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -101,9 +88,20 @@
             android:layout_marginLeft="2dp"
             android:layout_marginStart="2dp" />
 
-
-
     </RelativeLayout>
 
+    <com.melnykov.fab.FloatingActionButton
+        android:id="@+id/fabCommand"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:src="@drawable/ic_shopping_cart"
+        fab:fab_colorNormal="@color/fab_valid_button_nrm"
+        fab:fab_colorPressed="@color/fab_valid_button_prs"
+        fab:fab_colorRipple="@color/fab_valid_button_rpl"
+        android:layout_marginBottom="28dp"
+        android:layout_alignBottom="@+id/relativeLayout6"
+        android:layout_alignRight="@+id/relativeLayout2"
+        android:layout_alignEnd="@+id/relativeLayout2"/>
 
 </RelativeLayout>

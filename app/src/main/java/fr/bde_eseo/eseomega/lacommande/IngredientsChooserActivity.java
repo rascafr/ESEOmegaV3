@@ -92,7 +92,7 @@ public class IngredientsChooserActivity extends AppCompatActivity {
                 elemPos = extras.getInt(Constants.KEY_ELEMENT_POSITION);
                 element = new LacmdElement(DataManager.getInstance().getElementFromID(elementID));
                 getSupportActionBar().setTitle(TITLE_BASE + element.getName());
-                Log.d("INTENT", elementID + " - " + elemPos);
+                //Log.d("INTENT", elementID + " - " + elemPos);
             }
         } else {
             elementID = (String) savedInstanceState.getSerializable(Constants.KEY_ELEMENT_ID);

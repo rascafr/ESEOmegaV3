@@ -110,7 +110,11 @@ public class LacmdRoot {
         if (items != null && items.size() > 0) {
             if (single) friendly += " (";
             for (int i = 0; i < items.size(); i++) {
-                if (i != 0) friendly += ", ";
+                if (i != 0) {
+                    //if (single)
+                        friendly += ", ";
+                    //else friendly += "\n - ";
+                }
                 friendly += items.get(i).getFriendlyString(true);
             }
             if (single) friendly += ") ";

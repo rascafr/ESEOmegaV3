@@ -1,6 +1,7 @@
 package fr.bde_eseo.eseomega.lacommande;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,13 +31,13 @@ import fr.bde_eseo.eseomega.lacommande.model.LacmdRoot;
  * Used to display checkboxes with elements inside
  */
 public class SecoElementChooserActivity extends AppCompatActivity {
-/*
+
     private RecyclerView recList;
     private CheckboxListAdapter mAdapter;
     private TextView tvIngredients, tvAdd, tvStackMorePrice, tvStackMoreText;
     private ArrayList<CheckboxItem> checkboxItems;
     private Toolbar toolbar;
-    private LacmdMenu menu
+    private LacmdMenu menu;
     private String menuID;
     private int maxElements, currentElements, elemPos;
     private double supplMore;
@@ -64,15 +65,29 @@ public class SecoElementChooserActivity extends AppCompatActivity {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recList.setLayoutManager(llm);
 
-        // Add ingredients to list's dataset
-        for (int i=0;i<DataManager.getInstance().getIngredients().size();i++) {
-            checkboxItems.add(
-                new CheckboxItem(
-                    DataManager.getInstance().getIngredients().get(i).getName(),
-                    DataManager.getInstance().getIngredients().get(i).getIdstr(),
-                    DataManager.getInstance().getIngredients().get(i).getPrice()
-                )
-            );
+        currentElements = 0;
+
+        // Add elemnts without ingredients to list's dataset
+        for (int i=0;i<DataManager.getInstance().getElements().size();i++) {
+            if (DataManager.getInstance().getElements().get(i).hasIngredients() == 0 &&
+                    DataManager.getInstance().getElements().get(i).getOutofmenu() == 0)
+                checkboxItems.add(
+                    new CheckboxItem(
+                        DataManager.getInstance().getElements().get(i).getName(),
+                        DataManager.getInstance().getElements().get(i).getIdstr(),
+                        DataManager.getInstance().getElements().get(i).getPrice()
+                    )
+                );
+        }
+
+        for (int i=0;i<DataManager.getInstance().getMenu().getItems().size();i++) {
+            LacmdRoot element = DataManager.getInstance().getMenu().getItems().get(i);
+            if (element.hasIngredients() == 0) {
+                if (element.getName().length() > 0) {
+                    setArrayCheck(element.getIdstr());
+                    currentElements++;
+                }
+            }
         }
 
         supplMore = 0;
@@ -81,6 +96,7 @@ public class SecoElementChooserActivity extends AppCompatActivity {
         tvStackMorePrice.setVisibility(View.INVISIBLE);
 
         // Get parameters
+        /*
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             if(extras == null) {
@@ -88,20 +104,22 @@ public class SecoElementChooserActivity extends AppCompatActivity {
                 finish();
             } else {
                 menuID = extras.getString(Constants.KEY_MENU_ID);
-                elemPos = extras.getInt(Constants.KEY_ELEMENT_POSITION);
-                element = new LacmdElement(DataManager.getInstance().getElementFromID(elementID));
-                getSupportActionBar().setTitle(TITLE_BASE + element.getName());
-                Log.d("INTENT", elementID + " - " + elemPos);
+                menu = DataManager.getInstance().getMenuFromID(menuID);
+                //elemPos = extras.getInt(Constants.KEY_ELEMENT_POSITION);
+                //element = new LacmdElement(DataManager.getInstance().getElementFromID(elementID));
+                getSupportActionBar().setTitle(TITLE_BASE);
+                Log.d("INTENT", menuID);
             }
         } else {
-            elementID = (String) savedInstanceState.getSerializable(Constants.KEY_ELEMENT_ID);
-            elemPos = (int) savedInstanceState.getSerializable(Constants.KEY_ELEMENT_POSITION);
-            element = new LacmdElement(DataManager.getInstance().getElementFromID(elementID));
-            getSupportActionBar().setTitle(TITLE_BASE + element.getName());
-        }
+            //elementID = (String) savedInstanceState.getSerializable(Constants.KEY_ELEMENT_ID);
+            //elemPos = (int) savedInstanceState.getSerializable(Constants.KEY_ELEMENT_POSITION);
+            //element = new LacmdElement(DataManager.getInstance().getElementFromID(elementID));
+            getSupportActionBar().setTitle(TITLE_BASE);
+        }*/
 
-        maxElements = element.hasIngredients();
-        currentElements = 0;
+        getSupportActionBar().setTitle(TITLE_BASE);
+        menu = DataManager.getInstance().getMenu();
+        maxElements = menu.getMaxSecoElem();
         tvIngredients.setText("Vous devez choisir " + maxElements +
                 " élément" + (maxElements>0?"s":"") +
                 " dans la liste ci-dessous.");
@@ -110,22 +128,47 @@ public class SecoElementChooserActivity extends AppCompatActivity {
         tvAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tvAdd.setBackgroundColor(0x2fffffff);
-                // Add all checked items
-                ArrayList<LacmdRoot> items = new ArrayList<LacmdRoot>();
-                for (int i=0;i<checkboxItems.size();i++) {
-                    if (checkboxItems.get(i).isChecked())
-                        items.add(checkboxItems.get(i));
-                }
-                element.setItems(items);
 
-                if (elemPos == -1) {
+                tvAdd.setBackgroundColor(0x2fffffff);
+
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvAdd.setBackgroundColor(0x00ffffff);
+                    }
+                }, 500);
+
+                if (currentElements == maxElements) {
+
+                    // Remove old items
+                    for (int i=0;i<DataManager.getInstance().getMenu().getItems().size();i++) {
+                        LacmdRoot element = DataManager.getInstance().getMenu().getItems().get(i);
+                        if (element.hasIngredients() == 0) {
+                            DataManager.getInstance().getMenu().getItems().remove(i);
+                            i--;
+                        }
+                    }
+
+                    // Add all checked items
+                    for (int i = 0; i < checkboxItems.size(); i++) {
+                        if (checkboxItems.get(i).isChecked()) {
+                            DataManager.getInstance().getMenu().getItems().add(
+                                    new LacmdElement(DataManager.getInstance().getElementFromID(checkboxItems.get(i).getIdstr())));
+                        }
+                    }
+                    //element.setItems(items);
+
+                /*if (elemPos == -1) {
                     Toast.makeText(SecoElementChooserActivity.this, "\"" + element.getName() + "\" a été ajouté au panier", Toast.LENGTH_SHORT).show();
                     DataManager.getInstance().addCartItem(element);
                 } else {
                     DataManager.getInstance().getMenu().getItems().set(elemPos, element);
+                }*/
+                    SecoElementChooserActivity.this.finish();
+                } else {
+                    Toast.makeText(SecoElementChooserActivity.this, "Vous devez sélectionner tous vos éléments.", Toast.LENGTH_SHORT).show();
                 }
-                SecoElementChooserActivity.this.finish();
             }
         });
     }
@@ -135,9 +178,8 @@ public class SecoElementChooserActivity extends AppCompatActivity {
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            CheckBoxHolder cbh = new CheckBoxHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_check, parent, false));
 
-            return cbh;
+            return new CheckBoxHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_check, parent, false));
         }
 
         @Override
@@ -150,18 +192,13 @@ public class SecoElementChooserActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         CheckBox cb = (CheckBox) v;
-                        checkboxItems.get(position).setChecked(cb.isChecked());
-                        boolean isfree = checkboxItems.get(position).getPrice() == 0;
                         currentElements += cb.isChecked()?1:-1;
                         if (currentElements > maxElements) {
-                            supplMore = checkboxItems.get(position).getPrice()*(currentElements - maxElements);
-                            tvStackMorePrice.setVisibility(View.VISIBLE);
-                            tvStackMorePrice.setText(new DecimalFormat("0.00").format(supplMore) + "€");
-                            tvStackMoreText.setVisibility(View.VISIBLE);
-                        } else {
-                            tvStackMorePrice.setVisibility(View.INVISIBLE);
-                            tvStackMoreText.setVisibility(View.INVISIBLE);
+                            cb.setChecked(false);
+                            currentElements --;
+                            Toast.makeText(SecoElementChooserActivity.this, "Vous avez attend le nombre max d'éléments", Toast.LENGTH_SHORT).show();
                         }
+                        checkboxItems.get(position).setChecked(cb.isChecked());
                     }
                 });
             }
@@ -187,6 +224,14 @@ public class SecoElementChooserActivity extends AppCompatActivity {
                 super(itemView);
                 checkBox = (CheckBox) itemView.findViewById(R.id.checkBox);
                 tvMore = (TextView) itemView.findViewById(R.id.tvSuppl);
+            }
+        }
+    }
+
+    private void setArrayCheck (String idstr) {
+        for (int i=0;i<checkboxItems.size();i++) {
+            if (checkboxItems.get(i).getIdstr().equals(idstr)) {
+                checkboxItems.get(i).setChecked(true);
             }
         }
     }
@@ -233,5 +278,5 @@ public class SecoElementChooserActivity extends AppCompatActivity {
             result = getResources().getDimensionPixelSize(resourceId);
         }
         return result;
-    }*/
+    }
 }

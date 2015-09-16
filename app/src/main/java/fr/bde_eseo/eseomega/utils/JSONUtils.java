@@ -52,7 +52,10 @@ public class JSONUtils {
                 result = sb.toString();
 
                 //result = EntityUtils.toString(response.getEntity());
-                obj = new JSONObject(result);
+                if (result.contains("<html><body><h1>503"))
+                    obj = null;
+                else
+                    obj = new JSONObject(result);
 
             } catch (IOException | JSONException e) {
                 e.printStackTrace();

@@ -1,5 +1,7 @@
 package fr.bde_eseo.eseomega.lacommande;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,10 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.rascafr.test.matdesignfragment.R;
 
 import org.json.JSONArray;
 
+import fr.bde_eseo.eseomega.GPGame;
+import fr.bde_eseo.eseomega.MainActivity;
 import fr.bde_eseo.eseomega.lacommande.DataManager;
 import fr.bde_eseo.eseomega.lacommande.tabs.TabCartView;
 import fr.bde_eseo.eseomega.slidingtab.SlidingTabLayout;
@@ -25,6 +30,7 @@ import fr.bde_eseo.eseomega.utils.JSONUtils;
  */
 public class OrderTabsFragment extends Fragment {
 
+    public static final long MAX_DELAY_ORDER = 582*1000;
     private ViewPager mPager;
     private SlidingTabLayout mTabs;
     private ViewPagerAdapter mAdapter;
@@ -45,8 +51,35 @@ public class OrderTabsFragment extends Fragment {
         mTabs.setDistributeEvenly(true);
         mTabs.setViewPager(mPager);
 
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                // This method will be executed once the timer is over
+                Context ctx = getActivity();
+                if (ctx != null) {
+                    new MaterialDialog.Builder(getActivity())
+                            .title("Votre panier a expiré")
+                            .content("Pour des raisons de sécurité, il n'est possible de passer commande que pendant 10 minutes sans la valider.\nMerci de bien vouloir recommencer ...")
+                            .cancelable(false)
+                            .negativeText("Ok")
+                            .callback(new MaterialDialog.ButtonCallback() {
+                                @Override
+                                public void onNegative(MaterialDialog dialog) {
+                                    super.onNegative(dialog);
+                                    getFragmentManager().popBackStackImmediate();
+                                }
+                            })
+                            .show();
+                }
+
+            }
+        }, MAX_DELAY_ORDER);
+
         return rootView;
     }
+
+
 
     // Used to refresh cart's item numbers
     public void refreshCart () {

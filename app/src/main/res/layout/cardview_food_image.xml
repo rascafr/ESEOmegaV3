@@ -29,7 +29,6 @@
             android:layout_gravity="center_horizontal"
             android:adjustViewBounds="false"
             android:scaleType="centerCrop"
-            android:src="@drawable/err_tips"
             android:layout_below="@+id/relativeLayout" />
 
         <RelativeLayout
@@ -54,28 +53,29 @@
                     android:textColor="@android:color/black"
                     android:text="Menus"
                     android:layout_marginLeft="11dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="10dp"
+                          android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
                     android:layout_centerVertical="false"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true" />
+                    android:layout_alignParentStart="true"
+                          android:layout_toLeftOf="@+id/foodMore"
+                          android:layout_toStartOf="@+id/foodMore"/>
 
-                </RelativeLayout>
+                <TextView android:id="@+id/foodMore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_header_size_small"
+                    android:textStyle="bold"
+                    android:textColor="@color/circle_ready"
+                    android:text="A partir de 3.00€"
+                    android:layout_marginRight="11dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_centerVertical="false"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true" />
 
-            <TextView android:id="@+id/foodMore"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/text_header_size_small"
-                android:textStyle="bold"
-                android:textColor="@color/circle_ready"
-                android:text="A partir de 3.00€"
-                android:layout_marginRight="11dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="10dp"
-                android:layout_centerVertical="false"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
+            </RelativeLayout>
 
         </RelativeLayout>
 

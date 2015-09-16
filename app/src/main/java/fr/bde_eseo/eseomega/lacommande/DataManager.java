@@ -84,28 +84,24 @@ public class DataManager {
 
                     JSONObject lacmdObj = array.getJSONObject(a); // object like "menu", "elements"...
                     if (lacmdObj.has(JSON_KEY_MENUS)) {
-                        Log.d("JSON", "Has : " + JSON_KEY_MENUS);
                         JSONArray lacmdArray = lacmdObj.getJSONArray(JSON_KEY_MENUS);
                         //menus = new ArrayList<>(); -> Now in RESET !
                         for (int i=0;i<lacmdArray.length();i++) {
                             menus.add(new LacmdMenu(lacmdArray.getJSONObject(i)));
                         }
                     } else if (lacmdObj.has(JSON_KEY_ELEMENTS)) {
-                        Log.d("JSON", "Has : " + JSON_KEY_ELEMENTS);
                         JSONArray lacmdArray = lacmdObj.getJSONArray(JSON_KEY_ELEMENTS);
                         //elements = new ArrayList<>();
                         for (int i = 0; i < lacmdArray.length(); i++) {
                             elements.add(new LacmdElement(lacmdArray.getJSONObject(i)));
                         }
                     } else if (lacmdObj.has(JSON_KEY_INGREDIENTS)) {
-                        Log.d("JSON", "Has : " + JSON_KEY_INGREDIENTS);
                         JSONArray lacmdArray = lacmdObj.getJSONArray(JSON_KEY_INGREDIENTS);
                         //ingredients = new ArrayList<>();
                         for (int i=0;i<lacmdArray.length();i++) {
                             ingredients.add(new LacmdIngredient(lacmdArray.getJSONObject(i)));
                         }
                     } else if (lacmdObj.has(JSON_KEY_CATEGORIES)) {
-                        Log.d("JSON", "Has : " + JSON_KEY_CATEGORIES);
                         JSONArray lacmdArray = lacmdObj.getJSONArray(JSON_KEY_CATEGORIES);
                         //categories = new ArrayList<>();
                         for (int i=0;i<lacmdArray.length();i++) {
@@ -210,8 +206,7 @@ public class DataManager {
 
     // Increments number of items
     public void addCartItem (LacmdRoot root) {
-        Log.d("CART", "Adding " + root.getName() + ", " + root.getIdstr() + ", " + root.getObjectType() + ", item = " + (root.getItems()==null?"null": root.getItems().size()));
-        cartArray.add(new LacmdRoot(root)); // HARDWARE COPY
+        cartArray.add(new LacmdRoot(root)); // HARDWARE COPY -> TODO
     }
 
     // Removes an item
@@ -274,7 +269,7 @@ public class DataManager {
     private LacmdMenu menu;
 
     public void setMenu (LacmdMenu menu) {
-        this.menu = menu;
+        this.menu = new LacmdMenu(menu);
     }
 
     public LacmdMenu getMenu() {

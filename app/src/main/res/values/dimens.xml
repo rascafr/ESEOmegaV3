@@ -15,4 +15,9 @@
     <!-- Material Design UI -->
     <dimen name="tool_bar_top_padding">0dp</dimen>
 
+    <!-- Club actions -->
+    <dimen name="icon_size">32dp</dimen>
+    <dimen name="icon_margin_side">18dp</dimen>
+    <dimen name="icon_margin_top_bottom">8dp</dimen>
+
 </resources>

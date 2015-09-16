@@ -1,5 +1,7 @@
 package fr.bde_eseo.eseomega.hintsntips;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,12 +25,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fr.bde_eseo.eseomega.Constants;
+import fr.bde_eseo.eseomega.listeners.RecyclerItemClickListener;
 import fr.bde_eseo.eseomega.utils.ConnexionUtils;
 import fr.bde_eseo.eseomega.utils.JSONUtils;
+import fr.bde_eseo.eseomega.utils.Utilities;
 
 /**
  * Created by Rascafr on 11/08/2015.
@@ -59,6 +64,9 @@ public class TipsFragment extends Fragment {
     private final static String JSON_KEY_ITEM_AVANTAGES = "avantages";
     private final static int LATENCY_REFRESH = 8; // 8 sec min between 2 refreshs
 
+    private String cachePath;
+    private File cacheFileEseo;
+
     public TipsFragment () {}
 
     @Override
@@ -78,13 +86,16 @@ public class TipsFragment extends Fragment {
         img.setVisibility(View.GONE);
         disabler = new RecyclerViewDisabler();
 
+        // I/O cache data
+        cachePath = getActivity().getCacheDir() + "/";
+        cacheFileEseo = new File(cachePath + "tips.json");
+
         // Model / objects
         sponsorItems = new ArrayList<>();
         mAdapter = new MyTipsAdapter(getActivity(), sponsorItems);
         recList = (RecyclerView) rootView.findViewById(R.id.recyList);
         recList.setAdapter(mAdapter);
         recList.setHasFixedSize(false);
-        recList.addItemDecoration(new DividerItemDecoration(getActivity(), R.drawable.drawer_divider));
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recList.setLayoutManager(llm);
@@ -114,6 +125,20 @@ public class TipsFragment extends Fragment {
             }
         });
 
+        // On click listener
+        recList.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                SponsorItem si = sponsorItems.get(position);
+                if (si.getUrl() != null && si.getUrl().length() > 0) {
+                    String url = si.getUrl();
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse(url));
+                    startActivity(i);
+                }
+            }
+        }));
+
         return rootView;
     }
 
@@ -141,7 +166,7 @@ public class TipsFragment extends Fragment {
      */
     private class AsyncJSON extends AsyncTask<String, String, JSONObject> {
 
-        boolean displayCircle;
+        private boolean displayCircle, onLine;
 
         public AsyncJSON (boolean displayCircle) {
             this.displayCircle = displayCircle;
@@ -203,7 +228,23 @@ public class TipsFragment extends Fragment {
 
         @Override
         protected JSONObject doInBackground(String... params) {
-            return JSONUtils.getJSONFromUrl(params[0], getActivity());
+            JSONObject obj = null;
+            onLine = Utilities.isPingOnline(getActivity());
+            if (onLine) {
+                obj = JSONUtils.getJSONFromUrl(params[0], getActivity());
+                if (obj != null) {
+                    Utilities.writeStringToFile(cacheFileEseo, obj.toString());
+                }
+            } else {
+                if (cacheFileEseo.exists()) {
+                    try {
+                        obj = new JSONObject(Utilities.getStringFromFile(cacheFileEseo));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return obj;
         }
     }
 }

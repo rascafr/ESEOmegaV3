@@ -19,25 +19,38 @@
 
     </LinearLayout>
 
-    <ScrollView
-        android:layout_marginTop="-7dp"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/rlFillProfile"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/linearLayout2"
         android:layout_below="@+id/linearLayout">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/rlFillProfile"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:paddingBottom="@dimen/activity_vertical_margin">
+            android:gravity="center"
+            android:layout_centerInParent="true"
+            android:orientation="vertical">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                app:border_width="4dp"
+                app:border_color="#fff"
+                android:src="@drawable/ic_unknown"
+                android:id="@+id/circleView"/>
 
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Connecté en tant que"
+                android:layout_marginTop="16dp"
+                android:text="BONJOUR"
                 android:gravity="center"
                 android:textStyle="bold"
                 android:id="@+id/tv1"/>
@@ -45,73 +58,66 @@
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textSize="28dp"
+                android:textSize="28sp"
                 android:text="François LEPAROUX"
-                android:textColor="@color/circle_preparing"
-                android:layout_marginTop="14dp"
+                android:layout_marginTop="2dp"
                 android:gravity="center"
                 android:textStyle="bold"
-                android:typeface="serif"
-                android:layout_below="@id/tv1"
                 android:id="@+id/tvUserName"/>
 
-            <View
-                android:id="@+id/vw1"
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="16dp"
-                android:background="@android:color/darker_gray"
-                android:layout_below="@id/tvUserName"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
-
             <TextView
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Vous voulez personnaliser votre image de profil ?\n(C'est plus sympa, vous avez un beau visage)"
                 android:gravity="center"
-                android:layout_below="@id/vw1"
-                android:id="@+id/tvUserPicture"/>
-
-            <Button
+                android:text="Vous avez accès à toutes les fonctionnalités, dont la commande à la caféteria."
                 android:layout_marginTop="16dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Changer ma photo"
-                android:layout_below="@+id/tvUserPicture"
-                android:layout_centerHorizontal="true"
-                android:id="@+id/button_change"/>
+                android:color="@color/text_light_header"/>
 
-            <View
-                android:layout_marginTop="16dp"
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"
-                android:layout_below="@+id/button_change"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:id="@+id/vw2"/>
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Se déconnecter"
-                android:id="@+id/button_disconnect"
-                android:layout_below="@+id/vw2"
-                android:layout_margin="14dp"
-                android:layout_centerHorizontal="true" />
+        </LinearLayout>
 
-            <TextView
-                android:text="@string/text_warning_nopaid"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/tvRemoveProfile"
-                android:layout_below="@id/button_disconnect"
-                android:layout_centerHorizontal="true" />
 
-        </RelativeLayout>
 
-    </ScrollView>
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/abc_action_bar_default_height_material"
+        android:orientation="horizontal"
+        android:background="@color/md_blue_700"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/linearLayout2">
+
+        <TextView
+            android:id="@+id/tvDisconnect"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:textColor="@color/md_white_1000"
+            android:paddingLeft="32dp"
+            android:paddingRight="54dp"
+            android:background="@drawable/textview_back_button"
+            android:text="DÉCONNEXION"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/imageView"
+            android:layout_toStartOf="@+id/imageView" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_right"
+            android:layout_marginLeft="-48dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="32dp"
+            android:layout_marginEnd="32dp"
+            android:id="@+id/imageView" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

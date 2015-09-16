@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +34,7 @@ import java.util.Locale;
 
 import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.lacommande.model.HistoryItem;
+import fr.bde_eseo.eseomega.profile.UserProfile;
 import fr.bde_eseo.eseomega.utils.ConnexionUtils;
 import fr.bde_eseo.eseomega.utils.EncryptUtils;
 import fr.bde_eseo.eseomega.utils.Utilities;
@@ -54,6 +54,7 @@ public class OrderDetailsFragment extends Fragment {
     private Handler mHandler;
     private static final int RUN_UPDATE = 20000;
     private boolean run;
+    private UserProfile profile;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -81,6 +82,10 @@ public class OrderDetailsFragment extends Fragment {
         rl1.setVisibility(View.INVISIBLE);
         rl2.setVisibility(View.INVISIBLE);
 
+        // profile
+        profile = new UserProfile();
+        profile.readProfilePromPrefs(getActivity());
+
         // Save old brightness level and set it now to 100%
         WindowManager.LayoutParams layout = getActivity().getWindow().getAttributes();
         oldScreenBrightness = layout.screenBrightness;
@@ -102,7 +107,6 @@ public class OrderDetailsFragment extends Fragment {
 
     @Override
     public void onResume() {
-        Log.d("Hand", "Resuming update thread");
         run = true;
         mHandler.postDelayed(updateTimerThread, 0);
         super.onResume();
@@ -110,7 +114,6 @@ public class OrderDetailsFragment extends Fragment {
 
     @Override
     public void onPause() {
-        Log.d("Hand", "Stopping update thread");
         run = false;
         super.onPause();
     }
@@ -126,7 +129,7 @@ public class OrderDetailsFragment extends Fragment {
                     async.execute();
                 }
             } catch (NullPointerException e) { // Stop handler if fragment disappears
-                Log.d("Hand", "Handler stopped"); mHandler.removeCallbacks(updateTimerThread);
+                mHandler.removeCallbacks(updateTimerThread);
             }
         }
     };
@@ -150,11 +153,10 @@ public class OrderDetailsFragment extends Fragment {
 
             List<NameValuePair> pairs = new ArrayList<>();
             pairs.add(new BasicNameValuePair("idcmd", String.valueOf(idcmd)));
-            pairs.add(new BasicNameValuePair("hash", EncryptUtils.sha256(getActivity().getResources().getString(R.string.SALT_SYNC_SINGLE) + String.valueOf(idcmd))));
+            pairs.add(new BasicNameValuePair("username", profile.getId()));
+            pairs.add(new BasicNameValuePair("password", profile.getPassword()));
+            pairs.add(new BasicNameValuePair("hash", EncryptUtils.sha256(getActivity().getResources().getString(R.string.SALT_SYNC_SINGLE) + String.valueOf(idcmd) + profile.getId() + profile.getPassword())));
             resp = ConnexionUtils.postServerData(Constants.URL_SYNC_SINGLE, pairs);
-            Log.d("PAIR", pairs.get(0).getName() + " - " + pairs.get(0).getValue());
-            Log.d("PAIR", pairs.get(1).getName() + " - " + pairs.get(1).getValue());
-            Log.d("RESP", resp);
 
             return resp;
         }
@@ -169,7 +171,9 @@ public class OrderDetailsFragment extends Fragment {
                     JSONObject jsonSync = array.getJSONObject(0);
                     tvOrderDate.setText("Votre commande du\n" + getFrenchDate(jsonSync.getString("datetime")));
                     tvOrderNumero.setText(jsonSync.getString("strcmd") + " " + new DecimalFormat("000").format(jsonSync.getInt("modcmd")));
-                    tvOrderDetails.setText(jsonSync.getString("resume"));
+                    String txtDesc = jsonSync.getString("resume");
+                    txtDesc = " - " + txtDesc.replaceAll("<br>", "\n - ");
+                    tvOrderDetails.setText(txtDesc);
                     tvOrderPrice.setText(new DecimalFormat("0.00").format(jsonSync.getDouble("price")) + "€");
                     ImageLoader.getInstance().displayImage(Constants.URL_ASSETS + jsonSync.getString("imgurl"), imgCategory);
                     int color = 0, color2 = 0;

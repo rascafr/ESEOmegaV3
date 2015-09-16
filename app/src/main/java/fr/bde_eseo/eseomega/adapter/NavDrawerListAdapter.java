@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +13,7 @@ import android.widget.TextView;
 
 import com.rascafr.test.matdesignfragment.R;
 
-import fr.bde_eseo.eseomega.TrickActivity;
 import fr.bde_eseo.eseomega.model.NavDrawerItem;
-import fr.bde_eseo.eseomega.utils.ImageUtils;
-import fr.bde_eseo.eseomega.utils.Utilities;
 
 import java.util.ArrayList;
 import java.util.TreeSet;

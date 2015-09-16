@@ -1,11 +1,14 @@
 package fr.bde_eseo.eseomega.lacommande;
 
+import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.rascafr.test.matdesignfragment.R;
 
 import fr.bde_eseo.eseomega.lacommande.model.LacmdRoot;
@@ -16,14 +19,19 @@ import fr.bde_eseo.eseomega.lacommande.model.LacmdRoot;
  */
 public class MyCartAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
 
+    private Context ctx;
+    public MyCartAdapter (Context ctx) {
+        this.ctx = ctx;
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new CartItemHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.itemview_cart, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        LacmdRoot root = DataManager.getInstance().getCartArray().get(position);
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+        final LacmdRoot root = DataManager.getInstance().getCartArray().get(position);
 
         CartItemHolder cih = (CartItemHolder) holder;
         cih.tvName.setText(root.getName());
@@ -34,6 +42,7 @@ public class MyCartAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             cih.tvDetails.setText(desc);
         }
         cih.tvPrice.setText(root.getFormattedPrice());
+
     }
 
     @Override
@@ -50,12 +59,14 @@ public class MyCartAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public class CartItemHolder extends RecyclerView.ViewHolder {
 
         protected TextView tvPrice, tvName, tvDetails;
+        protected CardView cardView;
 
         public CartItemHolder(View itemView) {
             super(itemView);
             tvName = (TextView) itemView.findViewById(R.id.tvNameCartItem);
             tvPrice = (TextView) itemView.findViewById(R.id.tvPriceCartItem);
             tvDetails = (TextView) itemView.findViewById(R.id.tvDetailsCartItem);
+            cardView = (CardView) itemView.findViewById(R.id.cardCart);
         }
     }
 }

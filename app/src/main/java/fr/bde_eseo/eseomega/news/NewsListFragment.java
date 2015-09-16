@@ -1,6 +1,8 @@
 package fr.bde_eseo.eseomega.news;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
@@ -22,6 +24,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
@@ -31,10 +34,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import fr.bde_eseo.eseomega.Constants;
+import fr.bde_eseo.eseomega.events.EventItem;
 import fr.bde_eseo.eseomega.hintsntips.DividerItemDecoration;
+import fr.bde_eseo.eseomega.lacommande.IngredientsChooserActivity;
+import fr.bde_eseo.eseomega.listeners.RecyclerItemClickListener;
 import fr.bde_eseo.eseomega.utils.ConnexionUtils;
 import fr.bde_eseo.eseomega.utils.JSONUtils;
 import fr.bde_eseo.eseomega.utils.Utilities;
@@ -51,10 +58,15 @@ public class NewsListFragment extends Fragment {
     private ImageView img;
     private TextView tv1, tv2;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private SharedPreferences prefs_Read;
+    private SharedPreferences.Editor prefs_Write;
     private int ptr;
     private long timestamp;
     private RecyclerView.OnItemTouchListener disabler;
     private final static int LATENCY_REFRESH = 8; // 8 sec min between 2 refreshs
+    private File cacheFile;
+    private String cachePath;
+    private File cacheFileEseo;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,6 +85,11 @@ public class NewsListFragment extends Fragment {
         img.setVisibility(View.GONE);
 
         // Model
+        // Set preferences objects
+        prefs_Read = getActivity().getSharedPreferences(Constants.PREFS_NEWS_KEY, 0);
+        prefs_Write = prefs_Read.edit();
+        cachePath = getActivity().getCacheDir() + "/";
+        cacheFileEseo = new File(cachePath + "news_eseomega.json");
         ptr = 0;
         newsItems = new ArrayList<>();
         mAdapter = new MyNewsAdapter(getActivity());
@@ -95,8 +112,6 @@ public class NewsListFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Log.d("NEWS", "Is online ? " + Utilities.isPingOnline(getActivity()));
-                //Toast.makeText(getActivity(), "Refreshing ...", Toast.LENGTH_SHORT).show();
                 long t = System.currentTimeMillis() / 1000;
                 if (t - timestamp > LATENCY_REFRESH) { // timestamp in seconds)
                     timestamp = t;
@@ -140,6 +155,7 @@ public class NewsListFragment extends Fragment {
 
         private boolean displayCircle;
         private boolean addMore;
+        private boolean onLine;
 
         private AsyncJSONNews(boolean displayCircle, boolean addMore) {
             this.displayCircle = displayCircle;
@@ -169,13 +185,23 @@ public class NewsListFragment extends Fragment {
                     JSONArray array = obj.getJSONArray("articles");
                     //newsItems.clear();
 
+                    if (!onLine) {
+                        newsItems.add(new NewsItem("Dernière mise à jour : " +
+                            prefs_Read.getString(Constants.PREFS_NEWS_LAST_DOWNLOAD_DATE, "jamais")));
+                    } else {
+                        if (ptr == 0) {
+                            prefs_Write.putString(Constants.PREFS_NEWS_LAST_DOWNLOAD_DATE, Utilities.getCalendarAsString());
+                            prefs_Write.commit();
+                        }
+                    }
+
                     for (int i=0;i<array.length();i++) {
                         NewsItem ni = new NewsItem(array.getJSONObject(i));
                         newsItems.add(ni);
                     }
 
                     if (array.length()>0) {
-                        newsItems.add(new NewsItem());
+                        if (onLine) newsItems.add(new NewsItem());
                     } else if (array.length() == 0 && ptr > 0) {
                         ptr--;
                     }
@@ -185,7 +211,7 @@ public class NewsListFragment extends Fragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                mAdapter.notifyDataSetChanged();
+
             } else {
                 if (displayCircle) progCircle.setVisibility(View.GONE);
                 mAdapter.notifyDataSetChanged();
@@ -199,7 +225,29 @@ public class NewsListFragment extends Fragment {
 
         @Override
         protected JSONObject doInBackground(String... params) {
-            return JSONUtils.getJSONFromUrl(params[0], getActivity());
+
+            JSONObject news = null;
+            onLine = Utilities.isPingOnline(getActivity());
+
+            // If is online : download JSON file from server
+            if (onLine) {
+                news = JSONUtils.getJSONFromUrl(params[0], getActivity());
+                // save it if it's the 5 first news
+                if (ptr == 0 && news != null) {
+                    Utilities.writeStringToFile(cacheFileEseo, news.toString());
+                }
+            } else {
+                // Else if offline : load JSON file from cache if it exists
+                if (cacheFileEseo.exists()) {
+                    try {
+                        news = new JSONObject(Utilities.getStringFromFile(cacheFileEseo));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            return news;
         }
     }
 
@@ -208,11 +256,11 @@ public class NewsListFragment extends Fragment {
     public class MyNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private DisplayImageOptions options;
-        private Typeface mFont;
         private Context ctx;
 
         private final static int TYPE_NORMAL = 0;
         private final static int TYPE_FOOTER = 1;
+        private final static int TYPE_HEADER = 2;
 
         public MyNewsAdapter (Context ctx) {
             this.ctx = ctx;
@@ -226,34 +274,31 @@ public class NewsListFragment extends Fragment {
                     .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2)
                     .bitmapConfig(Bitmap.Config.RGB_565)
                     .build();
-            mFont = Typeface.createFromAsset(ctx.getAssets(),"fonts/Biko_Regular.otf");
         }
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             if (viewType == TYPE_NORMAL)
                 return new NewsHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.itemview_news_flat_very, parent, false));
+            else if (viewType == TYPE_HEADER)
+                return new NewsHeaderHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.itemview_offline, parent, false));
             else
                 return new NewsFooterHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.itemview_loadmore, parent, false));
         }
 
         @Override
         public int getItemViewType(int position) {
-            return newsItems!=null?newsItems.get(position).isFooter()?TYPE_FOOTER:TYPE_NORMAL:0;
+            return newsItems!=null?
+                    newsItems.get(position).isFooter()?
+                            TYPE_FOOTER:newsItems.get(position).isHeader()?
+                                TYPE_HEADER:0:0;
         }
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            NewsItem ni = newsItems.get(position);
+            final NewsItem ni = newsItems.get(position);
 
-            if (!ni.isFooter()) {
-                NewsHolder nh = (NewsHolder) holder;
-                //nh.tvName.setTypeface(mFont);
-                nh.tvName.setText(ni.getName());
-                nh.tvContent.setText(Html.fromHtml(ni.getShData()));
-                nh.tvDateAuthor.setText("Par " + ni.getAuthor() + " | " + ni.getFrenchStr());
-                ImageLoader.getInstance().displayImage(ni.getHeaderImg(), nh.imgHeader, options);
-            } else {
+            if (ni.isFooter()) {
                 NewsFooterHolder nfh = (NewsFooterHolder) holder;
                 nfh.cardView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -261,10 +306,38 @@ public class NewsListFragment extends Fragment {
                         AsyncJSONNews asyncJSONNews = new AsyncJSONNews(false, true);
                         ptr++;
                         asyncJSONNews.execute(Constants.URL_NEWS_ANDROID + "height=5&ptr=" + ptr);
-                        Toast.makeText(ctx, "Loading ...", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ctx, "Chargement ...", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else if (ni.isHeader()) {
+                NewsHeaderHolder nhh = (NewsHeaderHolder) holder;
+                nhh.tvLast.setText(ni.getName());
+            } else {
+                NewsHolder nh = (NewsHolder) holder;
+                //nh.tvName.setTypeface(mFont);
+                nh.tvName.setText(ni.getName());
+                nh.tvContent.setText(Html.fromHtml(ni.getShData()));
+                nh.tvDateAuthor.setText("Par " + ni.getAuthor() + " | " + ni.getFrenchStr());
+                ImageLoader.getInstance().displayImage(ni.getHeaderImg(), nh.imgHeader, options);
+                nh.cardView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // On clic : intent to new activity
+                        if (!ni.isHeader() && !ni.isFooter()) { // a simple news article
+
+                            Intent myIntent = new Intent(getActivity(), ViewNewsActivity.class);
+                            myIntent.putExtra(Constants.KEY_NEWS_TITLE, ni.getName());
+                            myIntent.putExtra(Constants.KEY_NEWS_AUTHOR, ni.getAuthor());
+                            myIntent.putExtra(Constants.KEY_NEWS_IMGARRAY, ni.getImgLinks());
+                            myIntent.putExtra(Constants.KEY_NEWS_HTML, ni.getData());
+                            String link = (ni.getLink()==null?"":ni.getLink());
+                            myIntent.putExtra(Constants.KEY_NEWS_LINK, link);
+                            startActivity(myIntent);
+                        }
                     }
                 });
             }
+
         }
 
         @Override
@@ -276,6 +349,8 @@ public class NewsListFragment extends Fragment {
 
             protected TextView tvName, tvContent, tvDateAuthor;
             protected ImageView imgHeader;
+            protected TextView tvLast;
+            protected CardView cardView;
 
             public NewsHolder(View itemView) {
                 super(itemView);
@@ -283,6 +358,7 @@ public class NewsListFragment extends Fragment {
                 tvContent = (TextView) itemView.findViewById(R.id.newsDesc);
                 imgHeader = (ImageView) itemView.findViewById(R.id.newsPicture);
                 tvDateAuthor = (TextView) itemView.findViewById(R.id.newsAuthorDate);
+                cardView = (CardView) itemView.findViewById(R.id.cardview);
             }
         }
 
@@ -293,6 +369,17 @@ public class NewsListFragment extends Fragment {
             public NewsFooterHolder (View itemView) {
                 super(itemView);
                 cardView = (CardView) itemView.findViewById(R.id.card_view);
+            }
+
+        }
+
+        private class NewsHeaderHolder extends RecyclerView.ViewHolder {
+
+            protected TextView tvLast;
+
+            public NewsHeaderHolder (View itemView) {
+                super(itemView);
+                tvLast = (TextView) itemView.findViewById(R.id.tvDateLast);
             }
 
         }

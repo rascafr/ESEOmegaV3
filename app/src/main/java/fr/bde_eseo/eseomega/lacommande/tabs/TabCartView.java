@@ -24,13 +24,16 @@ import org.apache.http.message.BasicNameValuePair;
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 
 import de.greenrobot.event.EventBus;
 import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.lacommande.DataManager;
 import fr.bde_eseo.eseomega.lacommande.MyCartAdapter;
 import fr.bde_eseo.eseomega.lacommande.OrderTabsFragment;
+import fr.bde_eseo.eseomega.lacommande.model.LacmdMenu;
 import fr.bde_eseo.eseomega.lacommande.model.LacmdRoot;
 import fr.bde_eseo.eseomega.listeners.RecyclerItemClickListener;
 import fr.bde_eseo.eseomega.utils.ConnexionUtils;
@@ -61,7 +64,7 @@ public class TabCartView extends Fragment {
         img.setVisibility(View.VISIBLE);
 
         // Database model and view
-        mAdapter = new MyCartAdapter();
+        mAdapter = new MyCartAdapter(getActivity());
         recList = (RecyclerView) v.findViewById(R.id.recyList);
         recList.setAdapter(mAdapter);
         recList.setHasFixedSize(false);
@@ -106,14 +109,56 @@ public class TabCartView extends Fragment {
         floatingShop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AsyncPostCart asyncPostCart = new AsyncPostCart();
-                asyncPostCart.execute();
-                String s = "";
-                for (int i = 0; i < DataManager.getInstance().getNbCartItems(); i++) {
-                    LacmdRoot root = DataManager.getInstance().getCartArray().get(i);
-                    s += "\n" + root.getName() + ", " + root.getIdstr() + ", " + root.getObjectType() + ", item = " + (root.getItems() == null ? "null" : root.getItems().size());
+
+                int size = DataManager.getInstance().getCartArray().size();
+
+                int nbMenu = 0;
+                for (int i=0;i<size;i++)
+                    if (DataManager.getInstance().getCartArray().get(i).getObjectType().equals(LacmdMenu.ID_CAT_MENU))
+                        nbMenu++;
+
+                if (size > 0 && size <= 10 && nbMenu <= 2) {
+
+                    new MaterialDialog.Builder(getActivity())
+                            .title("Valider la commande ?")
+                            .content("En validant, vous vous engagez à venir payer et récupérer votre repas au comptoir de la cafet aujourd'hui entre 12h et 13h.\n\n" +
+                                    "Si ce n'est pas le cas, il vous sera impossible de passer une nouvelle commande dès demain.")
+                            .positiveText("Je confirme, j'ai faim !")
+                            .negativeText("Annuler")
+                            .callback(new MaterialDialog.ButtonCallback() {
+                                @Override
+                                public void onPositive(MaterialDialog dialog) {
+                                    super.onPositive(dialog);
+                                    AsyncPostCart asyncPostCart = new AsyncPostCart();
+                                    asyncPostCart.execute();
+                                }
+
+                                @Override
+                                public void onNegative(MaterialDialog dialog) {
+                                    super.onNegative(dialog);
+                                }
+                            })
+                            .show();
+
+                } else if (size == 0){
+                    new MaterialDialog.Builder(getActivity())
+                            .title("Panier vide")
+                            .content("Une commande doit comporter au moins un élément !")
+                            .negativeText("En effet")
+                            .show();
+                } else if (size == 10){
+                    new MaterialDialog.Builder(getActivity())
+                            .title("Panier rempli")
+                            .content("Une commande est limité à 10 éléments !")
+                            .negativeText("Je vais en retirer")
+                            .show();
+                } else if (nbMenu > 2) {
+                    new MaterialDialog.Builder(getActivity())
+                            .title("Trop gourmand")
+                            .content("Une commande est limité à 2 menus !")
+                            .negativeText("Dommage")
+                            .show();
                 }
-                Log.d("CART", s);
             }
         });
 
@@ -173,10 +218,14 @@ public class TabCartView extends Fragment {
 
             if (s != null) {
                 if (s.equals("1")) {
+
+                    Calendar cal = Calendar.getInstance(); //Create Calendar-Object
+                    int hour = cal.get(Calendar.HOUR_OF_DAY);
+
                     new MaterialDialog.Builder(getActivity())
-                            .title("Yeah")
-                            .content("Votre commande a été envoyée sur nos serveurs !")
-                            .negativeText("Fermer")
+                            .title("Commande validée !")
+                            .content("Celle-ci " + (hour<12?"va être traitée après 12h":"est en cours de préparation") + " et sera disponible après avoir payé au comptoir.\n\nBon appétit !")
+                            .negativeText("Merci")
                             .cancelable(false)
                             .callback(new MaterialDialog.ButtonCallback() {
                                 @Override

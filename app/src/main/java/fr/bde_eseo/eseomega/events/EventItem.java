@@ -1,10 +1,15 @@
 package fr.bde_eseo.eseomega.events;
 
+import android.content.Intent;
+import android.provider.CalendarContract;
+import android.util.Log;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 
 /**
@@ -16,9 +21,11 @@ public class EventItem {
     private static final int MAX_CHAR_DESC = 36;
     private String name, details, club, url, lieu;
     private boolean isHeader;
-    private Date date;
+    private Date date, datefin;
     private int color; // aarrggbb, set alpha to 0xFF
     private String shorted;
+    private Calendar cal, calFin;
+
 
     public EventItem(String name, String details, boolean isHeader, Date date, int color) {
         this.name = name;
@@ -28,14 +35,20 @@ public class EventItem {
         this.color = color;
     }
 
-    public EventItem(String name, String details, String strDate, ArrayList<String> colors) {
+    public EventItem(String name, String details, String strDate, String strDateFin, ArrayList<String> colors) {
         this.name = name;
         this.details = details;
 
         // ARGB -> alpha 255
-        setDateAsString(strDate);
+        setDateAsString(strDate, strDateFin);
         this.color = 0xFF000000 | (Integer.parseInt(colors.get(0)) << 16) | (Integer.parseInt(colors.get(1)) << 8) | (Integer.parseInt(colors.get(2)));
         this.isHeader = false;
+
+        // Calendar
+        cal = new GregorianCalendar();
+        cal.setTime(date);
+        calFin = new GregorianCalendar();
+        calFin.setTime(datefin);
     }
 
     public void setAdditionnal (String club, String url, String lieu) {
@@ -65,14 +78,10 @@ public class EventItem {
             } else
                 prevNotNull = false;
         }
-        if (sLim.charAt(sLim.length()-2) == '·')
-            sLim = sLim.substring(0, sLim.length()-3);
         /*
         if (club != null && club.length() != 0) sLim += sTime.length()>0?" · ":"" + club;
         if (lieu != null && lieu.length() != 0) sLim += (club != null && club.length() != 0)?" · ":"" + lieu;
         if (details != null && details.length() != 0) sLim += (lieu != null && lieu.length() != 0)?" · ":"" + details;*/
-        if (sLim.length() > MAX_CHAR_DESC)
-            sLim = sLim.substring(0, MAX_CHAR_DESC-1) + "...";
         this.shorted = sLim;
     }
 
@@ -84,6 +93,23 @@ public class EventItem {
     public EventItem(String name) {
         this.name = name;
         this.isHeader = true;
+    }
+
+    public Intent toCalendarIntent () {
+        Intent calIntent = new Intent(Intent.ACTION_INSERT);
+        calIntent.setType("vnd.android.cursor.item/event");
+        calIntent.putExtra(CalendarContract.Events.TITLE, name);
+        calIntent.putExtra(CalendarContract.Events.EVENT_LOCATION, (lieu!=null?lieu:""));
+        calIntent.putExtra(CalendarContract.Events.DESCRIPTION, (details!=null?details:""));
+
+        SimpleDateFormat sdf = new SimpleDateFormat("HH'h'mm", Locale.FRANCE);
+        String sDate = sdf.format(this.date);
+        boolean allDay = sDate.equals(HOUR_PASS_ALLDAY);
+        calIntent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, allDay);
+        calIntent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, cal.getTimeInMillis());
+        if (!allDay) calIntent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, calFin.getTimeInMillis());
+
+        return calIntent;
     }
 
     public void setName(String name) {
@@ -116,14 +142,17 @@ public class EventItem {
         return sDate;
     }
 
-    public void setDateAsString(String dateAsString) {
+    public void setDateAsString(String dateAsString, String dateAsStringEnd) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.FRANCE);
         Date date = null;
+        Date datefin = null;
         try {
             date = format.parse(dateAsString);
+            datefin = format.parse(dateAsStringEnd);
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        this.datefin = datefin;
         this.date = date;
     }
 

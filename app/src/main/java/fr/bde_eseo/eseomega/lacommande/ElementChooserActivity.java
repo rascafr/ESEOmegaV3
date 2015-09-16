@@ -39,7 +39,7 @@ public class ElementChooserActivity extends AppCompatActivity {
     private TextView tvIngredients, tvAdd, tvStackMorePrice, tvStackMoreText;
     private Toolbar toolbar;
     private String menuID;
-    private LacmdMenu menu;
+    private LacmdMenu menuTemp, menu;
     private double supplMore;
     private int nbSandw, nbElems;
     private boolean activityStarted = false;
@@ -73,28 +73,30 @@ public class ElementChooserActivity extends AppCompatActivity {
                 finish();
             } else {
                 menuID = extras.getString(Constants.KEY_MENU_ID);
-                menu = DataManager.getInstance().getMenuFromID(menuID);
-                getSupportActionBar().setTitle("Menu " + menu.getName());
+                menuTemp = DataManager.getInstance().getMenuFromID(menuID);
+                getSupportActionBar().setTitle("Menu " + menuTemp.getName());
             }
-            menu.setItems(new ArrayList<LacmdRoot>());
-            DataManager.getInstance().setMenu(menu);
+            menuTemp.setItems(new ArrayList<LacmdRoot>());
+            DataManager.getInstance().setMenu(menuTemp);
         } else {
             menuID = (String) savedInstanceState.getSerializable(Constants.KEY_MENU_ID);
-            menu = DataManager.getInstance().getMenuFromID(menuID);
-            getSupportActionBar().setTitle("Menu " + menu.getName());
+            menuTemp = DataManager.getInstance().getMenuFromID(menuID);
+            getSupportActionBar().setTitle("Menu " + menuTemp.getName());
+            DataManager.getInstance().setMenu(menuTemp);
         }
+
+        // copy menu
+        menu = DataManager.getInstance().getMenu();
 
         nbSandw = menu.getMaxMainElem();
         nbElems = menu.getMaxSecoElem();
         menu.setItems(new ArrayList<LacmdRoot>());
         for (int i=0;i<nbSandw;i++)
             menu.getItems().add(new LacmdElement("", "", 0.0, 0.0, 0, 0, 1));
-        for (int i=0;i<nbElems;i++)
+        if (nbElems > 0)
             menu.getItems().add(new LacmdElement("", "", 0.0, 0.0, 0, 0, 0));
 
         //menu.getItems().get(0).setName("Sandwich maxi");
-
-
 
         supplMore = 0;
         mAdapter.notifyDataSetChanged();
@@ -154,7 +156,17 @@ public class ElementChooserActivity extends AppCompatActivity {
     /**
      * Custom adapter
      */
-    private class MenuListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
+    public class MenuListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
+
+        public ArrayList<CustomObjItem> adapterObjects;
+
+        public ArrayList<CustomObjItem> getAdapterObjects() {
+            return adapterObjects;
+        }
+
+        public MenuListAdapter () {
+            adapterObjects = new ArrayList<>();
+        }
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -167,9 +179,22 @@ public class ElementChooserActivity extends AppCompatActivity {
         public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
 
             if (menu.getItems() != null) {
+                final MenuItemHolder mih = (MenuItemHolder) holder;
+            /*
+
+                CustomObjItem obj = adapterObjects.get(position);
+
+                if (obj.isMain()) {
+                    mih.tvHeader.setText("Choisissez votre " + (position + 1) + (position == 0 ? "er" : "ème") + " élement principal");
+                } else {
+                    mih.tvHeader.setText("Choisissez vos " + nbElems + " éléments secondaires");
+                }
+                mih.tvName.setText(obj.getName());
+
+                */
 
                 final LacmdElement elem = (LacmdElement) menu.getItems().get(position);
-                final MenuItemHolder mih = (MenuItemHolder) holder;
+
                 if (elem.hasIngredients() > 0) {
                     mih.tvHeader.setText("Choisissez votre " + (position + 1) + (position == 0 ? "er" : "ème") + " élement principal");
                     if (elem.getFriendlyString(true).length() == 0) {
@@ -180,12 +205,14 @@ public class ElementChooserActivity extends AppCompatActivity {
 
                 } else {
                     //mih.tvHeader.setText("Choisissez votre " + (position - nbSandw + 1) + (position - nbSandw == 0 ? "er" : "ème") + " élement secondaire");
-                    mih.tvHeader.setText("Choisissez vos " + nbElems + " éléments secondaires");
-                    if (elem.getFriendlyString(true).length() == 0) {
-                        mih.tvName.setText("Yaourt Fraises\nBeignet Chocolat Noir\nChips 300g Huile Colza");
+
+                    if (position - nbSandw == 0) {
+                        mih.tvHeader.setText("Choisissez vos " + nbElems + " éléments secondaires");
+                        mih.tvHeader.setVisibility(View.VISIBLE);
                     } else {
-                        mih.tvName.setText(elem.getName());
+                        mih.tvHeader.setVisibility(View.GONE);
                     }
+                    mih.tvName.setText(elem.getName().length()==0?"-- Touchez ici --":elem.getName());
                 }
 
 
@@ -210,7 +237,6 @@ public class ElementChooserActivity extends AppCompatActivity {
                             for (int i = 0; i < nb; i++) {
                                 String s = st.nextToken();
                                 strings.add(s);
-                                Log.d("NEXT", s + "/" + nb);
                                 items[i] = DataManager.getInstance().getElementFromID(s).getName();
                             }
 
@@ -229,12 +255,15 @@ public class ElementChooserActivity extends AppCompatActivity {
                                             myIntent.putExtra(Constants.KEY_ELEMENT_POSITION, position);
                                             startActivity(myIntent);
                                             activityStarted = true;
-                                            Log.d("ELEM", "User chooses " + strings.get(which));
 
                                             return true;
                                         }
                                     })
                                     .show();
+                        } else { // call seco element chooser
+                            Intent myIntent = new Intent(ElementChooserActivity.this, SecoElementChooserActivity.class);
+                            startActivity(myIntent);
+                            activityStarted = true;
                         }
                     }
                 });
@@ -344,6 +373,57 @@ public class ElementChooserActivity extends AppCompatActivity {
     }
 
     /**
+     * Mixed
+     */
+    private class CustomObjItem {
+        private String name, idstr;
+        private double priceMore;
+        private boolean isMain;
+
+        public CustomObjItem(String name, String idstr, double priceMore, boolean isMain) {
+            this.name = name;
+            this.idstr = idstr;
+            this.priceMore = priceMore;
+            this.isMain = isMain;
+        }
+
+        public String getName () {
+            if (name == null || name.length() == 0)
+                return "-- Touchez ici --";
+            else
+                return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public void setIdstr(String idstr) {
+            this.idstr = idstr;
+        }
+
+        public void setPriceMore(double priceMore) {
+            this.priceMore = priceMore;
+        }
+
+        public void setIsMain(boolean isMain) {
+            this.isMain = isMain;
+        }
+
+        public String getIdstr() {
+            return idstr;
+        }
+
+        public double getPriceMore() {
+            return priceMore;
+        }
+
+        public boolean isMain() {
+            return isMain;
+        }
+    }
+
+    /**
      * Custom class to handle menu's objects
      */
     private class MenuItem {
@@ -403,7 +483,40 @@ public class ElementChooserActivity extends AppCompatActivity {
         super.onResume();
         if (activityStarted && mAdapter != null && menu != null) {
             activityStarted = false;
-            mAdapter.notifyDataSetChanged();
+
+            mAdapter.adapterObjects.clear();
+            String str = "";
+            for (int i=0;i<menu.getItems().size();i++) {
+
+                if (menu.getItems().get(i).hasIngredients() > 0) {
+                    mAdapter.adapterObjects.add(new CustomObjItem(menu.getItems().get(i).getName(),
+                            menu.getItems().get(i).getIdstr(),
+                            menu.getItems().get(i).getPrice(),
+                            true));
+                } else {
+                    if (str.length() == 0)
+                        str += "\n";
+                    str += menu.getItems().get(i).getName();
+                }
+            }
+            mAdapter.adapterObjects.add(new CustomObjItem(str, "", 0.0, false));
+
+            /*
+
+                if (menu.getItems().get(i).hasIngredients() == 0) {
+                    if (mAdapter.adapterObjects.get(i) == null) { // no objects yet for this position
+                        mAdapter.adapterObjects.add(new CustomObjItem(menu.getItems().get(i).getName(),
+                                menu.getItems().get(i).getIdstr(),
+                                menu.getItems().get(i).getPrice(),
+                                false));
+                    } else {
+
+                    }
+                }
+
+            }*/
+
+                mAdapter.notifyDataSetChanged();
             double total = 0.0;
             for(int i=0;i<menu.getItems().size();i++) {
                 total += menu.getItems().get(i).calcRealPrice(true);

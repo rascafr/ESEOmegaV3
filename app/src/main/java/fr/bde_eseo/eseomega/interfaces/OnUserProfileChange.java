@@ -1,6 +1,6 @@
 package fr.bde_eseo.eseomega.interfaces;
 
-import fr.bde_eseo.eseomega.model.UserProfile;
+import fr.bde_eseo.eseomega.profile.UserProfile;
 
 /**
  * Created by François on 19/04/2015.

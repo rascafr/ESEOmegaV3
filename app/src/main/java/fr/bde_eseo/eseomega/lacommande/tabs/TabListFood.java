@@ -136,8 +136,6 @@ public class TabListFood extends Fragment {
                                     mOnItemAddToCart.OnItemAddToCart();
                                 }
 
-                                Log.d("FOOD", "User chooses : " + roots.get(which).toString());
-
                                 return true;
                             }
                         })

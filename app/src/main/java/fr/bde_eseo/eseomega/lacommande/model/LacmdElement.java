@@ -43,6 +43,10 @@ public class LacmdElement extends LacmdRoot {
         return pricemore;
     }
 
+    public int getOutofmenu() {
+        return outofmenu;
+    }
+
     @Override
     public String toString() {
         return "LacmdElement{" +

@@ -4,7 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="8dp"
-    android:padding="16dp">
+    android:paddingTop="16dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingEnd="16dp"
+    android:paddingStart="16dp"
+    >
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:src="@drawable/ic_loading"
@@ -60,5 +65,14 @@
         android:textColor="#9a9a9a"
         android:layout_alignLeft="@+id/tvDescSponsor"
         android:layout_alignStart="@+id/tvDescSponsor" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/md_grey_400"
+        android:layout_marginTop="24dp"
+        android:layout_below="@id/tvUrl"
+        android:layout_alignLeft="@+id/tvUrl"
+        android:layout_alignStart="@+id/tvUrl"/>
 
 </RelativeLayout>

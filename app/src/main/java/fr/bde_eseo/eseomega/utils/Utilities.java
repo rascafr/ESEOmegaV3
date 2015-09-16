@@ -16,6 +16,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Calendar;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by François on 18/04/2015.
@@ -30,21 +33,26 @@ public class Utilities {
     // V2.0 : checks if network is reachable
     public static boolean isPingOnline(Context context) {
 
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        if (netInfo != null && netInfo.isConnectedOrConnecting()) {
-            Runtime runtime = Runtime.getRuntime();
-            try {
+        if (context != null) {
 
-                Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-                int     exitValue = ipProcess.waitFor();
-                return (exitValue == 0);
+            ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo netInfo = cm.getActiveNetworkInfo();
+            if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+                Runtime runtime = Runtime.getRuntime();
+                try {
 
-            } catch (IOException | InterruptedException e) { e.printStackTrace(); }
+                    Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+                    int exitValue = ipProcess.waitFor();
+                    return (exitValue == 0);
 
-            return false;
-        } else
-            return false;
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                return false;
+            } else
+                return false;
+        } return false;
     }
 
     public static String convertStreamToString(InputStream is) {
@@ -94,18 +102,19 @@ public class Utilities {
         try {
             try {
                 stream = new FileOutputStream(filePath);
+                try {
+                    try {
+                        stream.write(data.getBytes());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } finally {
+                    stream.close();
+                }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
-            try {
-                try {
-                    stream.write(data.getBytes());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } finally {
-                stream.close();
-            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -119,7 +128,11 @@ public class Utilities {
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
+    public static String getCalendarAsString () {
+        Calendar c  = Calendar.getInstance(TimeZone.getTimeZone("Europe/Paris"), Locale.FRANCE);
+        int day = c.get(Calendar.DATE), month = c.get(Calendar.MONTH) + 1, year = c.get(Calendar.YEAR);
 
-
+        return ((day < 10) ? "0":"") + day + "/" + ((month < 10) ? "0":"") + month + "/" + year;
+    }
 
 }

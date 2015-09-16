@@ -1,5 +1,8 @@
 package fr.bde_eseo.eseomega.utils;
 
+import android.util.Base64;
+import android.util.Log;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -10,8 +13,6 @@ import java.util.Formatter;
  * V2.0 : uses SHA-256
  */
 public class EncryptUtils {
-
-    //public final static String SALT_GET_TOKEN = "simu+42+DePêche";
 
     public static String sha256(String password)
     {
@@ -34,6 +35,37 @@ public class EncryptUtils {
         }
         String result = formatter.toString();
         formatter.close();
+        return result;
+    }
+
+    public static String passBase64 (String password) {
+        String passBis = "", result = "", copyPass = password;
+
+        // Create the password + key
+        for (int i=0;i<password.length();i++) {
+            passBis += "" + (char)(password.charAt(i) + 1);
+        }
+
+        // Base64 for keyed
+        try {
+            passBis = Base64.encodeToString(passBis.getBytes("UTF-8"), Base64.NO_WRAP);
+            copyPass = Base64.encodeToString(copyPass.getBytes("UTF-8"), Base64.NO_WRAP);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        // Intercal password with keyed
+        for (int i=0;i<passBis.length();i++) {
+            result += copyPass.charAt(i);
+            result += passBis.charAt(i);
+        }
+
+        // Remove == doublon if present
+        if (result.contains("===="))
+            result = result.substring(0, result.length()-2);
+        else // Add two "==" if not
+            result += "==";
+
         return result;
     }
 }
