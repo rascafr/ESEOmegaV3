@@ -16,8 +16,8 @@ import com.rascafr.test.matdesignfragment.R;
  */
 public class MyEventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private final static int TYPE_HEADER = 0;
-    private final static int TYPE_ITEM = 1;
+    public final static int TYPE_HEADER = 0;
+    public final static int TYPE_ITEM = 1;
     private ArrayList<EventItem> eventItems;
     private Context ctx;
 

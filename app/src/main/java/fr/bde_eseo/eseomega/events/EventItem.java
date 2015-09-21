@@ -35,13 +35,12 @@ public class EventItem {
         this.color = color;
     }
 
-    public EventItem(String name, String details, String strDate, String strDateFin, ArrayList<String> colors) {
+    public EventItem(String name, String details, String strDate, String strDateFin) {
         this.name = name;
         this.details = details;
 
         // ARGB -> alpha 255
         setDateAsString(strDate, strDateFin);
-        this.color = 0xFF000000 | (Integer.parseInt(colors.get(0)) << 16) | (Integer.parseInt(colors.get(1)) << 8) | (Integer.parseInt(colors.get(2)));
         this.isHeader = false;
 
         // Calendar
@@ -55,6 +54,10 @@ public class EventItem {
         this.club = club;
         this.url = url;
         this.lieu = lieu;
+    }
+
+    public void setColors (ArrayList<String> colors) {
+        this.color = 0xFF000000 | (Integer.parseInt(colors.get(0)) << 16) | (Integer.parseInt(colors.get(1)) << 8) | (Integer.parseInt(colors.get(2)));
     }
 
     // Like : Heure · club · lieu · description (size limited -> ~35 chars)

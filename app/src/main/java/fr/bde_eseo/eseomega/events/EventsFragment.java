@@ -32,6 +32,8 @@ import org.json.JSONObject;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import fr.bde_eseo.eseomega.Constants;
@@ -248,38 +250,60 @@ public class EventsFragment extends Fragment {
                     array = jsonObject.getJSONArray(JSON_KEY_ARRAY);
 
                     String lastHeader = "---"; // undefined for the first iteration (no event before)
+                    int scrollTo = -1, counter = 0;
 
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject obj = array.getJSONObject(i);
                         ArrayList<String> colors = new ArrayList<>();
-                        JSONArray colorsJSON = obj.getJSONArray(JSON_KEY_ARRAY_COLOR);
-                        for (int a = 0; a < colorsJSON.length(); a++) {
-                            colors.add(colorsJSON.getInt(a)+""); // TODO pass integer directly without using string
-                        }
 
                         EventItem ei = new EventItem(
                                 obj.getString(JSON_KEY_ITEM_NAME),
                                 obj.getString(JSON_KEY_ITEM_DETAIL),
                                 obj.getString(JSON_KEY_ITEM_DATE),
-                                obj.getString(JSON_KEY_ITEM_DATEFIN),
-                                colors);
+                                obj.getString(JSON_KEY_ITEM_DATEFIN));
                         ei.setAdditionnal(
                                 obj.getString(JSON_KEY_ITEM_CLUB),
                                 obj.getString(JSON_KEY_ITEM_URL),
                                 obj.getString(JSON_KEY_ITEM_LIEU));
                         ei.performShortedDetails();
 
-                        if (ei.getMonthHeader().equals(lastHeader)) // same month, no header
+                        JSONArray colorsJSON = obj.getJSONArray(JSON_KEY_ARRAY_COLOR);
+                        for (int a = 0; a < colorsJSON.length(); a++) {
+                            if (ei.getDate().before(new Date())) {
+                                colors.add("127"); // Gray
+                            } else {
+                                colors.add(colorsJSON.getInt(a)+""); // TODO pass integer directly without using string
+                            }
+                        }
+
+                        ei.setColors(colors);
+
+                        if (ei.getDate().after(new Date()) && scrollTo == -1) {
+                            scrollTo = counter;
+                        }
+
+                        if (ei.getMonthHeader().equals(lastHeader)) { // same month, no header
                             eventItems.add(ei);
-                        else { // another month : add header then event
+                            counter++;
+                        } else { // another month : add header then event
                             eventItems.add(new EventItem(ei.getMonthHeader()));
                             eventItems.add(ei);
+                            counter+=2;
                             lastHeader = ei.getMonthHeader();
                         }
                     }
                     if (displayCircle) progCircle.setVisibility(View.GONE);
                     mAdapter.setEventItems(eventItems);
                     mAdapter.notifyDataSetChanged();
+                    if (scrollTo >= 2 && recList.getAdapter().getItemViewType(scrollTo-2) == MyEventsAdapter.TYPE_HEADER) {
+                        scrollTo-=2;
+
+                    }
+                    if (scrollTo == -1) {
+                        scrollTo = eventItems.size()-1;
+                    }
+                    Log.d("SCROLL", "scrollTo = " + scrollTo);
+                    recList.scrollToPosition(scrollTo);
 
                 } catch (JSONException e) {
                     e.printStackTrace();

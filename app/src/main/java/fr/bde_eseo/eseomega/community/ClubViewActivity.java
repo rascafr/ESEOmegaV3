@@ -42,7 +42,7 @@ public class ClubViewActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private ClubItem clubItem;
     private TextView tvDesc, tvNoMember;
-    private ImageView imgClub, iWeb, iFb, iTw, iSnap, iMail, iLinked, iPhone, iYou;
+    private ImageView imgClub, iWeb, iFb, iTw, iSnap, iMail, iLinked, iPhone, iYou, iInsta;
     private DisplayImageOptions options;
     private ArrayList<MixedItem> items;
     private MyMembersAdapter mAdapter;
@@ -83,6 +83,7 @@ public class ClubViewActivity extends AppCompatActivity {
         iLinked = (ImageView) findViewById(R.id.icoLinkedIn);
         iYou = (ImageView) findViewById(R.id.icoYoutube);
         iPhone = (ImageView) findViewById(R.id.icoPhone);
+        iInsta = (ImageView) findViewById(R.id.icoInsta);
 
         tvDesc.setText(clubItem.getDetails());
         options = new DisplayImageOptions.Builder()
@@ -109,6 +110,9 @@ public class ClubViewActivity extends AppCompatActivity {
 
         if (clubItem.hasSnapchat()) iSnap.setVisibility(View.VISIBLE);
         else iSnap.setVisibility(View.GONE);
+
+        if (clubItem.hasInsta()) iInsta.setVisibility(View.VISIBLE);
+        else iInsta.setVisibility(View.GONE);
 
         if (clubItem.hasMail()) iMail.setVisibility(View.VISIBLE);
         else iMail.setVisibility(View.GONE);
@@ -208,6 +212,18 @@ public class ClubViewActivity extends AppCompatActivity {
                     mdb.positiveText("Ouvrir Snapchat");
 
                 mdb.show();
+            }
+        });
+
+        // Instagram (browser or app)
+        iInsta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("instagram://user?username="+clubItem.getInstagram()));
+                if (intent.resolveActivity(getPackageManager()) != null)
+                    startActivity(intent);
+                else
+                    intentToBrowser("https://instagram.com/" + clubItem.getInstagram() + "/");
             }
         });
 

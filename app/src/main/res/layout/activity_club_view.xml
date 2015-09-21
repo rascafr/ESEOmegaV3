@@ -93,6 +93,13 @@
                     android:src="@drawable/ic_snap"/>
 
                 <ImageView
+                    android:id="@+id/icoInsta"
+                    android:layout_width="@dimen/icon_size"
+                    android:layout_height="@dimen/icon_size"
+                    android:layout_marginTop="@dimen/icon_margin_top_bottom" android:layout_marginBottom="@dimen/icon_margin_top_bottom" android:layout_marginLeft="@dimen/icon_margin_side" android:layout_marginRight="@dimen/icon_margin_side" android:layout_marginStart="@dimen/icon_margin_side" android:layout_marginEnd="@dimen/icon_margin_side"
+                    android:src="@drawable/ic_insta"/>
+
+                <ImageView
                     android:id="@+id/icoMail"
                     android:layout_width="@dimen/icon_size"
                     android:layout_height="@dimen/icon_size"

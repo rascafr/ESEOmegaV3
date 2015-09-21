@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class ClubItem {
 
     private String name, desc, details, img;
-    private String fb, linkedin, tel, twitter, snap, youtube, web, mail;
+    private String fb, linkedin, tel, twitter, snap, youtube, web, mail, instagram;
     private ArrayList<ModuleItem> modules;
 
     public ClubItem (JSONObject obj) throws JSONException {
@@ -29,6 +29,7 @@ public class ClubItem {
         youtube = obj.getString("youtube");
         web = obj.getString("web");
         mail = obj.getString("mail");
+        instagram = obj.getString("instagram");
         modules = new ArrayList<>();
 
         JSONArray modulesArray = obj.getJSONArray("modules");
@@ -89,6 +90,8 @@ public class ClubItem {
         return mail;
     }
 
+    public String getInstagram() { return instagram; }
+
     public boolean hasFacebook () {
         return fb!=null && fb.length() > 0;
     }
@@ -119,6 +122,10 @@ public class ClubItem {
 
     public boolean hasMail () {
         return mail!=null && mail.length() > 0;
+    }
+
+    public boolean hasInsta () {
+        return instagram!=null && instagram.length() > 0;
     }
 
     public class ModuleItem {
