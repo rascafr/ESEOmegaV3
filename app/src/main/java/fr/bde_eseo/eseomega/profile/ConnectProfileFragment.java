@@ -1,21 +1,32 @@
 package fr.bde_eseo.eseomega.profile;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.rascafr.test.matdesignfragment.R;
 
 import fr.bde_eseo.eseomega.Constants;
+import fr.bde_eseo.eseomega.gcmpush.QuickstartPreferences;
+import fr.bde_eseo.eseomega.gcmpush.RegistrationIntentService;
 import fr.bde_eseo.eseomega.interfaces.OnUserProfileChange;
 import fr.bde_eseo.eseomega.utils.ConnexionUtils;
 import fr.bde_eseo.eseomega.utils.EncryptUtils;
@@ -39,11 +50,15 @@ public class ConnectProfileFragment extends Fragment {
     public ConnectProfileFragment(){}
 
     private MaterialEditText etUserID, etUserPassword;
+    private MaterialDialog mdProgress;
     private Button btValid;
     private String userID, userName, userPassword;
     private OnUserProfileChange mOnUserProfileChange;
     private String[] bullshitHint;
     private Random rand;
+
+    // GCM
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
 
     @Override
     public void onAttach(Activity activity) {
@@ -88,6 +103,25 @@ public class ConnectProfileFragment extends Fragment {
             }
         });
 
+        // GCM Receiver
+        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                SharedPreferences sharedPreferences =
+                        PreferenceManager.getDefaultSharedPreferences(context);
+                boolean sentToken = sharedPreferences
+                        .getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
+                if (sentToken) {
+                    //mInformationTextView.setText(getString(R.string.gcm_send_message));
+                    mdProgress.hide();
+                    Toast.makeText(getActivity(), "OK TOKEN SENT !", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), "ERROR TOKEN !", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+
+
         return rootView;
     }
 
@@ -97,7 +131,6 @@ public class ConnectProfileFragment extends Fragment {
     class AsyncLogin extends AsyncTask<String, String, String> {
 
         private Context ctx;
-        private MaterialDialog mdProgress;
         private boolean errorsHasOccured = false, errorOmega = false, network = false;
         private String enPass;
 
@@ -176,6 +209,7 @@ public class ConnectProfileFragment extends Fragment {
             String res;
 
             if (network) {
+
                 mdProgress.hide();
 
                 if (result.length() > 2 && result.charAt(0) == '1') {
@@ -198,12 +232,20 @@ public class ConnectProfileFragment extends Fragment {
 
                     mOnUserProfileChange.OnUserProfileChange(profile);
 
+                    // Check Services, then start Registration class
+                    if (Utilities.checkPlayServices(getActivity())) {
+                        // Start IntentService to register this application with GCM.
+                        Intent intent = new Intent(getActivity(), RegistrationIntentService.class);
+                        getActivity().startService(intent);
+                    }
+
                     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                     fragmentManager.beginTransaction()
                             .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                             .replace(R.id.frame_container, new ViewProfileFragment(), "FRAG_VIEW_PROFILE")
                             .commit();
                 } else {
+                    mdProgress.hide();
                     res = result.contains("-2")?"Mauvaise combinaison identifiant - mot de passe\n" +
                             "Veuillez vérifier vos informations, puis réessayer.":"Erreur inconnue : " + result + "\nImpossible de valider votre connexion sur nos serveur.\n";
 

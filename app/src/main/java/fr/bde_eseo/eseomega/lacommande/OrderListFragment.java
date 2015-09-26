@@ -173,7 +173,7 @@ public class OrderListFragment extends Fragment {
                 int hour = cal.get(Calendar.HOUR_OF_DAY); //Get the hour from the calendar
                 int minute = cal.get(Calendar.MINUTE);
                 //debug
-                 hour = 12;
+                if (BuildConfig.DEBUG) hour = 12;
                 TimeZone tz = Calendar.getInstance().getTimeZone();
                 int hourTimezone = tz.getOffset(System.currentTimeMillis()) - tz.getDSTSavings();
 
@@ -184,7 +184,7 @@ public class OrderListFragment extends Fragment {
                             .negativeText("D'accord")
                             .cancelable(false)
                             .show();
-                } else if(!((hour >= 10 && hour <= 12) || (hour == 13 && minute <= 10))) {
+                } else if (!(hour >= 10 && hour <= 12)) { // 10h ... 12h59
                     new MaterialDialog.Builder(getActivity())
                             .title("Erreur")
                             .content("La commande à la Cafet n'est possible que de 10h à 13h !")

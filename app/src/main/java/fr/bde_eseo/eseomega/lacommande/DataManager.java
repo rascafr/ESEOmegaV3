@@ -54,6 +54,7 @@ public class DataManager {
         this.ingredients.clear();
         if (categories == null) this.categories = new ArrayList<>();
         this.categories.clear();
+        this.instructions = "";
     }
 
     /**
@@ -274,5 +275,18 @@ public class DataManager {
 
     public LacmdMenu getMenu() {
         return menu;
+    }
+
+    /**
+     * Instructions
+     */
+    private String instructions;
+
+    public void setInstructions (String instructions) {
+        this.instructions = instructions;
+    }
+
+    public String getInstructions () {
+        return instructions;
     }
 }

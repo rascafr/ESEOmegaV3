@@ -23,6 +23,7 @@ public class UserProfile {
     private String encodedPassword;
     private boolean isCreated;
     private String picturePath;
+    private String pushToken;
 
     private final static int MAX_TEXT_LENGTH = 39;
 
@@ -36,6 +37,14 @@ public class UserProfile {
         this.encodedPassword = EncryptUtils.sha256(ctx.getResources().getString(R.string.SALT_PASS_USER) + encodedPassword);
         this.isCreated = true;
         this.picturePath = "";
+    }
+
+    public String getPushToken() {
+        return pushToken;
+    }
+
+    public void setPushToken(String pushToken) {
+        this.pushToken = pushToken;
     }
 
     public String getName () {
@@ -182,6 +191,7 @@ public class UserProfile {
         prefs_Write.putString(Constants.PREFS_USER_PROFILE_PASSWORD, this.encodedPassword);
         prefs_Write.putBoolean(Constants.PREFS_USER_PROFILE_EXISTS, this.isCreated);
         prefs_Write.putString(Constants.PREFS_USER_PROFILE_PICTURE, this.picturePath);
+        prefs_Write.putString(Constants.PREFS_USER_PROFILE_PUSH_TOKEN, this.pushToken);
         prefs_Write.commit();
     }
 
@@ -197,6 +207,7 @@ public class UserProfile {
         this.id = prefs_Read.getString(Constants.PREFS_USER_PROFILE_ID, "");
         this.isCreated = prefs_Read.getBoolean(Constants.PREFS_USER_PROFILE_EXISTS, false);
         this.picturePath = prefs_Read.getString(Constants.PREFS_USER_PROFILE_PICTURE, "");
+        this.pushToken = prefs_Read.getString(Constants.PREFS_USER_PROFILE_PUSH_TOKEN, "");
     }
 
     public void removeProfileFromPrefs (Context context) {
@@ -206,6 +217,7 @@ public class UserProfile {
         this.id = "";
         this.email = "";
         this.encodedPassword = "";
+        this.picturePath = "";
         registerProfileInPrefs(context);
     }
 

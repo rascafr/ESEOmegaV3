@@ -6,7 +6,11 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,10 +24,15 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import fr.bde_eseo.eseomega.MainActivity;
+
 /**
  * Created by François on 18/04/2015.
  */
 public class Utilities {
+
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private static final String TAG = "Utilities";
 
     public static void hideSoftKeyboard(Activity activity) {
         InputMethodManager inputMethodManager = (InputMethodManager)  activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -133,6 +142,26 @@ public class Utilities {
         int day = c.get(Calendar.DATE), month = c.get(Calendar.MONTH) + 1, year = c.get(Calendar.YEAR);
 
         return ((day < 10) ? "0":"") + day + "/" + ((month < 10) ? "0":"") + month + "/" + year;
+    }
+
+    /**
+     * Check the device to make sure it has the Google Play Services APK. If
+     * it doesn't, display a dialog that allows users to download the APK from
+     * the Google Play Store or enable it in the device's system settings.
+     */
+    public static boolean checkPlayServices(Activity activity) {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(activity);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, activity,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.i(TAG, "This device is not supported.");
+                activity.finish();
+            }
+            return false;
+        }
+        return true;
     }
 
 }

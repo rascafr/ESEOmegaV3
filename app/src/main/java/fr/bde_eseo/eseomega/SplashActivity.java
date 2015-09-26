@@ -61,7 +61,7 @@ public class SplashActivity extends Activity {
                 // This method will be executed once the timer is over
                 Intent i;
                 if (trick >= MIN_TRICK && profile.isCreated()) {
-                    i = new Intent(SplashActivity.this, GPGame.class);
+                    i = new Intent(SplashActivity.this, GantierActivity.class);
                 } else {
                     i = new Intent(SplashActivity.this, MainActivity.class);
                 }

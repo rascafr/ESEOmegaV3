@@ -1,13 +1,10 @@
 package fr.bde_eseo.eseomega.lacommande;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,15 +12,9 @@ import android.view.ViewGroup;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.rascafr.test.matdesignfragment.R;
 
-import org.json.JSONArray;
-
-import fr.bde_eseo.eseomega.GPGame;
-import fr.bde_eseo.eseomega.MainActivity;
-import fr.bde_eseo.eseomega.lacommande.DataManager;
 import fr.bde_eseo.eseomega.lacommande.tabs.TabCartView;
 import fr.bde_eseo.eseomega.slidingtab.SlidingTabLayout;
 import fr.bde_eseo.eseomega.slidingtab.ViewPagerAdapter;
-import fr.bde_eseo.eseomega.utils.JSONUtils;
 
 /**
  * Created by Rascafr on 21/07/2015.

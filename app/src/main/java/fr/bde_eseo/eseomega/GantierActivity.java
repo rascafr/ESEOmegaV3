@@ -43,7 +43,7 @@ import fr.bde_eseo.eseomega.utils.EncryptUtils;
 /**
  * Created by Rascafr on 15/08/2015.
  */
-public class GPGame extends Activity implements SensorEventListener {
+public class GantierActivity extends Activity implements SensorEventListener {
 
     private SensorManager senSensorManager;
     private Sensor senAccelerometer;
@@ -511,8 +511,8 @@ public class GPGame extends Activity implements SensorEventListener {
 
                             if (x >= marginB1 && x < marginB1+bpQuit.getWidth() && y >= marginBB1 && y <= marginBB1+bpQuit.getHeight()) {
                                 thread.setRunning(false);
-                                senSensorManager.unregisterListener(GPGame.this);
-                                GPGame.this.finish();
+                                senSensorManager.unregisterListener(GantierActivity.this);
+                                GantierActivity.this.finish();
                             } else if (x >= marginB2 && x < marginB2+bpRestart.getWidth() && y >= marginBB2 && y <= marginBB2+bpRestart.getHeight()) {
                                 thread.setStatus(GPGameThread.GAME_PLAY);
                                 thread.doStart();
@@ -994,7 +994,7 @@ public class GPGame extends Activity implements SensorEventListener {
                     List<NameValuePair> pairs = new ArrayList<>();
                     pairs.add(new BasicNameValuePair("client", profile.getId()));
                     pairs.add(new BasicNameValuePair("score", "" + score));
-                    pairs.add(new BasicNameValuePair("hash", EncryptUtils.sha256(GPGame.this.getResources().getString(R.string.SALT_SYNC_SCORES) + profile.getId() + score)));
+                    pairs.add(new BasicNameValuePair("hash", EncryptUtils.sha256(GantierActivity.this.getResources().getString(R.string.SALT_SYNC_SCORES) + profile.getId() + score)));
                     String gameResp = ConnexionUtils.postServerData(Constants.URL_GPGAME_POST_SCORES, pairs);
 
                     return gameResp;

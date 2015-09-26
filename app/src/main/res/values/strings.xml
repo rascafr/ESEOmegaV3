@@ -74,8 +74,18 @@ Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. N
     <string name="SALT_HISTORY_USER">Connexion au serveur ...</string> <!-- V2.1 -->
     <string name="SALT_SYNC_SCORES">ellepèse3Go|DeuxMégas</string>
     <string name="SALT_SYNC_SINGLE">base64(json_encode(#MACRO))</string> <!-- V2.1 -->
+    <string name="SALT_SYNC_PUSH">Erreur mémoire cache</string> <!-- V2.1 -->
+    <string name="SALT_DESYNC_PUSH">Bonjour %s !</string> <!-- V2.1 -->
+
+    <!-- Push -->
+    <string name="play_api_push">409995288520</string>
+    <string name="certif_push">08dcf95932ba97c60361b329cb4ccf53bc5e9d3834f657a6e7e3895b4e764eaa</string>
 
     <!-- UI -->
+    <string name="bad_signature_title">Vous avez réussi</string>
+    <string name="bad_signature_content">Décompiler et recompiler une application Android n\'est pas si facile que ça : Bravo à vous.\nEn revanche, cela ne vous donne pas tous les droits.\n(Bien tenté)</string>
+    <string name="bad_signature_button">Snif, je suis nul</string>
+
     <string name="empty_header_event">Aucun évenement trouvé</string>
     <string name="empty_desc_event">Vérifiez votre connexion internet, puis rafraîchissez cette onglet. Sinon, c\'est qu\'on a décidé de pas faire de soirées dans les jours à venir\n(vous allez pouvoir réviser !)</string>
 

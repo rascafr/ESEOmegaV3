@@ -25,6 +25,7 @@ public class EventItem {
     private int color; // aarrggbb, set alpha to 0xFF
     private String shorted;
     private Calendar cal, calFin;
+    private boolean isPassed;
 
 
     public EventItem(String name, String details, boolean isHeader, Date date, int color) {
@@ -200,5 +201,9 @@ public class EventItem {
 
     public String getLieu() {
         return lieu;
+    }
+
+    public void setIsPassed(boolean isPassed) {
+        this.isPassed = isPassed;
     }
 }

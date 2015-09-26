@@ -271,8 +271,10 @@ public class EventsFragment extends Fragment {
                         for (int a = 0; a < colorsJSON.length(); a++) {
                             if (ei.getDate().before(new Date())) {
                                 colors.add("127"); // Gray
+                                ei.setIsPassed(true);
                             } else {
                                 colors.add(colorsJSON.getInt(a)+""); // TODO pass integer directly without using string
+                                ei.setIsPassed(false);
                             }
                         }
 

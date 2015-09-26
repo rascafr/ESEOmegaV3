@@ -22,6 +22,16 @@ public class Constants {
     public static final String PREFS_USER_PROFILE_MAIL = "model.UserProfile.MAIL";
     public static final String PREFS_USER_PROFILE_EXISTS = "model.UserProfile.EXISTS";
     public static final String PREFS_USER_PROFILE_PICTURE = "model.UserProfile.PICTURE";
+    public static final String PREFS_USER_PROFILE_PUSH_TOKEN = "model.UserProfile.PUSHTOKEN";
+
+    // Notifications
+    public static final int NOTIF_GENERAL = 0;
+    public static final int NOTIF_NEWS = 1;
+    public static final int NOTIF_EVENTS = 2;
+    public static final int NOTIF_CLUBS = 3;
+    public static final int NOTIF_CAFET = 4;
+    public static final int NOTIF_TIPS = 5;
+    public static final int NOTIF_GANTIER = 42;
 
     // Fragments ID
     public static final String TAG_FRAGMENT_ORDER_TABS = "fragment.tabs.order";
@@ -35,13 +45,15 @@ public class Constants {
     public static final String URL_CAMPUS_LOGIN = "http://campus.eseo.fr/login/index.php"; // post ok
     public static final String URL_END_LOGIN =  URL_SERVER + "lacommande/apps/finaliserConnex.php"; // post ok
     public static final String URL_GPGAME_POST_SCORES = URL_SERVER + "lacommande/apps/syncGPScores.php"; // post ok
-    public static final String URL_POST_CART = URL_SERVER + "lacommande/apps/syncOrder-token.php"; // post ok
     //public static final String URL_SYNC_SINGLE = URL_SERVER + "lacommande/apps/syncSingle.php"; // post ok
 
     // URL V2.1
     public static final String URL_LOGIN = URL_SERVER + "lacommande/apps/v21/connectProfile.php";
     public static final String URL_SYNC_HISTORY = URL_SERVER + "lacommande/apps/v21/syncClientHistory.php";
     public static final String URL_SYNC_SINGLE = URL_SERVER + "lacommande/apps/v21/syncClientHistorySingle.php";
+    public static final String URL_SYNC_PUSH = URL_SERVER + "lacommande/apps/v21/registerPushClient.php";
+    public static final String URL_POST_CART = URL_SERVER + "lacommande/apps/v21/syncOrder-token.php";
+    public static final String URL_DESYNC_PUSH = URL_SERVER + "lacommande/apps/v21/unregisterPushClient.php";
 
     // Data from Naudet-Sonasi
     public static final String URL_SERVERBIS = "http://79.170.44.147/eseonews.fr/";
@@ -105,6 +117,10 @@ public class Constants {
     public static final String KEY_NEWS_HTML = "news.html";
     public static final String KEY_IMG = "news.img";
     public static final String KEY_CLUB_VIEW = "clubs.viewitem";
+    public static final String KEY_MAIN_INTENT = "main.intent.start";
+    public static final String KEY_MAIN_TITLE = "main.intent.title";
+    public static final String KEY_MAIN_MESSAGE = "main.intent.message";
+    public static final String KEY_GANTIER_INTENT = "gp.intent.start";
 
 
 }

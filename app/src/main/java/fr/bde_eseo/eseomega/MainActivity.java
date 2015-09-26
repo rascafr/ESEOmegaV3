@@ -1,14 +1,21 @@
 package fr.bde_eseo.eseomega;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -16,14 +23,18 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -33,9 +44,14 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.rascafr.test.matdesignfragment.BuildConfig;
 import com.rascafr.test.matdesignfragment.R;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
 import fr.bde_eseo.eseomega.adapter.NavDrawerListAdapter;
 import fr.bde_eseo.eseomega.community.CommunityFragment;
 import fr.bde_eseo.eseomega.events.EventsFragment;
+import fr.bde_eseo.eseomega.gcmpush.QuickstartPreferences;
+import fr.bde_eseo.eseomega.gcmpush.RegistrationIntentService;
 import fr.bde_eseo.eseomega.profile.ConnectProfileFragment;
 import fr.bde_eseo.eseomega.lacommande.DataManager;
 import fr.bde_eseo.eseomega.lacommande.OrderTabsFragment;
@@ -47,12 +63,15 @@ import fr.bde_eseo.eseomega.model.NavDrawerItem;
 import fr.bde_eseo.eseomega.profile.UserProfile;
 import fr.bde_eseo.eseomega.lacommande.OrderListFragment;
 import fr.bde_eseo.eseomega.news.NewsListFragment;
+import fr.bde_eseo.eseomega.utils.ConnexionUtils;
 import fr.bde_eseo.eseomega.utils.EncryptUtils;
 import fr.bde_eseo.eseomega.utils.ImageUtils;
 
 import java.io.File;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity implements OnUserProfileChange, OnItemAddToCart {
@@ -64,8 +83,14 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
     private RecyclerView recList;
     private ActionBarDrawerToggle mDrawerToggle;
 
+    // GCM
+    //private BroadcastReceiver mRegistrationBroadcastReceiver;
+
+    // Store app verification
+    private final static String SIGNATURE = "mM6h5mqKyeuhXgBF8SLnMBKc7BE=";
+
     // Log TAG
-    private static final String TAG = "ESEOmain";
+    //private static final String TAG = "ESEOmain";
 
     // Help Text
     private static final String HELP_DIALOG_TEXT =  "Cette application est l'application officielle ESEOmega pour Android.\n\n" +
@@ -109,11 +134,31 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Global UI View
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
         setSupportActionBar(toolbar);
-
         mTitle = getTitle();
+
+        // Check app auth
+
+        boolean installPlayStore = verifyInstaller(this);
+        boolean installSigned = checkAppSignature(this);
+
+        if (!BuildConfig.DEBUG && (!installPlayStore || !installSigned)) {
+            new MaterialDialog.Builder(this)
+                .title(R.string.bad_signature_title)
+                .content(R.string.bad_signature_content)
+                .negativeText(R.string.bad_signature_button)
+                .cancelable(false)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        super.onNegative(dialog);
+                        MainActivity.this.finish();
+                    }
+                }).show();
+        }
 
         // load slide menu items
         navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
@@ -182,9 +227,32 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-        if (savedInstanceState == null) {
+        // Receive Intent from notification
+        Bundle extras = getIntent().getExtras();
+        String message, title;
+        int intendID = 1; // default if news
+        boolean passInstance = false;
+
+        if (extras != null) {
+            title = extras.getString(Constants.KEY_MAIN_TITLE);
+            message = extras.getString(Constants.KEY_MAIN_MESSAGE);
+            intendID = extras.getInt(Constants.KEY_MAIN_INTENT);
+            passInstance = true;
+            if (intendID == Constants.NOTIF_GENERAL) {
+                intendID++;
+                if (title != null && title.length() > 0 && message != null && message.length() > 0) {
+                    new MaterialDialog.Builder(this)
+                            .title(title)
+                            .content(message)
+                            .negativeText("Fermer")
+                            .show();
+                }
+            }
+        }
+
+        if (savedInstanceState == null || passInstance) {
             // on first time display view for first nav item
-            displayView(1); // 0 is profile
+            displayView(intendID); // 0 is profile
         }
 
         // UNIVERSAL IMAGE LOADER SETUP
@@ -374,7 +442,7 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
 
         } else {
             // error in creating fragment
-            Log.e(TAG, "Error in creating fragment");
+            //Log.e("ESEOmega", "Error in creating fragment");
         }
     }
 
@@ -452,5 +520,34 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         } else { // Another fragment, we don't care
             MainActivity.super.onBackPressed();
         }
+    }
+
+    public static boolean checkAppSignature(Context context) {
+
+        try {
+            PackageInfo packageInfo = context.getPackageManager() .getPackageInfo(context.getPackageName(), PackageManager.GET_SIGNATURES);
+
+            for (Signature signature : packageInfo.signatures) {
+                byte[] signatureBytes = signature.toByteArray();
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                final String currentSignature = Base64.encodeToString(md.digest(), Base64.NO_WRAP); // no '\n' character into string !
+                //compare signatures
+                if (currentSignature.equals(SIGNATURE)){
+                    return true;
+                }
+            }
+
+        } catch (Exception e) {
+            //assumes an issue in checking signature., but we let the caller decide on what to do.
+        }
+        return false;
+    }
+
+    private static final String PLAY_STORE_APP_ID = "com.android.vending";
+
+    public static boolean verifyInstaller(final Context context) {
+        final String installer = context.getPackageManager().getInstallerPackageName(context.getPackageName());
+        return installer != null&& installer.startsWith(PLAY_STORE_APP_ID);
     }
 }

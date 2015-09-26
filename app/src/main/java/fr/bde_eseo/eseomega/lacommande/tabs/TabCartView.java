@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,7 +29,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
-import de.greenrobot.event.EventBus;
 import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.lacommande.DataManager;
 import fr.bde_eseo.eseomega.lacommande.MyCartAdapter;
@@ -48,6 +48,7 @@ public class TabCartView extends Fragment {
     private TextView tv1, tv2;
     private RecyclerView recList;
     private MyCartAdapter mAdapter;
+    private EditText etInstr;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -119,18 +120,36 @@ public class TabCartView extends Fragment {
 
                 if (size > 0 && size <= 10 && nbMenu <= 2) {
 
-                    new MaterialDialog.Builder(getActivity())
-                            .title("Valider la commande ?")
-                            .content("En validant, vous vous engagez à venir payer et récupérer votre repas au comptoir de la cafet aujourd'hui entre 12h et 13h.\n\n" +
-                                    "Si ce n'est pas le cas, il vous sera impossible de passer une nouvelle commande dès demain.")
-                            .positiveText("Je confirme, j'ai faim !")
+                    MaterialDialog md = new MaterialDialog.Builder(getActivity())
+                            .customView(R.layout.dialog_add_instructions, false)
+                            .title("Ajouter un commentaire ?")
+                            .positiveText("Finaliser la commande")
                             .negativeText("Annuler")
                             .callback(new MaterialDialog.ButtonCallback() {
                                 @Override
                                 public void onPositive(MaterialDialog dialog) {
                                     super.onPositive(dialog);
-                                    AsyncPostCart asyncPostCart = new AsyncPostCart();
-                                    asyncPostCart.execute();
+                                    DataManager.getInstance().setInstructions(etInstr.getText().toString());
+                                    new MaterialDialog.Builder(getActivity())
+                                            .title("Valider la commande ?")
+                                            .content("En validant, vous vous engagez à venir payer et récupérer votre repas au comptoir de la cafet aujourd'hui entre 12h et 13h.\n\n" +
+                                                    "Si ce n'est pas le cas, il vous sera impossible de passer une nouvelle commande dès demain.")
+                                            .positiveText("Je confirme, j'ai faim !")
+                                            .negativeText("Annuler")
+                                            .callback(new MaterialDialog.ButtonCallback() {
+                                                @Override
+                                                public void onPositive(MaterialDialog dialog) {
+                                                    super.onPositive(dialog);
+                                                    AsyncPostCart asyncPostCart = new AsyncPostCart();
+                                                    asyncPostCart.execute();
+                                                }
+
+                                                @Override
+                                                public void onNegative(MaterialDialog dialog) {
+                                                    super.onNegative(dialog);
+                                                }
+                                            })
+                                            .show();
                                 }
 
                                 @Override
@@ -138,7 +157,10 @@ public class TabCartView extends Fragment {
                                     super.onNegative(dialog);
                                 }
                             })
-                            .show();
+                            .build();
+
+                    etInstr = ((EditText)(md.getView().findViewById(R.id.etInstructions)));
+                    md.show();
 
                 } else if (size == 0){
                     new MaterialDialog.Builder(getActivity())
@@ -193,12 +215,14 @@ public class TabCartView extends Fragment {
         protected String doInBackground(String... params) {
 
             String JSONstr = DataManager.getInstance().outputJSON();
+            String instr = DataManager.getInstance().getInstructions();
             String resp = null;
 
             try {
                 List<NameValuePair> pairs = new ArrayList<>();
                 pairs.add(new BasicNameValuePair("token", DataManager.getInstance().getToken()));
                 pairs.add(new BasicNameValuePair("data", Base64.encodeToString(JSONstr.getBytes("UTF-8"), Base64.NO_WRAP)));
+                pairs.add(new BasicNameValuePair("instructions", Base64.encodeToString(instr.getBytes("UTF-8"), Base64.NO_WRAP)));
                 resp = ConnexionUtils.postServerData(Constants.URL_POST_CART, pairs);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
