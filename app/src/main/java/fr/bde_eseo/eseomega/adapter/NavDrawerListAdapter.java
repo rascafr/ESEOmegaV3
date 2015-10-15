@@ -11,7 +11,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.rascafr.test.matdesignfragment.R;
+import fr.bde_eseo.eseomega.R;
 
 import fr.bde_eseo.eseomega.model.NavDrawerItem;
 
@@ -124,9 +124,12 @@ public class NavDrawerListAdapter extends BaseAdapter {
         } else {
             ImageView imgIcon = (ImageView) convertView.findViewById(R.id.icon);
             TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
+            TextView txtCounter = (TextView) convertView.findViewById(R.id.tv_counter);
 
             imgIcon.setImageResource(ndi.getIcon());
             txtTitle.setText(ndi.getTitle());
+            txtCounter.setText(ndi.getCount());
+            txtCounter.setVisibility(ndi.getCounterVisibility()?View.VISIBLE:View.INVISIBLE);
         }
 
 

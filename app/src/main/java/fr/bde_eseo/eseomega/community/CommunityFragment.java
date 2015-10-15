@@ -3,6 +3,7 @@ package fr.bde_eseo.eseomega.community;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,7 +23,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.rascafr.test.matdesignfragment.R;
+import fr.bde_eseo.eseomega.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -72,6 +73,7 @@ public class CommunityFragment extends Fragment {
         swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.clubs_refresh);
         swipeRefreshLayout.setColorSchemeColors(R.color.md_blue_800);
         progCircle = (ProgressBar) rootView.findViewById(R.id.progressClubs);
+        progCircle.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.md_grey_500), PorterDuff.Mode.SRC_IN);
         tv1 = (TextView) rootView.findViewById(R.id.tvListNothing);
         tv2 = (TextView) rootView.findViewById(R.id.tvListNothing2);
         img = (ImageView) rootView.findViewById(R.id.imgNoClub);
@@ -156,7 +158,6 @@ public class CommunityFragment extends Fragment {
     public class AsyncJSON extends AsyncTask<String, String, JSONObject> {
 
         boolean displayCircle;
-        private boolean onLine;
 
         public AsyncJSON (boolean displayCircle) {
             this.displayCircle = displayCircle;
@@ -193,14 +194,10 @@ public class CommunityFragment extends Fragment {
 
         @Override
         protected JSONObject doInBackground(String... params) {
-            JSONObject obj = null;
-            onLine = Utilities.isPingOnline(getActivity());
-            if (onLine) {
-                obj = JSONUtils.getJSONFromUrl(params[0], getActivity());
-                if (obj != null) {
-                    Utilities.writeStringToFile(cacheFileEseo, obj.toString());
-                }
-            } else {
+
+            JSONObject obj = JSONUtils.getJSONFromUrl(params[0], getActivity());
+
+            if (obj == null) {
                 if (cacheFileEseo.exists()) {
                     try {
                         obj = new JSONObject(Utilities.getStringFromFile(cacheFileEseo));
@@ -208,7 +205,10 @@ public class CommunityFragment extends Fragment {
                         e.printStackTrace();
                     }
                 }
+            } else {
+                Utilities.writeStringToFile(cacheFileEseo, obj.toString());
             }
+
             return obj;
         }
     }

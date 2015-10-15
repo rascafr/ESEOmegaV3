@@ -16,7 +16,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.rascafr.test.matdesignfragment.R;
+import fr.bde_eseo.eseomega.R;
 
 
 public class SlidingTabLayout extends HorizontalScrollView {

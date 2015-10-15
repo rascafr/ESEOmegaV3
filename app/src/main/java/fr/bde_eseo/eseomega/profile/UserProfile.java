@@ -2,9 +2,8 @@ package fr.bde_eseo.eseomega.profile;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
-import com.rascafr.test.matdesignfragment.R;
+import fr.bde_eseo.eseomega.R;
 
 import fr.bde_eseo.eseomega.model.NavDrawerItem;
 import fr.bde_eseo.eseomega.utils.EncryptUtils;
@@ -34,7 +33,7 @@ public class UserProfile {
     public UserProfile (Context ctx, String name, String id, String encodedPassword) {
         this.name = name;
         this.id = id;
-        this.encodedPassword = EncryptUtils.sha256(ctx.getResources().getString(R.string.SALT_PASS_USER) + encodedPassword);
+        this.encodedPassword = EncryptUtils.sha256(ctx.getResources().getString(R.string.MESSAGE_PASS_USER) + encodedPassword);
         this.isCreated = true;
         this.picturePath = "";
     }

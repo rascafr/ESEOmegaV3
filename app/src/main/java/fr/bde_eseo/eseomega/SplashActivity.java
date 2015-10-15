@@ -10,7 +10,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.rascafr.test.matdesignfragment.R;
+import fr.bde_eseo.eseomega.R;
 
 import fr.bde_eseo.eseomega.profile.UserProfile;
 
@@ -38,7 +38,7 @@ public class SplashActivity extends Activity {
         vLogo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                trick++;
+                //trick++; // Goodbye guy
             }
         });
 

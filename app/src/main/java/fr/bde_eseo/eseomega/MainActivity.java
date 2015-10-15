@@ -3,6 +3,7 @@ package fr.bde_eseo.eseomega;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -18,6 +19,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -41,8 +43,8 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import com.rascafr.test.matdesignfragment.BuildConfig;
-import com.rascafr.test.matdesignfragment.R;
+import fr.bde_eseo.eseomega.BuildConfig;
+import fr.bde_eseo.eseomega.R;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -66,6 +68,7 @@ import fr.bde_eseo.eseomega.news.NewsListFragment;
 import fr.bde_eseo.eseomega.utils.ConnexionUtils;
 import fr.bde_eseo.eseomega.utils.EncryptUtils;
 import fr.bde_eseo.eseomega.utils.ImageUtils;
+import fr.bde_eseo.eseomega.utils.Utilities;
 
 import java.io.File;
 import java.security.MessageDigest;
@@ -119,6 +122,9 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
     private SharedPreferences prefs_Read;
     private SharedPreferences.Editor prefs_Write;
 
+    // GCM
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
+
     // slide menu items
     private String[] navMenuTitles;
     private TypedArray navMenuIcons;
@@ -141,7 +147,6 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         mTitle = getTitle();
 
         // Check app auth
-
         boolean installPlayStore = verifyInstaller(this);
         boolean installSigned = checkAppSignature(this);
 
@@ -159,6 +164,26 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
                     }
                 }).show();
         }
+
+        // GCM Receiver
+        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //Log.d("NOTIF", "onReceive !");
+                SharedPreferences sharedPreferences =
+                        PreferenceManager.getDefaultSharedPreferences(context);
+                boolean sentToken = sharedPreferences.getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
+                ConnectProfileFragment mFragment = (ConnectProfileFragment) getSupportFragmentManager().findFragmentByTag("frag0");
+                if (mFragment != null) {
+                    mFragment.setPushRegistration(sentToken);
+                    //Log.d("FRAG", "mFragment = " + (mFragment.isVisible() ? "visible" : "invisible"));
+                } else {
+                    //Log.d("FRAG", "mFragment = null");
+                }
+
+
+            }
+        };
 
         // load slide menu items
         navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
@@ -238,7 +263,9 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
             message = extras.getString(Constants.KEY_MAIN_MESSAGE);
             intendID = extras.getInt(Constants.KEY_MAIN_INTENT);
             passInstance = true;
-            if (intendID == Constants.NOTIF_GENERAL) {
+            if (intendID == Constants.NOTIF_CONNECT) {
+                intendID = 0;
+            } else if (intendID == Constants.NOTIF_GENERAL) {
                 intendID++;
                 if (title != null && title.length() > 0 && message != null && message.length() > 0) {
                     new MaterialDialog.Builder(this)
@@ -300,7 +327,7 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
                 new MaterialDialog.Builder(this)
                         .title("Re-bonjour !")
                         .content("Merci d'avoir pris le temps de faire cette mise à jour ! " +
-                                "Elle apporte des correctifs de sécurité aux différentes fonctions de l'application.\n" +
+                                "Elle apporte des correctifs de sécurité aux différentes fonctions de l'application, ainsi que la possibilité de recevoir les notifications liées à la caféteria et aux news.\n" +
                                 "Pour accéder à l'ensemble de ces services, nous vous demandons de bien vouloir vous reconnecter avec votre profil ESEO.\n\nL'équipe ESEOmega Ω")
                         .negativeText("OK")
                         .cancelable(false)
@@ -311,6 +338,7 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
                                 profile.removeProfileFromPrefs(MainActivity.this);
                                 profile.readProfilePromPrefs(MainActivity.this);
                                 OnUserProfileChange(profile);
+                                prefs_Write.putBoolean(Constants.PREFS_APP_WELCOME_DATA, false); // prevents from previous message
                                 prefs_Write.putString(Constants.PREFS_APP_VERSION, BuildConfig.VERSION_NAME);
                                 prefs_Write.commit();
                             }
@@ -318,6 +346,32 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
                         .show();
             }
         }
+
+        // Test tablet mode
+        // TODO V2.1.1
+        /*Utilities.isTabletDevice(this);
+
+        boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
+        if (tabletSize) {
+            // do something
+            Toast.makeText(this, "Tablet mode enabled !", Toast.LENGTH_SHORT).show();
+        } else {
+            // do something else
+            Toast.makeText(this, "Phone mode enabled !", Toast.LENGTH_SHORT).show();
+        }*/
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(QuickstartPreferences.REGISTRATION_COMPLETE));
+    }
+
+    @Override
+    protected void onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
+        super.onPause();
     }
 
 
@@ -533,6 +587,7 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
                 md.update(signature.toByteArray());
                 final String currentSignature = Base64.encodeToString(md.digest(), Base64.NO_WRAP); // no '\n' character into string !
                 //compare signatures
+                //Log.d("SIGN", "Signature : app = " + currentSignature + ", certificate = " + SIGNATURE);
                 if (currentSignature.equals(SIGNATURE)){
                     return true;
                 }

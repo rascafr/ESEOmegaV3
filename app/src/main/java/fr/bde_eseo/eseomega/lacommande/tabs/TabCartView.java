@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.melnykov.fab.FloatingActionButton;
-import com.rascafr.test.matdesignfragment.R;
+import fr.bde_eseo.eseomega.R;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -38,6 +38,7 @@ import fr.bde_eseo.eseomega.lacommande.model.LacmdRoot;
 import fr.bde_eseo.eseomega.listeners.RecyclerItemClickListener;
 import fr.bde_eseo.eseomega.utils.ConnexionUtils;
 import fr.bde_eseo.eseomega.utils.EncryptUtils;
+import fr.bde_eseo.eseomega.utils.Utilities;
 
 
 public class TabCartView extends Fragment {
@@ -129,7 +130,14 @@ public class TabCartView extends Fragment {
                                 @Override
                                 public void onPositive(MaterialDialog dialog) {
                                     super.onPositive(dialog);
-                                    DataManager.getInstance().setInstructions(etInstr.getText().toString());
+                                    DataManager.getInstance().setInstructions(
+
+                                            // Convert InputText into formatted string without Emojis / Unicode characters
+                                            etInstr
+                                            .getText()
+                                            .toString()
+                                            .trim());
+
                                     new MaterialDialog.Builder(getActivity())
                                             .title("Valider la commande ?")
                                             .content("En validant, vous vous engagez à venir payer et récupérer votre repas au comptoir de la cafet aujourd'hui entre 12h et 13h.\n\n" +
@@ -220,9 +228,9 @@ public class TabCartView extends Fragment {
 
             try {
                 List<NameValuePair> pairs = new ArrayList<>();
-                pairs.add(new BasicNameValuePair("token", DataManager.getInstance().getToken()));
-                pairs.add(new BasicNameValuePair("data", Base64.encodeToString(JSONstr.getBytes("UTF-8"), Base64.NO_WRAP)));
-                pairs.add(new BasicNameValuePair("instructions", Base64.encodeToString(instr.getBytes("UTF-8"), Base64.NO_WRAP)));
+                pairs.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.token), DataManager.getInstance().getToken()));
+                pairs.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.data), Base64.encodeToString(JSONstr.getBytes("UTF-8"), Base64.NO_WRAP)));
+                pairs.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.instructions), Base64.encodeToString(instr.getBytes("UTF-8"), Base64.NO_WRAP)));
                 resp = ConnexionUtils.postServerData(Constants.URL_POST_CART, pairs);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -240,7 +248,7 @@ public class TabCartView extends Fragment {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
-            if (s != null) {
+            if (Utilities.isNetworkDataValid(s)) {
                 if (s.equals("1")) {
 
                     Calendar cal = Calendar.getInstance(); //Create Calendar-Object
@@ -272,6 +280,18 @@ public class TabCartView extends Fragment {
                             })
                             .show();
                 }
+            } else {
+                new MaterialDialog.Builder(getActivity())
+                        .title("Erreur de connexion")
+                        .content("Impossible de valider votre commande sur nos serveurs.\nVérifiez votre connexion au réseau.")
+                        .negativeText("Fermer")
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+                                super.onNegative(dialog);
+                            }
+                        })
+                        .show();
             }
         }
     }

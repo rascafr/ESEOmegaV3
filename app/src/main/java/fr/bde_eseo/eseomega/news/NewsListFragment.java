@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -28,7 +29,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.rascafr.test.matdesignfragment.R;
+import fr.bde_eseo.eseomega.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -80,6 +81,7 @@ public class NewsListFragment extends Fragment {
         swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.news_refresh);
         swipeRefreshLayout.setColorSchemeColors(R.color.md_blue_800);
         progCircle.setVisibility(View.GONE);
+        progCircle.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.md_grey_500), PorterDuff.Mode.SRC_IN);
         tv1.setVisibility(View.GONE);
         tv2.setVisibility(View.GONE);
         img.setVisibility(View.GONE);
@@ -155,11 +157,12 @@ public class NewsListFragment extends Fragment {
 
         private boolean displayCircle;
         private boolean addMore;
-        private boolean onLine;
+        private boolean loadedFromCache;
 
         private AsyncJSONNews(boolean displayCircle, boolean addMore) {
             this.displayCircle = displayCircle;
             this.addMore = addMore;
+            this.loadedFromCache = false;
         }
 
         @Override
@@ -184,12 +187,15 @@ public class NewsListFragment extends Fragment {
                 try {
                     JSONArray array = obj.getJSONArray("articles");
                     //newsItems.clear();
+                    // Cannot happen : obj is different from null so there are news in cache or freshly fetched !
+                    /*    newsItems.add(new NewsItem("Dernière mise à jour : " +
+                            prefs_Read.getString(Constants.PREFS_NEWS_LAST_DOWNLOAD_DATE, "jamais")));*/
 
-                    if (!onLine) {
-                        newsItems.add(new NewsItem("Dernière mise à jour : " +
+                    if (ptr == 0) {
+                        if (loadedFromCache) {
+                            newsItems.add(new NewsItem("Dernière mise à jour : " +
                             prefs_Read.getString(Constants.PREFS_NEWS_LAST_DOWNLOAD_DATE, "jamais")));
-                    } else {
-                        if (ptr == 0) {
+                        } else {
                             prefs_Write.putString(Constants.PREFS_NEWS_LAST_DOWNLOAD_DATE, Utilities.getCalendarAsString());
                             prefs_Write.commit();
                         }
@@ -201,7 +207,7 @@ public class NewsListFragment extends Fragment {
                     }
 
                     if (array.length()>0) {
-                        if (onLine) newsItems.add(new NewsItem());
+                        if (!loadedFromCache) newsItems.add(new NewsItem());
                     } else if (array.length() == 0 && ptr > 0) {
                         ptr--;
                     }
@@ -226,14 +232,11 @@ public class NewsListFragment extends Fragment {
         @Override
         protected JSONObject doInBackground(String... params) {
 
-            JSONObject news = null;
-            onLine = Utilities.isPingOnline(getActivity());
+            JSONObject news = JSONUtils.getJSONFromUrl(params[0], getActivity());
 
-            // If is online : download JSON file from server
-            if (onLine) {
-                news = JSONUtils.getJSONFromUrl(params[0], getActivity());
+            if (news != null) {
                 // save it if it's the 5 first news
-                if (ptr == 0 && news != null) {
+                if (ptr == 0) {
                     Utilities.writeStringToFile(cacheFileEseo, news.toString());
                 }
             } else {
@@ -241,6 +244,7 @@ public class NewsListFragment extends Fragment {
                 if (cacheFileEseo.exists()) {
                     try {
                         news = new JSONObject(Utilities.getStringFromFile(cacheFileEseo));
+                        loadedFromCache = true;
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

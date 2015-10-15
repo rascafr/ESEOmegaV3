@@ -49,6 +49,8 @@ public class NavDrawerItem {
 		return this.title;
 	}
 
+
+
     public String getId() { return this.id; }
 	
 	public int getIcon(){
@@ -56,7 +58,7 @@ public class NavDrawerItem {
 	}
 	
 	public String getCount(){
-		return this.count;
+        return this.count;
 	}
 
     public boolean isProfile() { return this.isProfile; }
@@ -79,6 +81,10 @@ public class NavDrawerItem {
 	
 	public void setCount(String count){
 		this.count = count;
+		if (!count.equals("0"))
+			isCounterVisible = true;
+		else
+			isCounterVisible = false;
 	}
 	
 	public void setCounterVisibility(boolean isCounterVisible){

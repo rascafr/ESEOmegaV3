@@ -27,7 +27,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
+        android:textColor="@color/md_grey_800"
         android:textSize="16sp"
-        android:text="Que souhaitez vous faire ?"/>
+        android:id="@+id/tvEventDetails"
+        android:text="blah blah blah"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="8dp"
+        android:textColor="@color/md_grey_600"
+        android:textSize="16sp"
+        android:id="@+id/tvEventPlace"
+        android:text="Greniers St Jean"/>
 
 </LinearLayout>

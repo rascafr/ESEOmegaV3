@@ -25,6 +25,36 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
+    <!-- Pas a faire : utiliser le svraies tailles en dp !!! -->
+    <!-- OK -->
+    <View
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:background="@drawable/circle_back"
+        android:layout_margin="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_gravity="bottom|end"
+        android:visibility="invisible"
+        android:id="@+id/viewCircle"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <ProgressBar
+        android:id="@+id/progressLoading"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:indeterminate="true"
+        android:layout_margin="10dp"
+        android:layout_gravity="bottom|end"
+        android:visibility="visible"
+        android:layout_alignTop="@+id/viewCircle"
+        android:layout_alignLeft="@+id/viewCircle"
+        android:layout_alignStart="@+id/viewCircle"
+        android:layout_alignBottom="@+id/viewCircle"
+        android:layout_alignRight="@+id/viewCircle"
+        android:layout_alignEnd="@+id/viewCircle" />
+
     <ProgressBar
         android:id="@+id/progressHistoryList"
         android:layout_width="wrap_content"
@@ -38,7 +68,8 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_margin="20dp">
+        android:layout_margin="20dp"
+        android:id="@+id/relativeLayout7">
 
         <ImageView
             android:id="@+id/imgNoCommand"

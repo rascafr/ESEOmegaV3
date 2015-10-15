@@ -56,7 +56,7 @@ Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. N
     <!-- Bullshit for user's EditText hint -->
     <string-array name="bullshitHintUser">
         <item >sagetbob</item>
-        <item >plantierguy</item>
+        <item >eventEnPLS</item>
         <item >longetdur</item>
         <item >durdentyler</item>
         <item >android>iOS</item>
@@ -68,14 +68,30 @@ Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. N
     </string-array>
 
     <!-- Security -->
-    <string name="SALT_GET_TOKEN">simu+42+DePêche</string>
-    <string name="SALT_SYNC_USER">selfRetain_$_0x128D4_objc</string> <!-- V2.1 -->
-    <string name="SALT_PASS_USER">Oups, erreur de connexion</string> <!-- V2.1 -->
-    <string name="SALT_HISTORY_USER">Connexion au serveur ...</string> <!-- V2.1 -->
-    <string name="SALT_SYNC_SCORES">ellepèse3Go|DeuxMégas</string>
-    <string name="SALT_SYNC_SINGLE">base64(json_encode(#MACRO))</string> <!-- V2.1 -->
-    <string name="SALT_SYNC_PUSH">Erreur mémoire cache</string> <!-- V2.1 -->
-    <string name="SALT_DESYNC_PUSH">Bonjour %s !</string> <!-- V2.1 -->
+    <string name="MESSAGE_GET_TOKEN">Mauvais Login / Mot de passe</string> <!-- V2.1 -->
+    <string name="MEMORY_SYNC_USER">selfRetain_$_0x128D4_objc</string> <!-- V2.1 -->
+    <string name="MESSAGE_PASS_USER">Oups, erreur de connexion</string> <!-- V2.1 -->
+    <string name="MESSAGE_HISTORY_USER">Connexion au serveur ...</string> <!-- V2.1 -->
+    <string name="HEADER_SYNC_SCORES">**** SCORES ****</string>
+    <string name="MACRO_SYNC_SINGLE">base64(json_encode(#MACRO))</string> <!-- V2.1 -->
+    <string name="MESSAGE_SYNC_PUSH">Erreur mémoire cache</string> <!-- V2.1 -->
+    <string name="MESSAGE_DESYNC_PUSH">Bonjour %s !</string> <!-- V2.1 -->
+
+    <!-- POST Parameters -->
+    <string name="name">name</string>
+    <string name="login">login</string>
+    <string name="client">client</string>
+    <string name="username">username</string>
+    <string name="hash">hash</string>
+    <string name="tstp">tstp</string>
+    <string name="os">os</string>
+    <string name="token">token</string>
+    <string name="idcmd">idcmd</string>
+    <string name="data">data</string>
+    <string name="instructions">instructions</string>
+    <string name="version">version</string>
+    <string name="password">password</string>
+    <string name="score">score</string>
 
     <!-- Push -->
     <string name="play_api_push">409995288520</string>

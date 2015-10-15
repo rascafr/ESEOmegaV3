@@ -28,7 +28,7 @@ import android.util.Log;
 import com.google.android.gms.gcm.GcmPubSub;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
-import com.rascafr.test.matdesignfragment.R;
+import fr.bde_eseo.eseomega.R;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -46,6 +46,7 @@ public class RegistrationIntentService extends IntentService {
 
     private static final String TAG = "RegIntentService";
     private static final String[] TOPICS = {"global"};
+    private SharedPreferences sharedPreferences;
 
     public RegistrationIntentService() {
         super(TAG);
@@ -53,7 +54,8 @@ public class RegistrationIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         try {
             // [START register_for_gcm]
@@ -75,7 +77,7 @@ public class RegistrationIntentService extends IntentService {
             // You should store a boolean that indicates whether the generated token has been
             // sent to your server. If the boolean is false, send the token to your server,
             // otherwise your server should have already received the token.
-            sharedPreferences.edit().putBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, true).apply();
+            //sharedPreferences.edit().putBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, true).apply();
             // [END register_for_gcm]
         } catch (Exception e) {
             //Log.d(TAG, "Failed to complete token refresh", e);
@@ -83,9 +85,7 @@ public class RegistrationIntentService extends IntentService {
             // on a third-party server, this ensures that we'll attempt the update at a later time.
             sharedPreferences.edit().putBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false).apply();
         }
-        // Notify UI that registration has completed, so the progress indicator can be hidden.
-        Intent registrationComplete = new Intent(QuickstartPreferences.REGISTRATION_COMPLETE);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(registrationComplete);
+
     }
 
     /**
@@ -143,7 +143,19 @@ public class RegistrationIntentService extends IntentService {
 
         @Override
         protected void onPostExecute(String s) {
-            //Log.d("GcmPushToken", "[OK] Registered, result is : " + s);
+
+            if (s!= null && s.equals("1")) {
+                // Notify UI that registration has completed, so the progress indicator can be hidden.
+                //Log.d("NOTIF", "Registration complete");
+                sharedPreferences.edit().putBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, true).apply();
+            } else {
+                //Log.d("NOTIF", "Registration failed");
+                sharedPreferences.edit().putBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false).apply();
+            }
+
+            Intent registrationStatus = new Intent(QuickstartPreferences.REGISTRATION_COMPLETE);
+            LocalBroadcastManager.getInstance(RegistrationIntentService.this).sendBroadcast(registrationStatus);
+
         }
 
         @Override
@@ -155,12 +167,12 @@ public class RegistrationIntentService extends IntentService {
 
             if (profile.isCreated()) {
                 List<NameValuePair> pairs = new ArrayList<>();
-                pairs.add(new BasicNameValuePair("client", profile.getId()));
-                pairs.add(new BasicNameValuePair("password", profile.getPassword()));
-                pairs.add(new BasicNameValuePair("os", Constants.APP_ID));
-                pairs.add(new BasicNameValuePair("token", params[0]));
-                pairs.add(new BasicNameValuePair("hash", EncryptUtils.sha256(
-                        getResources().getString(R.string.SALT_SYNC_PUSH) +
+                pairs.add(new BasicNameValuePair(RegistrationIntentService.this.getResources().getString(R.string.client), profile.getId()));
+                pairs.add(new BasicNameValuePair(RegistrationIntentService.this.getResources().getString(R.string.password), profile.getPassword()));
+                pairs.add(new BasicNameValuePair(RegistrationIntentService.this.getResources().getString(R.string.os), Constants.APP_ID));
+                pairs.add(new BasicNameValuePair(RegistrationIntentService.this.getResources().getString(R.string.token), params[0]));
+                pairs.add(new BasicNameValuePair(RegistrationIntentService.this.getResources().getString(R.string.hash), EncryptUtils.sha256(
+                        getResources().getString(R.string.MESSAGE_SYNC_PUSH) +
                                 profile.getId() +
                                 profile.getPassword() +
                                 Constants.APP_ID +

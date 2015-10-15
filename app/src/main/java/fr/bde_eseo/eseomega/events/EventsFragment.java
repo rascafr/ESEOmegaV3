@@ -2,6 +2,7 @@ package fr.bde_eseo.eseomega.events;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,7 +23,7 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
-import com.rascafr.test.matdesignfragment.R;
+import fr.bde_eseo.eseomega.R;
 
 import org.apache.http.util.EncodingUtils;
 import org.json.JSONArray;
@@ -92,6 +93,7 @@ public class EventsFragment extends Fragment {
         tv2 = (TextView) rootView.findViewById(R.id.tvListNothing2);
         img = (ImageView) rootView.findViewById(R.id.imgNoEvent);
         progCircle.setVisibility(View.GONE);
+        progCircle.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.md_grey_500), PorterDuff.Mode.SRC_IN);
         tv1.setVisibility(View.GONE);
         tv2.setVisibility(View.GONE);
         img.setVisibility(View.GONE);
@@ -171,6 +173,17 @@ public class EventsFragment extends Fragment {
                     View mdView = md.getView();
                     ((TextView)mdView.findViewById(R.id.tvEventName)).setText(ei.getName());
                     (mdView.findViewById(R.id.rlBackDialogEvent)).setBackgroundColor(ei.getColor());
+                    if (ei.getDetails() != null && ei.getDetails().length() > 0) {
+                        ((TextView)mdView.findViewById(R.id.tvEventDetails)).setText(ei.getDetails());
+                    } else {
+                        ((TextView)mdView.findViewById(R.id.tvEventDetails)).setText("Que souhaitez vous faire ?");
+                    }
+                    if (ei.getLieu() != null && ei.getLieu().length() > 0) {
+                        ((TextView)mdView.findViewById(R.id.tvEventPlace)).setText("Lieu : " + ei.getLieu());
+                        ((TextView)mdView.findViewById(R.id.tvEventPlace)).setVisibility(View.VISIBLE);
+                    } else {
+                        ((TextView)mdView.findViewById(R.id.tvEventPlace)).setVisibility(View.GONE);
+                    }
 
                 }
 
@@ -222,7 +235,6 @@ public class EventsFragment extends Fragment {
     public class AsyncJSON extends AsyncTask<String, String, JSONObject> {
 
         boolean displayCircle;
-        private boolean onLine;
 
         public AsyncJSON (boolean displayCircle) {
             this.displayCircle = displayCircle;
@@ -304,7 +316,6 @@ public class EventsFragment extends Fragment {
                     if (scrollTo == -1) {
                         scrollTo = eventItems.size()-1;
                     }
-                    Log.d("SCROLL", "scrollTo = " + scrollTo);
                     recList.scrollToPosition(scrollTo);
 
                 } catch (JSONException e) {
@@ -323,14 +334,10 @@ public class EventsFragment extends Fragment {
 
         @Override
         protected JSONObject doInBackground(String... params) {
-            JSONObject obj = null;
-            onLine = Utilities.isPingOnline(getActivity());
-            if (onLine) {
-                obj = JSONUtils.getJSONFromUrl(params[0], getActivity());
-                if (obj != null) {
-                    Utilities.writeStringToFile(cacheFileEseo, obj.toString());
-                }
-            } else {
+
+            JSONObject obj = JSONUtils.getJSONFromUrl(params[0], getActivity());
+
+            if (obj == null) {
                 if (cacheFileEseo.exists()) {
                     try {
                         obj = new JSONObject(Utilities.getStringFromFile(cacheFileEseo));
@@ -338,6 +345,8 @@ public class EventsFragment extends Fragment {
                         e.printStackTrace();
                     }
                 }
+            } else {
+                Utilities.writeStringToFile(cacheFileEseo, obj.toString());
             }
             return obj;
         }

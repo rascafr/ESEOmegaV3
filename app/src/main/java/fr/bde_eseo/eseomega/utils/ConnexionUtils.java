@@ -58,7 +58,7 @@ public class ConnexionUtils {
             result = sb.toString().replace("\n", ""); // Correction buffer \n;
 
         } catch (IOException e) {
-            Log.i(LOG_KEY_ERROR, e.getMessage());
+            //Log.i(LOG_KEY_ERROR, e.getMessage());
         }
 
         return result;

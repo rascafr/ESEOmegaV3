@@ -1,6 +1,7 @@
 package fr.bde_eseo.eseomega.hintsntips;
 
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,7 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.rascafr.test.matdesignfragment.R;
+import fr.bde_eseo.eseomega.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -81,6 +82,7 @@ public class TipsFragment extends Fragment {
         tv2 = (TextView) rootView.findViewById(R.id.tvListNothing2);
         img = (ImageView) rootView.findViewById(R.id.imgNoSponsor);
         progCircle.setVisibility(View.GONE);
+        progCircle.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.md_grey_500), PorterDuff.Mode.SRC_IN);
         tv1.setVisibility(View.GONE);
         tv2.setVisibility(View.GONE);
         img.setVisibility(View.GONE);
@@ -166,7 +168,7 @@ public class TipsFragment extends Fragment {
      */
     private class AsyncJSON extends AsyncTask<String, String, JSONObject> {
 
-        private boolean displayCircle, onLine;
+        private boolean displayCircle;
 
         public AsyncJSON (boolean displayCircle) {
             this.displayCircle = displayCircle;
@@ -228,14 +230,10 @@ public class TipsFragment extends Fragment {
 
         @Override
         protected JSONObject doInBackground(String... params) {
-            JSONObject obj = null;
-            onLine = Utilities.isPingOnline(getActivity());
-            if (onLine) {
-                obj = JSONUtils.getJSONFromUrl(params[0], getActivity());
-                if (obj != null) {
-                    Utilities.writeStringToFile(cacheFileEseo, obj.toString());
-                }
-            } else {
+
+            JSONObject obj = JSONUtils.getJSONFromUrl(params[0], getActivity());
+
+            if (obj == null) {
                 if (cacheFileEseo.exists()) {
                     try {
                         obj = new JSONObject(Utilities.getStringFromFile(cacheFileEseo));
@@ -243,7 +241,10 @@ public class TipsFragment extends Fragment {
                         e.printStackTrace();
                     }
                 }
+            } else {
+                Utilities.writeStringToFile(cacheFileEseo, obj.toString());
             }
+
             return obj;
         }
     }

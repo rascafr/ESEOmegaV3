@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:textSize="15sp"
-        android:text="Vous pouvez indiquer si vous voulez être livré dans une certaine salle ou rajouter des indications sur votre commande."/>
+        android:text="Vous pouvez entrer ci-dessous quelques indications pour votre commande."/>
 
     <EditText
         android:id="@+id/etInstructions"
@@ -16,6 +16,8 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:hint="Consignes, ..."
+        android:textColorHint="@color/md_grey_500"
         android:maxLength="100"/>
 
 </LinearLayout>

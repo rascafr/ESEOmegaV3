@@ -28,9 +28,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.gcm.GcmListenerService;
-import com.rascafr.test.matdesignfragment.R;
+import fr.bde_eseo.eseomega.R;
 
 import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.GantierActivity;
@@ -54,6 +55,11 @@ public class MyGcmListenerService extends GcmListenerService {
         if (data != null) {
             String title = data.getString("title");
             String message = data.getString("message");
+            String versionPush = data.getString("versionPush");
+            double dVersion = 0.0;
+            if (versionPush != null && versionPush.length() > 0) {
+                dVersion = Double.valueOf(versionPush.replace(",", "."));
+            }
             int subject = 0;
             String topic = data.getString("topic");
             if (topic != null) {
@@ -75,7 +81,7 @@ public class MyGcmListenerService extends GcmListenerService {
              * that a message was received.
              */
             if (from.equals(this.getResources().getString(R.string.play_api_push))) {
-                sendNotification(subject, title, message);
+                sendNotification(subject, title, message, dVersion);
             }
         }
         // [END_EXCLUDE]
@@ -87,10 +93,15 @@ public class MyGcmListenerService extends GcmListenerService {
      *
      * @param message GCM message received.
      */
-    private void sendNotification(int intentID, String title, String message) {
+    private void sendNotification(int intentID, String title, String message, double versionPush) {
 
         // prepare intent
-        Intent intent;
+        Intent intent = null;
+        if (versionPush > Constants.NOTIF_VERSION) {
+            intentID = Constants.NOTIF_UPDATE;
+            title = Constants.NOTIF_UPDATE_TITLE;
+            message = Constants.NOTIF_UPDATE_TEXT;
+        }
         switch (intentID) {
             case Constants.NOTIF_GENERAL:
             case Constants.NOTIF_NEWS:
@@ -98,6 +109,7 @@ public class MyGcmListenerService extends GcmListenerService {
             case Constants.NOTIF_CLUBS:
             case Constants.NOTIF_CAFET:
             case Constants.NOTIF_TIPS:
+            case Constants.NOTIF_CONNECT:
             default:
                 intent = new Intent(this, MainActivity.class);
                 intent.putExtra(Constants.KEY_MAIN_INTENT, intentID);
@@ -110,35 +122,45 @@ public class MyGcmListenerService extends GcmListenerService {
                 intent = new Intent(this, GantierActivity.class);
                 intent.putExtra(Constants.KEY_GANTIER_INTENT, intentID);
                 break;
+            case Constants.NOTIF_UPDATE:
+                final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
+                try {
+                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName));
+                } catch (android.content.ActivityNotFoundException anfe) {
+                    Toast.makeText(MyGcmListenerService.this, "Erreur d'accès Play Store", Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
 
         // Attach intent to notification
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_ONE_SHOT);
+        if (intent != null) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_ONE_SHOT);
 
-        long[] pattern = {0, 100, 250, 100, 250, 100};
+            long[] pattern = {0, 100, 250, 100, 250, 100};
 
-        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_notif) // Only small icon for Lollipop
-                .setContentTitle(title)
-                .setContentText(message)
-                .setAutoCancel(true)
-                .setLights(Color.BLUE, 1000, 3000)
-                .setColor(this.getResources().getColor(R.color.md_blue_800))
-                .setVibrate(pattern)
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);
+            Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.drawable.ic_notif) // Only small icon for Lollipop
+                    .setContentTitle(title)
+                    .setContentText(message)
+                    .setAutoCancel(true)
+                    .setLights(Color.BLUE, 1000, 3000)
+                    .setColor(this.getResources().getColor(R.color.md_blue_800))
+                    .setVibrate(pattern)
+                    .setSound(defaultSoundUri)
+                    .setContentIntent(pendingIntent);
 
-        // Big icon for previous version (older than Lollipop)
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            notificationBuilder.setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.mipmap.ic_launcher));
+            // Big icon for previous version (older than Lollipop)
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                notificationBuilder.setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.mipmap.ic_launcher));
+            }
+
+            NotificationManager notificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+            // Random notification ID
+            notificationManager.notify((int) System.currentTimeMillis(), notificationBuilder.build());
         }
-
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        // Random notification ID
-        notificationManager.notify((int)System.currentTimeMillis(), notificationBuilder.build());
     }
 }

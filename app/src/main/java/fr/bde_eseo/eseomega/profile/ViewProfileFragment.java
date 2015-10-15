@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -20,7 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.rascafr.test.matdesignfragment.R;
+import fr.bde_eseo.eseomega.R;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -36,6 +37,7 @@ import fr.bde_eseo.eseomega.interfaces.OnUserProfileChange;
 import fr.bde_eseo.eseomega.utils.ConnexionUtils;
 import fr.bde_eseo.eseomega.utils.EncryptUtils;
 import fr.bde_eseo.eseomega.utils.ImageUtils;
+import fr.bde_eseo.eseomega.utils.Utilities;
 
 /**
  * Created by Rascafr on 29/07/2015.
@@ -73,7 +75,7 @@ public class ViewProfileFragment extends Fragment {
         // Get current profile
         profile = new UserProfile();
         profile.readProfilePromPrefs(getActivity());
-        Log.d("PROFILE", profile.getId() + ", " + profile.getPushToken());
+        //Log.d("PROFILE", profile.getId() + ", " + profile.getPushToken());
         userName = profile.getName();
         tvUserName.setText(userName);
         userFirst = profile.getFirstName();
@@ -93,6 +95,14 @@ public class ViewProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
             tvDisconnect.setBackgroundColor(0x2fffffff);
+
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    tvDisconnect.setBackgroundColor(0x00ffffff);
+                }
+            }, 500);
 
             MaterialDialog mdConfirm = new MaterialDialog.Builder(getActivity())
                 .title("Déconnexion")
@@ -166,12 +176,12 @@ public class ViewProfileFragment extends Fragment {
         @Override
         protected String doInBackground(UserProfile ... params) {
             List<NameValuePair> pairs = new ArrayList<>();
-            pairs.add(new BasicNameValuePair("client", this.profile.getId()));
-            pairs.add(new BasicNameValuePair("password", this.profile.getPassword()));
-            pairs.add(new BasicNameValuePair("os", Constants.APP_ID));
-            pairs.add(new BasicNameValuePair("token", this.profile.getPushToken()));
-            pairs.add(new BasicNameValuePair("hash", EncryptUtils.sha256(
-                    getResources().getString(R.string.SALT_DESYNC_PUSH) +
+            pairs.add(new BasicNameValuePair(getResources().getString(R.string.client), this.profile.getId()));
+            pairs.add(new BasicNameValuePair(getResources().getString(R.string.password), this.profile.getPassword()));
+            pairs.add(new BasicNameValuePair(getResources().getString(R.string.os), Constants.APP_ID));
+            pairs.add(new BasicNameValuePair(getResources().getString(R.string.token), this.profile.getPushToken()));
+            pairs.add(new BasicNameValuePair(getResources().getString(R.string.hash), EncryptUtils.sha256(
+                    getResources().getString(R.string.MESSAGE_DESYNC_PUSH) +
                             this.profile.getId() +
                             this.profile.getPassword() +
                             Constants.APP_ID +
@@ -181,21 +191,38 @@ public class ViewProfileFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            Log.d("RES", s);
+        protected void onPostExecute(String data) {
 
-            materialDialog.hide();
+            // If disconnexion is not successfull (network problem)
+            if (!Utilities.isNetworkDataValid(data)) {
+                //materialDialog.hide();
+                materialDialog.dismiss();
+                materialDialog = new MaterialDialog.Builder(getActivity())
+                        .title("Erreur de déconnexion")
+                        .content("Impossible d'accéder au serveur.\nVeuiller vérifier votre connexion au réseau puis réessayer.")
+                        .negativeText("Fermer")
+                        .cancelable(false)
+                        .show();
+            } else {
+                // Success ! Remove profile from preferences
+                materialDialog.dismiss();
+                this.profile.removeProfileFromPrefs(ctx);
+                this.profile.readProfilePromPrefs(ctx);
+                mOnUserProfileChange.OnUserProfileChange(this.profile);
 
-            this.profile.removeProfileFromPrefs(ctx);
-            this.profile.readProfilePromPrefs(ctx);
-            mOnUserProfileChange.OnUserProfileChange(this.profile);
+                // Delete cache file
+                String cachePath = getActivity().getCacheDir() + "/";
+                File cacheHistoryJSON = new File(cachePath + "history.json");
+                if (cacheHistoryJSON.exists()) {
+                    cacheHistoryJSON.delete();
+                }
 
-            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                    .replace(R.id.frame_container, new ConnectProfileFragment(), "FRAG_CONNECT_PROFILE")
-                    .commit();
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                        .replace(R.id.frame_container, new ConnectProfileFragment(), "frag0")
+                        .commit();
+            }
         }
     }
 
@@ -207,15 +234,19 @@ public class ViewProfileFragment extends Fragment {
             Uri profPicture = data.getData();
             String[] filePathColumn = { MediaStore.Images.Media.DATA };
             Cursor cursor = getActivity().getContentResolver().query(profPicture, filePathColumn, null, null, null);
-            cursor.moveToFirst();
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String picturePath = cursor.getString(columnIndex);
-            cursor.close();
-            if (profile != null) { // cas impossible, mais au cas où ...
-                profile.setPicturePath(picturePath);
-                profile.registerProfileInPrefs(getActivity());
-                setImageView();
-                mOnUserProfileChange.OnUserProfileChange(profile);
+            if (cursor != null) {
+                cursor.moveToFirst();
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                String picturePath = cursor.getString(columnIndex);
+                cursor.close();
+                if (profile != null) { // cas impossible, mais au cas où ...
+                    profile.setPicturePath(picturePath);
+                    profile.registerProfileInPrefs(getActivity());
+                    setImageView();
+                    mOnUserProfileChange.OnUserProfileChange(profile);
+                }
+            } else {
+                Toast.makeText(getActivity(), "Erreur lors du traitement de l'image.", Toast.LENGTH_SHORT).show();
             }
         }
     }

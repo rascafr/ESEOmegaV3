@@ -1,13 +1,10 @@
 package fr.bde_eseo.eseomega.profile;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -16,16 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.rascafr.test.matdesignfragment.R;
+
+import fr.bde_eseo.eseomega.R;
 
 import fr.bde_eseo.eseomega.Constants;
-import fr.bde_eseo.eseomega.gcmpush.QuickstartPreferences;
 import fr.bde_eseo.eseomega.gcmpush.RegistrationIntentService;
 import fr.bde_eseo.eseomega.interfaces.OnUserProfileChange;
 import fr.bde_eseo.eseomega.utils.ConnexionUtils;
@@ -56,9 +50,41 @@ public class ConnectProfileFragment extends Fragment {
     private OnUserProfileChange mOnUserProfileChange;
     private String[] bullshitHint;
     private Random rand;
+    private UserProfile profile;
 
-    // GCM
-    private BroadcastReceiver mRegistrationBroadcastReceiver;
+    // Function to set the dialog visibity from activity
+    public void setPushRegistration (boolean isSent) {
+        if (isSent) {
+            if (mdProgress != null) mdProgress.hide();
+            //Toast.makeText(getActivity(), "Enregistrement notifs ok !", Toast.LENGTH_SHORT).show();
+
+            MaterialDialog md = new MaterialDialog.Builder(getActivity())
+                    .title("Bienvenue, " + profile.getFirstName() + " !")
+                    .negativeText("Fermer")
+                    .content("Votre profil a été synchronisé, et les notifications ont été activées, vous bénéficiez désormais de toutes les fonctionnalités.\nProfitez-en !")
+                    .iconRes(R.drawable.ic_checked_user)
+                    .show();
+
+        } else {
+            if (mdProgress != null) mdProgress.hide();
+
+            MaterialDialog md = new MaterialDialog.Builder(getActivity())
+                    .title("Oups ...")
+                    .content("Impossible d'enregistrer votre appareil sur nos serveur\n" +
+                            "Vous êtes connectés, mais vous ne pourrez pas recevoir les notifications news et cafétéria.\nTentez de vous reconnecter, ou contactez nous.")
+                    .negativeText("Fermer")
+                    .iconRes(R.drawable.ic_dizzy)
+                    .show();
+        }
+
+        mOnUserProfileChange.OnUserProfileChange(profile);
+
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                .replace(R.id.frame_container, new ViewProfileFragment(), "FRAG_VIEW_PROFILE")
+                .commit();
+    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -96,30 +122,14 @@ public class ConnectProfileFragment extends Fragment {
                     etUserPassword.setError("Un trou de mémoire ? Mmh ...");
                 } else {
                     AsyncLogin asyncLogin = new AsyncLogin(getActivity());
-                    asyncLogin.execute(Constants.URL_CAMPUS_LOGIN);
+                    asyncLogin.execute();
                 }
                 etUserID.setHint(bullshitHint[rand.nextInt(bullshitHint.length)]);
 
             }
         });
 
-        // GCM Receiver
-        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                SharedPreferences sharedPreferences =
-                        PreferenceManager.getDefaultSharedPreferences(context);
-                boolean sentToken = sharedPreferences
-                        .getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
-                if (sentToken) {
-                    //mInformationTextView.setText(getString(R.string.gcm_send_message));
-                    mdProgress.hide();
-                    Toast.makeText(getActivity(), "OK TOKEN SENT !", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getActivity(), "ERROR TOKEN !", Toast.LENGTH_SHORT).show();
-                }
-            }
-        };
+
 
 
         return rootView;
@@ -131,7 +141,6 @@ public class ConnectProfileFragment extends Fragment {
     class AsyncLogin extends AsyncTask<String, String, String> {
 
         private Context ctx;
-        private boolean errorsHasOccured = false, errorOmega = false, network = false;
         private String enPass;
 
         public AsyncLogin (Context ctx) {
@@ -145,22 +154,20 @@ public class ConnectProfileFragment extends Fragment {
             userPassword = etUserPassword.getText().toString();
             enPass = EncryptUtils.passBase64(userPassword);
 
-            if (Utilities.isPingOnline(ctx)) {
-                network = true;
-                mdProgress = new MaterialDialog.Builder(ctx)
-                        .title("Veuillez patienter ...")
-                        .content("Connexion au serveur ESEO")
-                        .negativeText("Annuler")
-                        .cancelable(false)
-                        .progress(true, 4, false)
-                        .callback(new MaterialDialog.ButtonCallback() {
-                            @Override
-                            public void onNegative(MaterialDialog dialog) {
-                                AsyncLogin.this.cancel(true);
-                            }
-                        })
-                        .show();
-            } else {
+            mdProgress = new MaterialDialog.Builder(ctx)
+                    .title("Veuillez patienter ...")
+                    .content("Connexion au serveur ESEO")
+                    .negativeText("Annuler")
+                    .cancelable(false)
+                    .progress(true, 4, false)
+                    .callback(new MaterialDialog.ButtonCallback() {
+                        @Override
+                        public void onNegative(MaterialDialog dialog) {
+                            AsyncLogin.this.cancel(true);
+                        }
+                    })
+                    .show();
+            /*
                 mdProgress = new MaterialDialog.Builder(ctx)
                         .title("Oups ...")
                         .content("Impossible d'accéder au réseau. Veuillez vérifier votre connexion, puis réessayer.")
@@ -175,7 +182,7 @@ public class ConnectProfileFragment extends Fragment {
                             }
                         })
                         .show();
-            }
+            }*/
 
 
         }
@@ -189,17 +196,13 @@ public class ConnectProfileFragment extends Fragment {
         @Override
         protected String doInBackground(String... urls) {
 
-            if (network) {
-                String enPass = EncryptUtils.passBase64(userPassword);
-                List<NameValuePair> pairs = new ArrayList<>();
-                pairs.add(new BasicNameValuePair("username", userID));
-                pairs.add(new BasicNameValuePair("password", enPass));
-                pairs.add(new BasicNameValuePair("hash", EncryptUtils.sha256(userID + enPass + getActivity().getResources().getString(R.string.SALT_SYNC_USER))));
+            List<NameValuePair> pairs = new ArrayList<>();
+            pairs.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.username), userID));
+            pairs.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.password), enPass));
+            pairs.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.hash),
+                    EncryptUtils.sha256(userID + enPass + getActivity().getResources().getString(R.string.MEMORY_SYNC_USER))));
 
-                return ConnexionUtils.postServerData(Constants.URL_LOGIN, pairs);
-            } else {
-                return "";
-            }
+            return ConnexionUtils.postServerData(Constants.URL_LOGIN, pairs);
         }
 
         // Once connexion is done
@@ -208,54 +211,54 @@ public class ConnectProfileFragment extends Fragment {
 
             String res;
 
-            if (network) {
+            if (Utilities.isNetworkDataValid(result)) {
 
-                mdProgress.hide();
+                //Log.d("RES", result);
 
                 if (result.length() > 2 && result.charAt(0) == '1') {
 
                     userName = result.substring(2);
 
-                    UserProfile profile = new UserProfile(ctx, userName, userID, userPassword);
-
-                    MaterialDialog md = new MaterialDialog.Builder(getActivity())
-                            .title("Bienvenue, " + profile.getFirstName() + " !")
-                            .negativeText("Fermer")
-                            .content("Votre profil a été synchronisé, vous bénéficiez désormais de toutes les fonctionnalités.\nProfitez-en !")
-                            .iconRes(R.drawable.ic_checked_user)
-                            .show();
-
-                    //profile.reverseName();
-
+                    profile = new UserProfile(ctx, userName, userID, userPassword);
                     profile.guessEmailAddress();
                     profile.registerProfileInPrefs(getActivity());
 
-                    mOnUserProfileChange.OnUserProfileChange(profile);
-
                     // Check Services, then start Registration class
                     if (Utilities.checkPlayServices(getActivity())) {
+                        mdProgress.setContent("Enregistrement de l'appareil");
                         // Start IntentService to register this application with GCM.
                         Intent intent = new Intent(getActivity(), RegistrationIntentService.class);
                         getActivity().startService(intent);
                     }
 
-                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    fragmentManager.beginTransaction()
-                            .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
-                            .replace(R.id.frame_container, new ViewProfileFragment(), "FRAG_VIEW_PROFILE")
-                            .commit();
                 } else {
-                    mdProgress.hide();
+                    mdProgress.dismiss();
                     res = result.contains("-2")?"Mauvaise combinaison identifiant - mot de passe\n" +
                             "Veuillez vérifier vos informations, puis réessayer.":"Erreur inconnue : " + result + "\nImpossible de valider votre connexion sur nos serveur.\n";
 
-                    MaterialDialog md = new MaterialDialog.Builder(ctx)
+                    mdProgress = new MaterialDialog.Builder(ctx)
                             .title("Oups ...")
                             .content(res)
                             .negativeText("Fermer")
                             .iconRes(R.drawable.ic_dizzy)
                             .show();
                 }
+            } else {
+                mdProgress.dismiss();
+                mdProgress = new MaterialDialog.Builder(ctx)
+                        .title("Oups ...")
+                        .content("Impossible d'accéder au réseau. Veuillez vérifier votre connexion, puis réessayer.")
+                        .negativeText("Fermer")
+                        .cancelable(false)
+                        .iconRes(R.drawable.ic_facepalm)
+                        .limitIconToDefaultSize()
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+                                AsyncLogin.this.cancel(true);
+                            }
+                        })
+                        .show();
             }
         }
     }

@@ -9,7 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import com.rascafr.test.matdesignfragment.R;
+import fr.bde_eseo.eseomega.R;
 
 /**
  * Created by Rascafr on 11/08/2015.
@@ -55,10 +55,22 @@ public class MyEventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         } else {
             EventItemViewHolder eivh = (EventItemViewHolder) holder;
             eivh.name.setText(ei.getName());
-            eivh.details.setText(ei.getShortedDetails());
+
+            if (ei.setIsPassed()) {
+                eivh.name.setTextColor(0xFF7F7F7F);
+            } else {
+                eivh.name.setTextColor(0xFF454545);
+            }
+            eivh.rlColor.setBackgroundColor(ei.getColor());
+
+            if (ei.getShortedDetails().length() > 1) {
+                eivh.details.setVisibility(View.VISIBLE);
+                eivh.details.setText(ei.getShortedDetails());
+            } else
+                eivh.details.setVisibility(View.GONE);
+
             eivh.dayNum.setText(ei.getDayNumero());
             eivh.dayName.setText(ei.getDayName());
-            eivh.rlColor.setBackgroundColor(ei.getColor());
         }
     }
 

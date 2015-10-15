@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +12,10 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.rascafr.test.matdesignfragment.R;
+import fr.bde_eseo.eseomega.R;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -23,7 +23,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -142,88 +141,88 @@ public class OrderDetailsFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            if (!Utilities.isPingOnline(getActivity())) {
-                this.cancel(true);
-            }
         }
 
         @Override
         protected String doInBackground(String... params) {
-            String resp;
 
             List<NameValuePair> pairs = new ArrayList<>();
-            pairs.add(new BasicNameValuePair("idcmd", String.valueOf(idcmd)));
-            pairs.add(new BasicNameValuePair("username", profile.getId()));
-            pairs.add(new BasicNameValuePair("password", profile.getPassword()));
-            pairs.add(new BasicNameValuePair("hash", EncryptUtils.sha256(getActivity().getResources().getString(R.string.SALT_SYNC_SINGLE) + String.valueOf(idcmd) + profile.getId() + profile.getPassword())));
-            resp = ConnexionUtils.postServerData(Constants.URL_SYNC_SINGLE, pairs);
+            pairs.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.idcmd), String.valueOf(idcmd)));
+            pairs.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.username), profile.getId()));
+            pairs.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.password), profile.getPassword()));
+            pairs.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.hash), EncryptUtils.sha256(getActivity().getResources().getString(R.string.MACRO_SYNC_SINGLE) + String.valueOf(idcmd) + profile.getId() + profile.getPassword())));
 
-            return resp;
+            return ConnexionUtils.postServerData(Constants.URL_SYNC_SINGLE, pairs);
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            try {
-                JSONArray array = new JSONArray(s);
 
-                if (s!= null && array.length() > 0) {
-                    JSONObject jsonSync = array.getJSONObject(0);
-                    tvOrderDate.setText("Votre commande du\n" + getFrenchDate(jsonSync.getString("datetime")));
-                    tvOrderNumero.setText(jsonSync.getString("strcmd") + " " + new DecimalFormat("000").format(jsonSync.getInt("modcmd")));
-                    String txtDesc = jsonSync.getString("resume");
-                    txtDesc = " - " + txtDesc.replaceAll("<br>", "\n - ");
-                    tvOrderDetails.setText(txtDesc);
-                    tvOrderPrice.setText(new DecimalFormat("0.00").format(jsonSync.getDouble("price")) + "€");
-                    ImageLoader.getInstance().displayImage(Constants.URL_ASSETS + jsonSync.getString("imgurl"), imgCategory);
-                    int color = 0, color2 = 0;
-                    switch (jsonSync.getInt("status")) {
-                        case HistoryItem.STATUS_PREPARING:
-                            color = getActivity().getResources().getColor(R.color.circle_preparing);
-                            color2 = getActivity().getResources().getColor(R.color.blue_light);
-                            break;
-                        case HistoryItem.STATUS_DONE:
-                            color = getActivity().getResources().getColor(R.color.circle_done);
-                            color2 = getActivity().getResources().getColor(R.color.gray_light);
-                            break;
-                        case HistoryItem.STATUS_READY:
-                            color = getActivity().getResources().getColor(R.color.circle_ready);
-                            color2 = getActivity().getResources().getColor(R.color.green_light);
-                            break;
-                        case HistoryItem.STATUS_NOPAID:
-                            color = getActivity().getResources().getColor(R.color.circle_error);
-                            color2 = getActivity().getResources().getColor(R.color.orange_light);
-                            break;
+            if (Utilities.isNetworkDataValid(s)) {
+                try {
+                    JSONArray array = new JSONArray(s);
+                    if (array.length() > 0) {
+                        JSONObject jsonSync = array.getJSONObject(0);
+                        tvOrderDate.setText("Votre commande du\n" + getFrenchDate(jsonSync.getString("datetime")));
+                        tvOrderNumero.setText(jsonSync.getString("strcmd") + " " + new DecimalFormat("000").format(jsonSync.getInt("modcmd")));
+                        String txtDesc = jsonSync.getString("resume");
+                        txtDesc = " - " + txtDesc.replaceAll("<br>", "\n - ");
+                        tvOrderDetails.setText(txtDesc);
+                        tvOrderPrice.setText(new DecimalFormat("0.00").format(jsonSync.getDouble("price")) + "€");
+                        ImageLoader.getInstance().displayImage(Constants.URL_ASSETS + jsonSync.getString("imgurl"), imgCategory);
+                        int color = 0, color2 = 0;
+                        switch (jsonSync.getInt("status")) {
+                            case HistoryItem.STATUS_PREPARING:
+                                color = getActivity().getResources().getColor(R.color.circle_preparing);
+                                color2 = getActivity().getResources().getColor(R.color.blue_light);
+                                break;
+                            case HistoryItem.STATUS_DONE:
+                                color = getActivity().getResources().getColor(R.color.circle_done);
+                                color2 = getActivity().getResources().getColor(R.color.gray_light);
+                                break;
+                            case HistoryItem.STATUS_READY:
+                                color = getActivity().getResources().getColor(R.color.circle_ready);
+                                color2 = getActivity().getResources().getColor(R.color.green_light);
+                                break;
+                            case HistoryItem.STATUS_NOPAID:
+                                color = getActivity().getResources().getColor(R.color.circle_error);
+                                color2 = getActivity().getResources().getColor(R.color.orange_light);
+                                break;
+                        }
+
+                        tvOrderDate.setVisibility(View.VISIBLE);
+                        tvOrderPrice.setVisibility(View.VISIBLE);
+                        tvOrderDetails.setVisibility(View.VISIBLE);
+                        tvOrderNumero.setVisibility(View.VISIBLE);
+                        tvDesc.setVisibility(View.VISIBLE);
+                        imgCategory.setVisibility(View.VISIBLE);
+                        rl1.setVisibility(View.VISIBLE);
+                        rl2.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.INVISIBLE);
+
+                        tvOrderPrice.setTextColor(color);
+                        tvDesc.setTextColor(color);
+                        rl1.setBackgroundColor(color);
+                        rl2.setBackgroundColor(color2);
+                    } else {
+                        progressBar.setVisibility(View.INVISIBLE);
+                        tvOrderDate.setVisibility(View.INVISIBLE);
+                        tvOrderPrice.setVisibility(View.INVISIBLE);
+                        tvOrderDetails.setVisibility(View.INVISIBLE);
+                        tvOrderNumero.setVisibility(View.INVISIBLE);
+                        tvDesc.setVisibility(View.INVISIBLE);
+                        imgCategory.setVisibility(View.INVISIBLE);
+                        rl1.setVisibility(View.INVISIBLE);
+                        rl2.setVisibility(View.INVISIBLE);
                     }
 
-                    tvOrderDate.setVisibility(View.VISIBLE);
-                    tvOrderPrice.setVisibility(View.VISIBLE);
-                    tvOrderDetails.setVisibility(View.VISIBLE);
-                    tvOrderNumero.setVisibility(View.VISIBLE);
-                    tvDesc.setVisibility(View.VISIBLE);
-                    imgCategory.setVisibility(View.VISIBLE);
-                    rl1.setVisibility(View.VISIBLE);
-                    rl2.setVisibility(View.VISIBLE);
-                    progressBar.setVisibility(View.INVISIBLE);
-
-                    tvOrderPrice.setTextColor(color);
-                    tvDesc.setTextColor(color);
-                    rl1.setBackgroundColor(color);
-                    rl2.setBackgroundColor(color2);
-                } else {
-                    progressBar.setVisibility(View.INVISIBLE);
-                    tvOrderDate.setVisibility(View.INVISIBLE);
-                    tvOrderPrice.setVisibility(View.INVISIBLE);
-                    tvOrderDetails.setVisibility(View.INVISIBLE);
-                    tvOrderNumero.setVisibility(View.INVISIBLE);
-                    tvDesc.setVisibility(View.INVISIBLE);
-                    imgCategory.setVisibility(View.INVISIBLE);
-                    rl1.setVisibility(View.INVISIBLE);
-                    rl2.setVisibility(View.INVISIBLE);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
+            } else {
+                Toast.makeText(getActivity(), "Connexion serveur impossible", Toast.LENGTH_SHORT).show();
+                getActivity().onBackPressed();
             }
 
             mHandler.postDelayed(updateTimerThread, RUN_UPDATE);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.rascafr.test.matdesignfragment" >
+    package="fr.bde_eseo.eseomega">
 
     <!-- Include following permission for Internet access -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -24,7 +24,7 @@
 
         <!-- Splash screen -->
         <activity
-            android:name="fr.bde_eseo.eseomega.SplashActivity"
+            android:name=".SplashActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme" >
@@ -36,14 +36,14 @@
         </activity>
 
         <activity
-            android:name="fr.bde_eseo.eseomega.GantierActivity"
+            android:name=".GantierActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
 
         <activity
-            android:name="fr.bde_eseo.eseomega.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden"
@@ -51,7 +51,7 @@
         </activity>
 
         <activity
-            android:name="fr.bde_eseo.eseomega.lacommande.IngredientsChooserActivity"
+            android:name=".lacommande.IngredientsChooserActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden"
@@ -59,7 +59,7 @@
         </activity>
 
         <activity
-            android:name="fr.bde_eseo.eseomega.lacommande.SecoElementChooserActivity"
+            android:name=".lacommande.SecoElementChooserActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden"
@@ -67,7 +67,7 @@
         </activity>
 
         <activity
-            android:name="fr.bde_eseo.eseomega.lacommande.ElementChooserActivity"
+            android:name=".lacommande.ElementChooserActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden"
@@ -75,7 +75,7 @@
         </activity>
 
         <activity
-            android:name="fr.bde_eseo.eseomega.news.ViewNewsActivity"
+            android:name=".news.ViewNewsActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden"
@@ -84,7 +84,7 @@
         </activity>
 
         <activity
-            android:name="fr.bde_eseo.eseomega.news.ImageViewActivity"
+            android:name=".news.ImageViewActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden"
@@ -93,7 +93,7 @@
         </activity>
 
         <activity
-            android:name="fr.bde_eseo.eseomega.community.ClubViewActivity"
+            android:name=".community.ClubViewActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden"
@@ -116,7 +116,7 @@
 
         <!-- [START gcm_listener] -->
         <service
-            android:name="fr.bde_eseo.eseomega.gcmpush.MyGcmListenerService"
+            android:name=".gcmpush.MyGcmListenerService"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
@@ -125,7 +125,7 @@
         <!-- [END gcm_listener] -->
         <!-- [START instanceId_listener] -->
         <service
-            android:name="fr.bde_eseo.eseomega.gcmpush.MyInstanceIDListenerService"
+            android:name=".gcmpush.MyInstanceIDListenerService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.gms.iid.InstanceID"/>
@@ -133,7 +133,7 @@
         </service>
         <!-- [END instanceId_listener] -->
         <service
-            android:name="fr.bde_eseo.eseomega.gcmpush.RegistrationIntentService"
+            android:name=".gcmpush.RegistrationIntentService"
             android:exported="false">
         </service>
 

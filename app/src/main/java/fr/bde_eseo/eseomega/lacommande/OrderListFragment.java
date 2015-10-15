@@ -1,6 +1,7 @@
 package fr.bde_eseo.eseomega.lacommande;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,8 +20,8 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.melnykov.fab.FloatingActionButton;
-import com.rascafr.test.matdesignfragment.BuildConfig;
-import com.rascafr.test.matdesignfragment.R;
+import fr.bde_eseo.eseomega.BuildConfig;
+import fr.bde_eseo.eseomega.R;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -57,7 +58,9 @@ public class OrderListFragment extends Fragment {
     public OrderListFragment() {}
 
     private RecyclerView recList;
-    private ProgressBar progressBar;
+    private ProgressBar progressBar, progressBarToken;
+    private View viewToken;
+    private FloatingActionButton fab;
     private MyHistoryAdapter mAdapter;
     private ArrayList<HistoryItem> historyList;
     private UserProfile userProfile;
@@ -80,6 +83,10 @@ public class OrderListFragment extends Fragment {
         firstDisplay = true;
         // Delay to update data
         run = true;
+
+        if (progressBarToken != null) progressBarToken.setVisibility(View.INVISIBLE);
+        if (fab != null) fab.setVisibility(View.VISIBLE);
+        if (viewToken != null) viewToken.setVisibility(View.INVISIBLE);
 
         if (mHandler == null) {
             mHandler = new android.os.Handler();
@@ -115,6 +122,8 @@ public class OrderListFragment extends Fragment {
         mAdapter = new MyHistoryAdapter(getActivity());
         recList = (RecyclerView) rootView.findViewById(R.id.cardHistory);
         progressBar = (ProgressBar) rootView.findViewById(R.id.progressHistoryList);
+        progressBarToken = (ProgressBar) rootView.findViewById(R.id.progressLoading);
+        viewToken = rootView.findViewById(R.id.viewCircle);
         tvNothing = (TextView) rootView.findViewById(R.id.tvListNothing);
         tvNothing2 = (TextView) rootView.findViewById(R.id.tvListNothing2);
         imgNothing = (ImageView) rootView.findViewById(R.id.imgNoCommand);
@@ -125,11 +134,15 @@ public class OrderListFragment extends Fragment {
         recList.setAdapter(mAdapter);
         recList.setVisibility(View.GONE);
         progressBar.setVisibility(View.GONE);
+        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.md_grey_500), PorterDuff.Mode.SRC_IN);
+        progressBarToken.setVisibility(View.INVISIBLE);
+        progressBarToken.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.md_white_1000), PorterDuff.Mode.SRC_IN);
+        viewToken.setVisibility(View.INVISIBLE);
         tvNothing.setVisibility(View.GONE);
         tvNothing2.setVisibility(View.GONE);
         imgNothing.setVisibility(View.GONE);
 
-        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
+        fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         fab.attachToRecyclerView(recList);
 
         // Change message
@@ -177,7 +190,14 @@ public class OrderListFragment extends Fragment {
                 TimeZone tz = Calendar.getInstance().getTimeZone();
                 int hourTimezone = tz.getOffset(System.currentTimeMillis()) - tz.getDSTSavings();
 
-                if (hourTimezone != ONE_HOUR_MILLIS) {
+                if (!userProfile.isCreated()) {
+                    new MaterialDialog.Builder(getActivity())
+                            .title("Vous n'êtes pas connecté")
+                            .content("Nous avons besoin de savoir qui vous êtes avant de pouvoir vous laisser commander.")
+                            .negativeText("D'accord")
+                            .cancelable(false)
+                            .show();
+                } else if (hourTimezone != ONE_HOUR_MILLIS) {
                     new MaterialDialog.Builder(getActivity())
                             .title("Erreur")
                             .content("L'accès à la Cafet ne peut se faire depuis un autre pays que la France.\nEnvoyez nous une carte postale !")
@@ -199,11 +219,12 @@ public class OrderListFragment extends Fragment {
                     /** Prepare data **/
                     long timestamp = System.currentTimeMillis() / 1000; // timestamp in seconds
                     params = new ArrayList<>();
-                    params.add(new BasicNameValuePair("client", userLogin));
-                    params.add(new BasicNameValuePair("tstp", "" + timestamp));
-                    params.add(new BasicNameValuePair("os", "" + Constants.APP_ID));
-                    params.add(new BasicNameValuePair("version", "" + versionName));
-                    params.add(new BasicNameValuePair("hash", EncryptUtils.sha256(getActivity().getResources().getString(R.string.SALT_GET_TOKEN) + userLogin + timestamp + Constants.APP_ID)));
+                    params.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.client), userLogin));
+                    params.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.password), userPass));
+                    params.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.tstp), "" + timestamp));
+                    params.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.os), "" + Constants.APP_ID));
+                    params.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.version), "" + versionName));
+                    params.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.hash), EncryptUtils.sha256(getActivity().getResources().getString(R.string.MESSAGE_GET_TOKEN) + userLogin + userPass + timestamp + Constants.APP_ID)));
 
                     /** Call async task **/
                     SyncTimeToken syncTimeToken = new SyncTimeToken(getActivity());
@@ -218,18 +239,14 @@ public class OrderListFragment extends Fragment {
                 @Override
                 public void onItemClick(View view, int position) {
 
-                    if (Utilities.isPingOnline(getActivity())) {
-                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                        OrderDetailsFragment fragment = new OrderDetailsFragment();
-                        fragment.setIdcmd(historyList.get(position).getCommandNumber());
-                        fragmentManager.beginTransaction()
-                                .setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.slide_in, R.anim.slide_out)
-                                .replace(R.id.frame_container, fragment, "FRAG_ORDER_DETAILS")
-                                .addToBackStack("BACK")
-                                .commit();
-                    } else {
-                        Toast.makeText(getActivity(), "Connexion au serveur impossible", Toast.LENGTH_SHORT).show();
-                    }
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    OrderDetailsFragment fragment = new OrderDetailsFragment();
+                    fragment.setIdcmd(historyList.get(position).getCommandNumber());
+                    fragmentManager.beginTransaction()
+                            .setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.slide_in, R.anim.slide_out)
+                            .replace(R.id.frame_container, fragment, "FRAG_ORDER_DETAILS")
+                            .addToBackStack("BACK")
+                            .commit();
                 }
             }
         ));
@@ -252,32 +269,34 @@ public class OrderListFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            if (!Utilities.isPingOnline(getActivity())) {
-                MaterialDialog progressDialog = new MaterialDialog.Builder(getActivity())
-                        .title("Erreur réseau")
-                        .content(Constants.ERROR_NETWORK)
-                        .cancelable(false)
-                        .negativeText("Fermer")
-                        .show();
-                SyncTimeToken.this.cancel(true);
-            }
+
+            progressBarToken.setVisibility(View.VISIBLE);
+            fab.setVisibility(View.INVISIBLE);
+            viewToken.setVisibility(View.VISIBLE);
         }
 
         @Override
         protected String doInBackground(String... sUrl) {
-            String s = ConnexionUtils.postServerData(Constants.URL_POST_TOKEN, params);
-            return s;
+            return ConnexionUtils.postServerData(Constants.URL_POST_TOKEN, params);
         }
 
         @Override
         protected void onPostExecute(String data) {
 
             /** Check if response is token, or an error **/
-            if (data == null || data.contains("-") || data.length() != 64) { // 64 : nb chars for a SHA256 value
+            if (!Utilities.isNetworkDataValid(data) || data.length() != 64 || data.contains("-")) { // 64 : nb chars for a SHA256 value
 
                 // Error
-                int e = (data != null && data.contains("-")) ? data.charAt(1) - 0x30 : -1;
+                int e = -1; // unknown error
+                if (data != null) {
+                    if (data.contains("<!DOCTYPE")) {
+                        e = Constants.ERROR_HOTSPOT;
+                    } else if (data.contains("-")) {
+                        e = data.charAt(1) - 0x30;
+                    }
+                }
                 String errorStr, errorCode;
+                //Log.d("DATA", "Error code : " + e);
 
                 switch (e) {
                     case Constants.ERROR_TIMESTAMP:
@@ -307,17 +326,27 @@ public class OrderListFragment extends Fragment {
                     case Constants.ERROR_BAD_VERSION:
                         errorStr = Constants.ERROR_BAD_VERSION_STR;
                         break;
+                    case Constants.ERROR_HOTSPOT:
+                        errorStr = Constants.ERROR_HOTSPOT_STR;
+                        break;
+                    case Constants.ERROR_NETWORK:
+                        errorStr = Constants.ERROR_NETWORK_STR;
+                        break;
                     default:
                         errorStr = Constants.ERROR_UNKNOWN + " :\n" + data;
                         break;
                 }
 
-                MaterialDialog progressDialog = new MaterialDialog.Builder(context)
-                                                .title("Erreur")
-                                                .content(errorStr)
-                                                .cancelable(false)
-                                                .negativeText("Fermer")
-                                                .show();
+                progressBarToken.setVisibility(View.INVISIBLE);
+                fab.setVisibility(View.VISIBLE);
+                viewToken.setVisibility(View.INVISIBLE);
+
+                new MaterialDialog.Builder(context)
+                        .title("Erreur")
+                        .content(errorStr)
+                        .cancelable(false)
+                        .negativeText("Fermer")
+                        .show();
 
             } else {
 
@@ -364,8 +393,6 @@ public class OrderListFragment extends Fragment {
     class SyncHistory extends AsyncTask<String, String, String> {
 
         private Context context;
-        private boolean isOffline;
-        private String sData;
         private List<NameValuePair> syncParam;
 
         public SyncHistory(Context context) {
@@ -382,41 +409,44 @@ public class OrderListFragment extends Fragment {
                 firstDisplay = false;
             }
 
-            if (Utilities.isPingOnline(getActivity())) {
-                syncParam.clear(); // in case of ...
-                syncParam.add(new BasicNameValuePair("client", userLogin));
-                syncParam.add(new BasicNameValuePair("password", userPass));
-                syncParam.add(new BasicNameValuePair("hash", EncryptUtils.sha256(getActivity().getResources().getString(R.string.SALT_HISTORY_USER) + userLogin + userPass)));
+            // Prepare param array
+            syncParam.clear(); // in case of ...
+            syncParam.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.client), userLogin));
+            syncParam.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.password), userPass));
+            syncParam.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.hash),
+                EncryptUtils.sha256(getActivity().getResources().getString(R.string.MESSAGE_HISTORY_USER) + userLogin + userPass)));
 
-                sData = Constants.URL_SYNC_HISTORY;
-                isOffline = false;
-            } else {
-                if (cacheHistoryJSON.exists()) {
-                    sData = Utilities.getStringFromFile(cacheHistoryJSON);
-                }
-                isOffline = true;
-            }
         }
 
         @Override
         protected String doInBackground(String... args) {
-            // Getting JSON from URL
+
+            // Prepare JSON String
             String jsonStr;
 
-            if (isOffline) {
-                jsonStr = sData; // data already contains JSON objects
-            } else {
-                jsonStr = ConnexionUtils.postServerData(sData, syncParam); // data contains only URL
-            }
+            // Try to fetch data from server
+            jsonStr = ConnexionUtils.postServerData(Constants.URL_SYNC_HISTORY, syncParam);
 
-            // bad password : do nothing
-            if (jsonStr != null && jsonStr.length() > 0) {
-                if (jsonStr.startsWith("-2")) {
-                    jsonStr = null;
-                } else if (jsonStr.charAt(0) == '1') {
-                    // good : delete
-                    jsonStr = jsonStr.substring(1);
+            // If data is empty
+            if (!Utilities.isNetworkDataValid(jsonStr)) {
+
+                // Fetch data from cache history
+                if (cacheHistoryJSON.exists()) {
+                    jsonStr = Utilities.getStringFromFile(cacheHistoryJSON);
                 } else {
+                    jsonStr = null; // force empty message
+                }
+
+            } else {
+
+                // Else, there is a server response : phone is online
+                if ((jsonStr.charAt(0) == '1')) {
+
+                    // good : delete server's validation flag
+                    jsonStr = jsonStr.substring(1);
+
+                } else {
+                    // other error / bad password (-2) : display nothing
                     jsonStr = null;
                 }
             }

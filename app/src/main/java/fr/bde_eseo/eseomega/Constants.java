@@ -31,7 +31,13 @@ public class Constants {
     public static final int NOTIF_CLUBS = 3;
     public static final int NOTIF_CAFET = 4;
     public static final int NOTIF_TIPS = 5;
+    public static final int NOTIF_UPDATE = 21;
     public static final int NOTIF_GANTIER = 42;
+    public static final int NOTIF_CONNECT = 99;
+    public static final double NOTIF_VERSION = 1.0; // Notification is valid if V_Push_App >= V_Push_Server
+    public static final String NOTIF_UPDATE_TITLE = "Impossible de recevoir les notifications";
+    public static final String NOTIF_UPDATE_TEXT = "Merci de mettre l'application à jour depuis le Play Store.";
+    public static final int NOTIF_UPDATE_FORCE= 147; // local only
 
     // Fragments ID
     public static final String TAG_FRAGMENT_ORDER_TABS = "fragment.tabs.order";
@@ -39,21 +45,21 @@ public class Constants {
     // URL's
     public static final String URL_SERVER = "http://217.199.187.59/francoisle.fr/";
     public static final String URL_ASSETS = URL_SERVER + "lacommande/assets/";
-    public static final String URL_JSON_LACMD_DATA = URL_SERVER + "lacommande/apps/syncData.php";
-    public static final String URL_POST_TOKEN = URL_SERVER + "lacommande/apps/syncDate-token.php"; // post ok
+    //public static final String URL_JSON_LACMD_DATA = URL_SERVER + "lacommande/apps/syncData.php";
     //public static final String URL_SYNC_HISTORY = URL_SERVER + "lacommande/apps/syncClientHistory.php"; // post ok
-    public static final String URL_CAMPUS_LOGIN = "http://campus.eseo.fr/login/index.php"; // post ok
-    public static final String URL_END_LOGIN =  URL_SERVER + "lacommande/apps/finaliserConnex.php"; // post ok
-    public static final String URL_GPGAME_POST_SCORES = URL_SERVER + "lacommande/apps/syncGPScores.php"; // post ok
+    //public static final String URL_GPGAME_POST_SCORES = URL_SERVER + "lacommande/apps/syncGPScores.php"; // post ok
     //public static final String URL_SYNC_SINGLE = URL_SERVER + "lacommande/apps/syncSingle.php"; // post ok
 
     // URL V2.1
     public static final String URL_LOGIN = URL_SERVER + "lacommande/apps/v21/connectProfile.php";
+    public static final String URL_POST_TOKEN = URL_SERVER + "lacommande/apps/v21/syncDate-token.php";
     public static final String URL_SYNC_HISTORY = URL_SERVER + "lacommande/apps/v21/syncClientHistory.php";
     public static final String URL_SYNC_SINGLE = URL_SERVER + "lacommande/apps/v21/syncClientHistorySingle.php";
     public static final String URL_SYNC_PUSH = URL_SERVER + "lacommande/apps/v21/registerPushClient.php";
     public static final String URL_POST_CART = URL_SERVER + "lacommande/apps/v21/syncOrder-token.php";
     public static final String URL_DESYNC_PUSH = URL_SERVER + "lacommande/apps/v21/unregisterPushClient.php";
+    public static final String URL_JSON_LACMD_DATA = URL_SERVER + "lacommande/apps/v21/syncData.php";
+    public static final String URL_GPGAME_POST_SCORES = URL_SERVER + "lacommande/apps/v21/syncGPScores.php";
 
     // Data from Naudet-Sonasi
     public static final String URL_SERVERBIS = "http://79.170.44.147/eseonews.fr/";
@@ -76,7 +82,8 @@ public class Constants {
                                                     "Bien tenté, mais vous ne pouvez pas tricher pour commander à la cafet avant les autres.";
 
     public static final int ERROR_USERREGISTER = 2;
-    public static final String ERROR_USERREGISTER_STR = "Vous n'êtes pas connecté à l'application.\nVotre profil est nécessaire afin d'accéder au service.";
+    public static final String ERROR_USERREGISTER_STR = "Votre mot de passe est incorrect.\n" +
+                                                    "Si vous l'avez changé depuis les services ESEO, merci de bien vouloir vous déconnecter puis reconnecter depuis l'onglet \"Mon profil\" de l'application";
 
     public static final int ERROR_SERVICE_OUT = 3;
     public static final String ERROR_SERVICE_OUT_STR = "Désolé ! On sait que vous avez faim. Mais la cafétéria n'est ouverte que pendant les périodes scolaires de 12h à 13h.";
@@ -97,10 +104,13 @@ public class Constants {
     public static final String ERROR_BAD_VERSION_STR = "Vous ne pouvez pas accéder au service car votre application n'est pas à jour.\n" +
             "Téléchargez la nouvelle version depuis le Play Store.";
 
+    public static final int ERROR_HOTSPOT = -2;
+    public static final String ERROR_HOTSPOT_STR = "La connexion semble passer par un hotspot : avez vous bien renseigné vos identifiants de connexion Wifi ?";
+
+    public static final int ERROR_NETWORK = -1;
+    public static final String ERROR_NETWORK_STR = "Impossible de se connecter au serveur. Veuillez vérifier votre connexion ou réessayer plus tard.";
 
     public static final String ERROR_UNKNOWN = "Veuillez réessayer plus tard, le service semble indisponible.";
-
-    public static final String ERROR_NETWORK = "Impossible de se connecter au serveur. Veuillez vérifier votre connexion ou réessayer plus tard.";
 
     // APP ID
     public static final String APP_ID = "ANDROID";

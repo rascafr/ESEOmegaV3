@@ -16,7 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.rascafr.test.matdesignfragment.R;
+import fr.bde_eseo.eseomega.R;
 
 import org.json.JSONArray;
 
@@ -71,20 +71,9 @@ public class TabListFood extends Fragment {
         recList.setLayoutManager(llm);
         recList.setAdapter(mAdapter);
 
-        // Check connectivity
-        if (Utilities.isPingOnline(getActivity())) {
-
-            // If online, download categories's data
-            AsyncGetData asyncGetData = new AsyncGetData();
-            asyncGetData.execute(Constants.URL_JSON_LACMD_DATA);
-
-        } else {
-
-            // Else set error message to user
-            tvNetStatus.setBackgroundColor(getActivity().getResources().getColor(R.color.md_prim_dark_red));
-            tvNetStatus.setText("Hors-ligne. Veuillez vérifier votre connexion.");
-
-        }
+        // Try to download categories's data
+        AsyncGetData asyncGetData = new AsyncGetData();
+        asyncGetData.execute(Constants.URL_JSON_LACMD_DATA);
 
         recList.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
             @Override
@@ -183,46 +172,55 @@ public class TabListFood extends Fragment {
         @Override
         protected void onPostExecute(JSONArray array) {
 
-            DataManager.getInstance().fillData(array);
+            // If network is ok, fill cafet items
+            if (array != null) {
 
-            // Associate data with Adapter
-            mAdapter.setFoodListArray(DataManager.getInstance().getCategories());
-            mAdapter.notifyDataSetChanged();
-            /*
+                DataManager.getInstance().fillData(array);
 
-            Log.d("JSON", "\n-- Categories --\n");
-            for (int i=0;i<DataManager.getInstance().getCategories().size();i++) {
-                Log.d("JSON", "  " + DataManager.getInstance().getCategories().get(i).toString() + "\n");
-            }
+                // Associate data with Adapter
+                mAdapter.setFoodListArray(DataManager.getInstance().getCategories());
+                mAdapter.notifyDataSetChanged();
+                /*
 
-            Log.d("JSON", "\n-- Menus --\n");
-            for (int i=0;i<DataManager.getInstance().getMenus().size();i++) {
-                Log.d("JSON", "  " + DataManager.getInstance().getMenus().get(i).toString() + "\n");
-            }
-
-            Log.d("JSON", "\n-- Elements --\n");
-            for (int i=0;i<DataManager.getInstance().getElements().size();i++) {
-                Log.d("JSON", "  " + DataManager.getInstance().getElements().get(i).toString() + "\n");
-            }
-
-            Log.d("JSON", "\n-- Ingredients --\n");
-            for (int i=0;i<DataManager.getInstance().getIngredients().size();i++) {
-                Log.d("JSON", "  " + DataManager.getInstance().getIngredients().get(i).toString() + "\n");
-            }
-            */
-
-            // Set GUI data
-            tvNetStatus.setText("Connexion effectuée !");
-            tvNetStatus.setBackgroundColor(getActivity().getResources().getColor(R.color.md_prim_dark_blue));
-
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    tvNetStatus.setVisibility(View.GONE);
+                Log.d("JSON", "\n-- Categories --\n");
+                for (int i=0;i<DataManager.getInstance().getCategories().size();i++) {
+                    Log.d("JSON", "  " + DataManager.getInstance().getCategories().get(i).toString() + "\n");
                 }
-            }, 2000);
 
+                Log.d("JSON", "\n-- Menus --\n");
+                for (int i=0;i<DataManager.getInstance().getMenus().size();i++) {
+                    Log.d("JSON", "  " + DataManager.getInstance().getMenus().get(i).toString() + "\n");
+                }
+
+                Log.d("JSON", "\n-- Elements --\n");
+                for (int i=0;i<DataManager.getInstance().getElements().size();i++) {
+                    Log.d("JSON", "  " + DataManager.getInstance().getElements().get(i).toString() + "\n");
+                }
+
+                Log.d("JSON", "\n-- Ingredients --\n");
+                for (int i=0;i<DataManager.getInstance().getIngredients().size();i++) {
+                    Log.d("JSON", "  " + DataManager.getInstance().getIngredients().get(i).toString() + "\n");
+                }
+                */
+
+                // Set GUI data
+                tvNetStatus.setText("Connexion effectuée !");
+                tvNetStatus.setBackgroundColor(getActivity().getResources().getColor(R.color.md_prim_dark_blue));
+
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvNetStatus.setVisibility(View.GONE);
+                    }
+                }, 2000);
+
+            } else {
+
+                // Else set error message to user
+                tvNetStatus.setBackgroundColor(getActivity().getResources().getColor(R.color.md_prim_dark_red));
+                tvNetStatus.setText("Hors-ligne. Veuillez vérifier votre connexion.");
+            }
         }
     }
 }

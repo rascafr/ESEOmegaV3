@@ -33,7 +33,7 @@ public class JSONUtils {
         HttpClient httpclient = new DefaultHttpClient();
         HttpPost httppost = new HttpPost(url);
 
-        if (Utilities.isPingOnline(ctx)) {
+        if (Utilities.isOnline(ctx)) {
 
             try {
                 // Execute HTTP Post Request
@@ -74,7 +74,7 @@ public class JSONUtils {
         HttpClient httpclient = new DefaultHttpClient();
         HttpPost httppost = new HttpPost(url);
 
-        if (Utilities.isPingOnline(ctx)) {
+        if (Utilities.isOnline(ctx)) {
 
             try {
                 // Execute HTTP Post Request

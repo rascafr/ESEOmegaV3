@@ -17,7 +17,7 @@ import java.util.Locale;
  */
 public class EventItem {
 
-    private static final String HOUR_PASS_ALLDAY = "00h02";
+    private static final String HOUR_PASS_ALLDAY = "00:02";
     private static final int MAX_CHAR_DESC = 36;
     private String name, details, club, url, lieu;
     private boolean isHeader;
@@ -62,31 +62,23 @@ public class EventItem {
     }
 
     // Like : Heure · club · lieu · description (size limited -> ~35 chars)
+    // V2.1 :
+    // À : heure début si != 00:02 · Fin : date fin si != date debut + heure fin si != heure debut
+    // Par : club si != null
     public void performShortedDetails () {
-        String sTime = getTimeAsString(), sLim = "", sT = null; // Time cannot be null !
-        boolean prevNotNull = false;
-        ArrayList<String> strings = new ArrayList<>();
-        strings.add(sTime); strings.add(club); strings.add(lieu); strings.add(details);
-        for (int i=0;i<strings.size();i++) {
+        String  sLim = "", sT = null; // Time cannot be null !
 
-            sT = strings.get(i);
+        String outFormat = "", stTime = getTimeAsString(this.date), endTime = getTimeAsString(this.datefin);
+        String dayStartStr = getDayAsString(this.date), dayEndStr = getDayAsString(this.datefin);
 
-            // Add '*' if previously successfully added char is not null
-            if (prevNotNull) {
-                sLim += " · ";
-            }
+        if (stTime.length() > 0) outFormat += "À : " + stTime;
+        if (stTime.length() > 0 && (!endTime.equals(stTime) || !dayEndStr.equals(dayStartStr))) outFormat += " · Fin : ";
+        if (!dayEndStr.equals(dayStartStr)) outFormat += dayEndStr + " ";
+        if (!endTime.equals(stTime)) outFormat += endTime;
+        if (outFormat.length() > 1 && club != null && club.length() > 0) outFormat += "\n";
+        if (club != null && club.length() > 0) outFormat += "Par : " + club;
 
-            if (sT != null && sT.length() != 0) {
-                sLim += sT;
-                prevNotNull = true;
-            } else
-                prevNotNull = false;
-        }
-        /*
-        if (club != null && club.length() != 0) sLim += sTime.length()>0?" · ":"" + club;
-        if (lieu != null && lieu.length() != 0) sLim += (club != null && club.length() != 0)?" · ":"" + lieu;
-        if (details != null && details.length() != 0) sLim += (lieu != null && lieu.length() != 0)?" · ":"" + details;*/
-        this.shorted = sLim;
+        this.shorted = outFormat;
     }
 
     // Get only, no operation -> faster in adapter
@@ -138,9 +130,9 @@ public class EventItem {
     }
 
     // If equal to hour_pass (00h02 ?) set it all day, no specific hour
-    public String getTimeAsString () {
-        SimpleDateFormat sdf = new SimpleDateFormat("HH'h'mm", Locale.FRANCE);
-        String sDate = sdf.format(this.date);
+    public String getTimeAsString (Date d) {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH':'mm", Locale.FRANCE);
+        String sDate = sdf.format(d);
         if (sDate.equals(HOUR_PASS_ALLDAY))
             sDate = "";
         return sDate;
@@ -158,6 +150,14 @@ public class EventItem {
         }
         this.datefin = datefin;
         this.date = date;
+    }
+
+    public String getDayAsString(Date d) {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd MMM", Locale.FRANCE);
+        String sDate = sdf.format(d);
+        if (sDate.equals(HOUR_PASS_ALLDAY))
+            sDate = "";
+        return sDate;
     }
 
     // Number as String, why ? for TextView call !
@@ -205,5 +205,9 @@ public class EventItem {
 
     public void setIsPassed(boolean isPassed) {
         this.isPassed = isPassed;
+    }
+
+    public boolean setIsPassed () {
+        return isPassed;
     }
 }

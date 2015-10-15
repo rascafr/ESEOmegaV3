@@ -2,12 +2,15 @@ package fr.bde_eseo.eseomega.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -40,6 +43,9 @@ public class Utilities {
     }
 
     // V2.0 : checks if network is reachable
+    // Try to connect directly to server using project's functions instead, because it causes problems on Galaxy S3 and other phone
+    // By the way, it slows the phone because process is not asynchronous
+    @Deprecated
     public static boolean isPingOnline(Context context) {
 
         if (context != null) {
@@ -50,7 +56,7 @@ public class Utilities {
                 Runtime runtime = Runtime.getRuntime();
                 try {
 
-                    Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+                    Process ipProcess = runtime.exec("/system/bin/ping -c 1 217.199.187.59");
                     int exitValue = ipProcess.waitFor();
                     return (exitValue == 0);
 
@@ -129,7 +135,8 @@ public class Utilities {
         }
     }
 
-    // Do not use : prefer isPingOnline which checks a real connexion
+    // Use it only to check if device "could be" online
+    // It returns true even if it's connected to a hotspot without account (cf ESEO's Wifi)
     @Deprecated
     public static boolean isOnline(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -164,4 +171,31 @@ public class Utilities {
         return true;
     }
 
+    public static boolean isTabletDevice(Context activityContext) {
+        boolean device_large = ((activityContext.getResources().getConfiguration().screenLayout &
+                Configuration.SCREENLAYOUT_SIZE_MASK) ==
+                Configuration.SCREENLAYOUT_SIZE_LARGE);
+
+        if (device_large) {
+            DisplayMetrics metrics = new DisplayMetrics();
+            Activity activity = (Activity) activityContext;
+            activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+            if (metrics.densityDpi == DisplayMetrics.DENSITY_DEFAULT
+                    || metrics.densityDpi == DisplayMetrics.DENSITY_HIGH
+                    || metrics.densityDpi == DisplayMetrics.DENSITY_MEDIUM
+                    || metrics.densityDpi == DisplayMetrics.DENSITY_TV
+                    || metrics.densityDpi == DisplayMetrics.DENSITY_XHIGH) {
+                Toast.makeText(activityContext, "Tablet mode enabled", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Simple way to check if data is ok or not **/
+    /** Returns false if data is null, length == 0 or begins with <!DOCTYPE>, true otherwise **/
+    public static boolean isNetworkDataValid (String data) {
+        return data != null && data.length() > 0 && !data.startsWith("<!DOCTYPE");
+    }
 }
