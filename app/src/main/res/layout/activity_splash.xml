@@ -6,8 +6,8 @@
 
     <ImageView
         android:id="@+id/imgLogo"
-        android:layout_width="240dp"
-        android:layout_height="240dp"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
         android:scaleType="fitCenter"
         android:src="@drawable/logowhite_noborder"
         android:layout_centerVertical="true"
@@ -16,8 +16,8 @@
     <ProgressBar
         android:id="@+id/idLoad"
         style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="240dp"
-        android:layout_height="240dp"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
         android:max="500"
         android:progress="0"
         android:progressDrawable="@drawable/circular_load"

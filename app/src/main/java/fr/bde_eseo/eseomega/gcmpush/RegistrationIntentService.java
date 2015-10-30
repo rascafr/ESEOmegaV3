@@ -30,11 +30,9 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 import fr.bde_eseo.eseomega.R;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import fr.bde_eseo.eseomega.Constants;
@@ -166,19 +164,19 @@ public class RegistrationIntentService extends IntentService {
             profile.readProfilePromPrefs(RegistrationIntentService.this);
 
             if (profile.isCreated()) {
-                List<NameValuePair> pairs = new ArrayList<>();
-                pairs.add(new BasicNameValuePair(RegistrationIntentService.this.getResources().getString(R.string.client), profile.getId()));
-                pairs.add(new BasicNameValuePair(RegistrationIntentService.this.getResources().getString(R.string.password), profile.getPassword()));
-                pairs.add(new BasicNameValuePair(RegistrationIntentService.this.getResources().getString(R.string.os), Constants.APP_ID));
-                pairs.add(new BasicNameValuePair(RegistrationIntentService.this.getResources().getString(R.string.token), params[0]));
-                pairs.add(new BasicNameValuePair(RegistrationIntentService.this.getResources().getString(R.string.hash), EncryptUtils.sha256(
+                HashMap<String, String> pairs = new HashMap<>();
+                pairs.put(RegistrationIntentService.this.getResources().getString(R.string.client), profile.getId());
+                pairs.put(RegistrationIntentService.this.getResources().getString(R.string.password), profile.getPassword());
+                pairs.put(RegistrationIntentService.this.getResources().getString(R.string.os), Constants.APP_ID);
+                pairs.put(RegistrationIntentService.this.getResources().getString(R.string.token), params[0]);
+                pairs.put(RegistrationIntentService.this.getResources().getString(R.string.hash), EncryptUtils.sha256(
                         getResources().getString(R.string.MESSAGE_SYNC_PUSH) +
                                 profile.getId() +
                                 profile.getPassword() +
                                 Constants.APP_ID +
-                                params[0])));
+                                params[0]));
 
-                pushResult = ConnexionUtils.postServerData(Constants.URL_SYNC_PUSH, pairs);
+                pushResult = ConnexionUtils.postServerData(Constants.URL_SYNC_PUSH, pairs, RegistrationIntentService.this);
 
                 // Save token into profile
                 profile.setPushToken(params[0]);

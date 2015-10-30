@@ -23,8 +23,6 @@ import com.melnykov.fab.FloatingActionButton;
 import fr.bde_eseo.eseomega.BuildConfig;
 import fr.bde_eseo.eseomega.R;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,7 +30,9 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import fr.bde_eseo.eseomega.Constants;
@@ -53,7 +53,11 @@ import fr.bde_eseo.eseomega.utils.Utilities;
  */
 public class OrderListFragment extends Fragment {
 
+    // Timezoone : CET ou GMT+01:00
+    // ID Timezone : Europe/Paris
     public static final int ONE_HOUR_MILLIS = 3600000;
+    public static final String TZ_EUROPE = "GMT+01:00";
+    public static final String TZ_ID_PARIS = "Europe/Paris";
 
     public OrderListFragment() {}
 
@@ -66,12 +70,12 @@ public class OrderListFragment extends Fragment {
     private UserProfile userProfile;
     private String userLogin, userPass;
     private static Handler mHandler;
-    private static final int RUN_UPDATE = 20000;
+    private static final int RUN_UPDATE = 15000;
     private static final int RUN_START = 100;
     private static boolean run, backgrounded = false;
     private static boolean firstDisplay = true;
     private File cacheHistoryJSON;
-    private List<NameValuePair> params;
+    private HashMap<String, String> params;
     private long lastUpdate = 0;
 
     private TextView tvNothing, tvNothing2;
@@ -184,11 +188,15 @@ public class OrderListFragment extends Fragment {
                 Calendar cal = Calendar.getInstance(); //Create Calendar-Object
                 //cal.setTime(new Date());               //Set the Calendar to now
                 int hour = cal.get(Calendar.HOUR_OF_DAY); //Get the hour from the calendar
-                int minute = cal.get(Calendar.MINUTE);
+                //int minute = cal.get(Calendar.MINUTE);
+
                 //debug
                 if (BuildConfig.DEBUG) hour = 12;
                 TimeZone tz = Calendar.getInstance().getTimeZone();
-                int hourTimezone = tz.getOffset(System.currentTimeMillis()) - tz.getDSTSavings();
+                //String tzStr = tz.getDisplayName(false, TimeZone.SHORT, Locale.FRANCE); // En locale France + daylight désactivé, le timezone est toujours GMT+01:00
+
+                String tzStr = tz.getID();
+                //Toast.makeText(getActivity(), "TZ : " + tzStr + ", " + tz.getID(), Toast.LENGTH_SHORT).show();
 
                 if (!userProfile.isCreated()) {
                     new MaterialDialog.Builder(getActivity())
@@ -197,7 +205,7 @@ public class OrderListFragment extends Fragment {
                             .negativeText("D'accord")
                             .cancelable(false)
                             .show();
-                } else if (hourTimezone != ONE_HOUR_MILLIS) {
+                } else if (!tzStr.equalsIgnoreCase(TZ_ID_PARIS)) {
                     new MaterialDialog.Builder(getActivity())
                             .title("Erreur")
                             .content("L'accès à la Cafet ne peut se faire depuis un autre pays que la France.\nEnvoyez nous une carte postale !")
@@ -218,13 +226,13 @@ public class OrderListFragment extends Fragment {
 
                     /** Prepare data **/
                     long timestamp = System.currentTimeMillis() / 1000; // timestamp in seconds
-                    params = new ArrayList<>();
-                    params.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.client), userLogin));
-                    params.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.password), userPass));
-                    params.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.tstp), "" + timestamp));
-                    params.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.os), "" + Constants.APP_ID));
-                    params.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.version), "" + versionName));
-                    params.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.hash), EncryptUtils.sha256(getActivity().getResources().getString(R.string.MESSAGE_GET_TOKEN) + userLogin + userPass + timestamp + Constants.APP_ID)));
+                    params = new HashMap<>();
+                    params.put(getActivity().getResources().getString(R.string.client), userLogin);
+                    params.put(getActivity().getResources().getString(R.string.password), userPass);
+                    params.put(getActivity().getResources().getString(R.string.tstp), "" + timestamp);
+                    params.put(getActivity().getResources().getString(R.string.os), "" + Constants.APP_ID);
+                    params.put(getActivity().getResources().getString(R.string.version), "" + versionName);
+                    params.put(getActivity().getResources().getString(R.string.hash), EncryptUtils.sha256(getActivity().getResources().getString(R.string.MESSAGE_GET_TOKEN) + userLogin + userPass + timestamp + Constants.APP_ID));
 
                     /** Call async task **/
                     SyncTimeToken syncTimeToken = new SyncTimeToken(getActivity());
@@ -277,7 +285,7 @@ public class OrderListFragment extends Fragment {
 
         @Override
         protected String doInBackground(String... sUrl) {
-            return ConnexionUtils.postServerData(Constants.URL_POST_TOKEN, params);
+            return ConnexionUtils.postServerData(Constants.URL_POST_TOKEN, params, getActivity());
         }
 
         @Override
@@ -393,7 +401,7 @@ public class OrderListFragment extends Fragment {
     class SyncHistory extends AsyncTask<String, String, String> {
 
         private Context context;
-        private List<NameValuePair> syncParam;
+        private HashMap<String, String> syncParam;
 
         public SyncHistory(Context context) {
             this.context = context;
@@ -402,19 +410,19 @@ public class OrderListFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            syncParam = new ArrayList<>();
+            syncParam = new HashMap<>();
             run = false;
             if (firstDisplay) {
                 progressBar.setVisibility(View.VISIBLE);
+                recList.setVisibility(View.INVISIBLE);
                 firstDisplay = false;
             }
 
             // Prepare param array
             syncParam.clear(); // in case of ...
-            syncParam.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.client), userLogin));
-            syncParam.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.password), userPass));
-            syncParam.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.hash),
-                EncryptUtils.sha256(getActivity().getResources().getString(R.string.MESSAGE_HISTORY_USER) + userLogin + userPass)));
+            syncParam.put(getActivity().getResources().getString(R.string.client), userLogin);
+            syncParam.put(getActivity().getResources().getString(R.string.password), userPass);
+            syncParam.put(getActivity().getResources().getString(R.string.hash), EncryptUtils.sha256(getActivity().getResources().getString(R.string.MESSAGE_HISTORY_USER) + userLogin + userPass));
 
         }
 
@@ -425,7 +433,7 @@ public class OrderListFragment extends Fragment {
             String jsonStr;
 
             // Try to fetch data from server
-            jsonStr = ConnexionUtils.postServerData(Constants.URL_SYNC_HISTORY, syncParam);
+            jsonStr = ConnexionUtils.postServerData(Constants.URL_SYNC_HISTORY, syncParam, getActivity());
 
             // If data is empty
             if (!Utilities.isNetworkDataValid(jsonStr)) {

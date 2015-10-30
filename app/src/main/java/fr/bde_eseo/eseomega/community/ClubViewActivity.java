@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +33,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fr.bde_eseo.eseomega.Constants;
+import fr.bde_eseo.eseomega.news.ImageViewActivity;
 
 /**
  * Created by Rascafr on 31/08/2015.
@@ -47,6 +49,7 @@ public class ClubViewActivity extends AppCompatActivity {
     private ArrayList<MixedItem> items;
     private MyMembersAdapter mAdapter;
     private RecyclerView recList;
+    private RelativeLayout rlClubPicture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +77,7 @@ public class ClubViewActivity extends AppCompatActivity {
         tvDesc = (TextView) findViewById(R.id.tvDescClub);
         tvNoMember = (TextView) findViewById(R.id.tvNoMember);
         imgClub = (ImageView) findViewById(R.id.imgClub);
+        rlClubPicture = (RelativeLayout) findViewById(R.id.rlClubPicture);
 
         iWeb = (ImageView) findViewById(R.id.icoWeb);
         iFb = (ImageView) findViewById(R.id.icoFb);
@@ -264,6 +268,16 @@ public class ClubViewActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 intentToBrowser(clubItem.getLinkedin());
+            }
+        });
+
+        // Club picture clic : open it wide
+        rlClubPicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(ClubViewActivity.this, ImageViewActivity.class);
+                myIntent.putExtra(Constants.KEY_IMG, clubItem.getImg());
+                startActivity(myIntent);
             }
         });
     }

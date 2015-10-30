@@ -37,17 +37,14 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.iid.InstanceID;
 import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import fr.bde_eseo.eseomega.BuildConfig;
-import fr.bde_eseo.eseomega.R;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 
 import fr.bde_eseo.eseomega.adapter.NavDrawerListAdapter;
 import fr.bde_eseo.eseomega.community.CommunityFragment;
@@ -71,6 +68,7 @@ import fr.bde_eseo.eseomega.utils.ImageUtils;
 import fr.bde_eseo.eseomega.utils.Utilities;
 
 import java.io.File;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -301,6 +299,10 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         prefs_Read = getSharedPreferences(Constants.PREFS_APP_WELCOME, 0);
         prefs_Write = prefs_Read.edit();
 
+        // For V2.1.1, prevent profile suppression
+        prefs_Write.putString(Constants.PREFS_APP_VERSION, BuildConfig.VERSION_NAME);
+        prefs_Write.apply();
+
         if (prefs_Read.getBoolean(Constants.PREFS_APP_WELCOME_DATA, true)) {
             new MaterialDialog.Builder(this)
                     .title("Bienvenue !")
@@ -315,7 +317,7 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
                             mDrawerLayout.openDrawer(mDrawerList);
                             prefs_Write.putBoolean(Constants.PREFS_APP_WELCOME_DATA, false);
                             prefs_Write.putString(Constants.PREFS_APP_VERSION, BuildConfig.VERSION_NAME); // prevent next message
-                            prefs_Write.commit();
+                            prefs_Write.apply();
                         }
                     })
                     .show();
@@ -340,12 +342,19 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
                                 OnUserProfileChange(profile);
                                 prefs_Write.putBoolean(Constants.PREFS_APP_WELCOME_DATA, false); // prevents from previous message
                                 prefs_Write.putString(Constants.PREFS_APP_VERSION, BuildConfig.VERSION_NAME);
-                                prefs_Write.commit();
+                                prefs_Write.apply();
                             }
                         })
                         .show();
             }
         }
+
+        // Test Token
+        // If changed -> send it
+        /*Intent intent = new Intent(this, RegistrationIntentService.class);
+        this.startService(intent);
+        Log.d("PUSH", "Current Token saved : " + profile.getPushToken());*/
+
 
         // Test tablet mode
         // TODO V2.1.1

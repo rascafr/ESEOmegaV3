@@ -1,43 +1,37 @@
 package fr.bde_eseo.eseomega.lacommande.tabs;
 
+import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.melnykov.fab.FloatingActionButton;
-import fr.bde_eseo.eseomega.R;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
-import java.util.Objects;
+import java.util.HashMap;
 
 import fr.bde_eseo.eseomega.Constants;
+import fr.bde_eseo.eseomega.R;
 import fr.bde_eseo.eseomega.lacommande.DataManager;
 import fr.bde_eseo.eseomega.lacommande.MyCartAdapter;
 import fr.bde_eseo.eseomega.lacommande.OrderTabsFragment;
 import fr.bde_eseo.eseomega.lacommande.model.LacmdMenu;
-import fr.bde_eseo.eseomega.lacommande.model.LacmdRoot;
 import fr.bde_eseo.eseomega.listeners.RecyclerItemClickListener;
 import fr.bde_eseo.eseomega.utils.ConnexionUtils;
-import fr.bde_eseo.eseomega.utils.EncryptUtils;
 import fr.bde_eseo.eseomega.utils.Utilities;
 
 
@@ -50,6 +44,8 @@ public class TabCartView extends Fragment {
     private RecyclerView recList;
     private MyCartAdapter mAdapter;
     private EditText etInstr;
+    private View viewOrder;
+    private ProgressBar progressBarOrder;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -64,6 +60,11 @@ public class TabCartView extends Fragment {
         tv1.setVisibility(View.VISIBLE);
         tv2.setVisibility(View.VISIBLE);
         img.setVisibility(View.VISIBLE);
+        viewOrder = v.findViewById(R.id.viewCircle);
+        viewOrder.setVisibility(View.INVISIBLE);
+        progressBarOrder = (ProgressBar) v.findViewById(R.id.progressLoading);
+        progressBarOrder.setVisibility(View.INVISIBLE);
+        progressBarOrder.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.md_white_1000), PorterDuff.Mode.SRC_IN);
 
         // Database model and view
         mAdapter = new MyCartAdapter(getActivity());
@@ -126,6 +127,7 @@ public class TabCartView extends Fragment {
                             .title("Ajouter un commentaire ?")
                             .positiveText("Finaliser la commande")
                             .negativeText("Annuler")
+                            .cancelable(false)
                             .callback(new MaterialDialog.ButtonCallback() {
                                 @Override
                                 public void onPositive(MaterialDialog dialog) {
@@ -134,9 +136,9 @@ public class TabCartView extends Fragment {
 
                                             // Convert InputText into formatted string without Emojis / Unicode characters
                                             etInstr
-                                            .getText()
-                                            .toString()
-                                            .trim());
+                                                    .getText()
+                                                    .toString()
+                                                    .trim());
 
                                     new MaterialDialog.Builder(getActivity())
                                             .title("Valider la commande ?")
@@ -227,11 +229,11 @@ public class TabCartView extends Fragment {
             String resp = null;
 
             try {
-                List<NameValuePair> pairs = new ArrayList<>();
-                pairs.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.token), DataManager.getInstance().getToken()));
-                pairs.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.data), Base64.encodeToString(JSONstr.getBytes("UTF-8"), Base64.NO_WRAP)));
-                pairs.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.instructions), Base64.encodeToString(instr.getBytes("UTF-8"), Base64.NO_WRAP)));
-                resp = ConnexionUtils.postServerData(Constants.URL_POST_CART, pairs);
+                HashMap<String, String> pairs = new HashMap<>();
+                pairs.put(getActivity().getResources().getString(R.string.token), DataManager.getInstance().getToken());
+                pairs.put(getActivity().getResources().getString(R.string.data), Base64.encodeToString(JSONstr.getBytes("UTF-8"), Base64.NO_WRAP));
+                pairs.put(getActivity().getResources().getString(R.string.instructions), Base64.encodeToString(instr.getBytes("UTF-8"), Base64.NO_WRAP));
+                resp = ConnexionUtils.postServerData(Constants.URL_POST_CART, pairs, getActivity());
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -242,11 +244,19 @@ public class TabCartView extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+
+            progressBarOrder.setVisibility(View.VISIBLE);
+            floatingShop.setVisibility(View.INVISIBLE);
+            viewOrder.setVisibility(View.VISIBLE);
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+
+            progressBarOrder.setVisibility(View.INVISIBLE);
+            floatingShop.setVisibility(View.VISIBLE);
+            viewOrder.setVisibility(View.INVISIBLE);
 
             if (Utilities.isNetworkDataValid(s)) {
                 if (s.equals("1")) {
@@ -270,7 +280,7 @@ public class TabCartView extends Fragment {
                 } else {
                     new MaterialDialog.Builder(getActivity())
                             .title("Oups")
-                            .content("Erreur avec les données envoyées / mauvaise réponse du serveur (" + s + ")")
+                            .content("Erreur avec les données envoyées / mauvaise réponse du serveur.")
                             .negativeText("Fermer")
                             .callback(new MaterialDialog.ButtonCallback() {
                                 @Override

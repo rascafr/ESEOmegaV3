@@ -1,13 +1,16 @@
 package fr.bde_eseo.eseomega.lacommande;
 
+import android.animation.ObjectAnimator;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -17,8 +20,6 @@ import android.widget.Toast;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import fr.bde_eseo.eseomega.R;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,6 +29,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -50,9 +52,10 @@ public class OrderDetailsFragment extends Fragment {
     private ProgressBar progressBar;
     private RelativeLayout rl1, rl2;
     private int idcmd;
-    private Handler mHandler;
-    private static final int RUN_UPDATE = 20000;
-    private boolean run;
+    private static Handler mHandler;
+    private static final int RUN_UPDATE = 15000;
+    private static final int RUN_START = 100;
+    private static boolean run;
     private UserProfile profile;
 
     @Override
@@ -92,8 +95,7 @@ public class OrderDetailsFragment extends Fragment {
         getActivity().getWindow().setAttributes(layout);
 
         // Delay to update data
-        run = true;
-        mHandler = new android.os.Handler();
+
 
         //idcmd = -1; // in case of
 
@@ -106,13 +108,25 @@ public class OrderDetailsFragment extends Fragment {
 
     @Override
     public void onResume() {
-        run = true;
-        mHandler.postDelayed(updateTimerThread, 0);
         super.onResume();
+
+        // Delay to update data
+        run = true;
+
+        if (mHandler == null) {
+            mHandler = new android.os.Handler();
+            mHandler.postDelayed(updateTimerThread, RUN_START);
+        } else {
+            mHandler.removeCallbacks(updateTimerThread);
+            mHandler.postDelayed(updateTimerThread, RUN_START);
+        }
     }
 
     @Override
     public void onPause() {
+        if( mHandler != null) {
+            mHandler.removeCallbacks(updateTimerThread);
+        }
         run = false;
         super.onPause();
     }
@@ -126,12 +140,16 @@ public class OrderDetailsFragment extends Fragment {
                 if (run) {
                     AsyncDetails async = new AsyncDetails();
                     async.execute();
+                    run = false;
                 }
             } catch (NullPointerException e) { // Stop handler if fragment disappears
                 mHandler.removeCallbacks(updateTimerThread);
+                run = false;
             }
         }
     };
+
+
 
     /**
      * Async task to download order details
@@ -141,18 +159,24 @@ public class OrderDetailsFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            run = false;
         }
 
         @Override
         protected String doInBackground(String... params) {
 
-            List<NameValuePair> pairs = new ArrayList<>();
-            pairs.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.idcmd), String.valueOf(idcmd)));
-            pairs.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.username), profile.getId()));
-            pairs.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.password), profile.getPassword()));
-            pairs.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.hash), EncryptUtils.sha256(getActivity().getResources().getString(R.string.MACRO_SYNC_SINGLE) + String.valueOf(idcmd) + profile.getId() + profile.getPassword())));
+            if (getActivity() != null) {
 
-            return ConnexionUtils.postServerData(Constants.URL_SYNC_SINGLE, pairs);
+                HashMap<String, String> pairs = new HashMap<>();
+                pairs.put(getActivity().getResources().getString(R.string.idcmd), String.valueOf(idcmd));
+                pairs.put(getActivity().getResources().getString(R.string.username), profile.getId());
+                pairs.put(getActivity().getResources().getString(R.string.password), profile.getPassword());
+                pairs.put(getActivity().getResources().getString(R.string.hash), EncryptUtils.sha256(getActivity().getResources().getString(R.string.MACRO_SYNC_SINGLE) + String.valueOf(idcmd) + profile.getId() + profile.getPassword()));
+
+                return ConnexionUtils.postServerData(Constants.URL_SYNC_SINGLE, pairs, getActivity());
+            } else {
+                return null;
+            }
         }
 
         @Override
@@ -221,8 +245,17 @@ public class OrderDetailsFragment extends Fragment {
                     e.printStackTrace();
                 }
             } else {
-                Toast.makeText(getActivity(), "Connexion serveur impossible", Toast.LENGTH_SHORT).show();
-                getActivity().onBackPressed();
+                if (getActivity() != null) {
+
+                    Toast.makeText(getActivity(), "Connexion serveur impossible", Toast.LENGTH_SHORT).show();
+                    new Handler().postDelayed(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            getActivity().onBackPressed();
+                        }
+                    }, 500);
+                }
             }
 
             mHandler.postDelayed(updateTimerThread, RUN_UPDATE);
@@ -233,6 +266,9 @@ public class OrderDetailsFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        run = false;
+        mHandler.removeCallbacks(updateTimerThread);
+
         WindowManager.LayoutParams layout = getActivity().getWindow().getAttributes();
         layout.screenBrightness = oldScreenBrightness;
         getActivity().getWindow().setAttributes(layout);

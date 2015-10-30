@@ -1,24 +1,22 @@
 package fr.bde_eseo.eseomega.utils;
 
-import android.util.Log;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
+import android.content.Context;
+import android.system.ErrnoException;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.ConnectException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Rascafr on 31/07/2015.
@@ -30,37 +28,68 @@ public class ConnexionUtils {
 
     // Send data with POST method, and returns the server's response
     // V2.0 : no more '\n' char
-    public static String postServerData(String url, List<NameValuePair> nameValuePairs) {
+    // V3.0 : android 6.0 support
+    public static String postServerData(String sUrl, HashMap<String, String> postDataParams, Context ctx) {
 
-        String result = null;
+        String result = "";
+        URL url = null;
 
-        // Create a new HttpClient and Post Header
-        HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost(url);
+        if (Utilities.isOnline(ctx)) {
+            try {
+                url = new URL(sUrl);
+                try {
 
-        try {
-            // Add your data
-            httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+                    HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                    httpURLConnection.setRequestMethod("POST");
+                    httpURLConnection.setReadTimeout(10000);
+                    httpURLConnection.setConnectTimeout(15000);
+                    httpURLConnection.setDoInput(true);
+                    httpURLConnection.setDoOutput(true);
 
-            // Execute HTTP Post Request
-            HttpResponse response = httpclient.execute(httppost);
-            InputStream is = response.getEntity().getContent();
+                    if (postDataParams != null) {
+                        OutputStream os = httpURLConnection.getOutputStream();
+                        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                        writer.write(getPostDataString(postDataParams));
 
-            InputStreamReader isr = new InputStreamReader(is, "utf8");
-            BufferedReader reader = new BufferedReader(isr);
-            //Log.d("InputStreamReader", "Charset encoding : " + isr.getEncoding());
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line).append("\n");
+                        writer.flush();
+                        writer.close();
+                        os.close();
+                    }
+                    int responseCode = httpURLConnection.getResponseCode();
+
+                    if (responseCode == HttpURLConnection.HTTP_OK) {
+                        String line;
+                        BufferedReader br = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
+                        while ((line = br.readLine()) != null) {
+                            result += line;
+                        }
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
             }
-            is.close();
-            result = sb.toString().replace("\n", ""); // Correction buffer \n;
-
-        } catch (IOException e) {
-            //Log.i(LOG_KEY_ERROR, e.getMessage());
         }
 
         return result;
+    }
+
+    private static String getPostDataString(HashMap<String, String> params) throws UnsupportedEncodingException {
+        StringBuilder result = new StringBuilder();
+        boolean first = true;
+        for(Map.Entry<String, String> entry : params.entrySet()){
+            if (first)
+                first = false;
+            else
+                result.append("&");
+
+            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+            result.append("=");
+            result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+        }
+
+        return result.toString();
     }
 }

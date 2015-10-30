@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.system.ErrnoException;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,10 +29,9 @@ import fr.bde_eseo.eseomega.utils.Utilities;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-
+import java.net.ConnectException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -196,13 +196,16 @@ public class ConnectProfileFragment extends Fragment {
         @Override
         protected String doInBackground(String... urls) {
 
-            List<NameValuePair> pairs = new ArrayList<>();
-            pairs.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.username), userID));
-            pairs.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.password), enPass));
-            pairs.add(new BasicNameValuePair(getActivity().getResources().getString(R.string.hash),
-                    EncryptUtils.sha256(userID + enPass + getActivity().getResources().getString(R.string.MEMORY_SYNC_USER))));
+            HashMap<String, String> pairs = new HashMap<>();
+            pairs.put(getActivity().getResources().getString(R.string.username), userID);
+            pairs.put(getActivity().getResources().getString(R.string.password), enPass);
+            pairs.put(getActivity().getResources().getString(R.string.hash), EncryptUtils.sha256(userID + enPass + getActivity().getResources().getString(R.string.MEMORY_SYNC_USER)));
 
-            return ConnexionUtils.postServerData(Constants.URL_LOGIN, pairs);
+            if (Utilities.isOnline(getActivity())) {
+                return ConnexionUtils.postServerData(Constants.URL_LOGIN, pairs, getActivity());
+            } else {
+                return null;
+            }
         }
 
         // Once connexion is done
@@ -234,7 +237,7 @@ public class ConnectProfileFragment extends Fragment {
                 } else {
                     mdProgress.dismiss();
                     res = result.contains("-2")?"Mauvaise combinaison identifiant - mot de passe\n" +
-                            "Veuillez vérifier vos informations, puis réessayer.":"Erreur inconnue : " + result + "\nImpossible de valider votre connexion sur nos serveur.\n";
+                            "Veuillez vérifier vos informations, puis réessayer.":"Erreur inconnue, impossible de valider votre connexion sur nos serveurs.\n";
 
                     mdProgress = new MaterialDialog.Builder(ctx)
                             .title("Oups ...")

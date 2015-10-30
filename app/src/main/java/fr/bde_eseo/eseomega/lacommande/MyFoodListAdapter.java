@@ -2,6 +2,8 @@ package fr.bde_eseo.eseomega.lacommande;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Build;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,13 +68,19 @@ public class MyFoodListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         LacmdCategory fc = foodCategoryArrayList.get(position);
 
-        if (getItemViewType(position) == TYPE_FOOD_ITEM) { // News Item
+        if (getItemViewType(position) == TYPE_FOOD_ITEM) { // Food Item
             FoodListViewHolder fvh = (FoodListViewHolder) viewHolder;
 
             fvh.vName.setText(fc.getName());
             fvh.vPrice.setText(fc.getBeginPriceAsStr());
             fvh.vSmallText.setText(fc.getSmallText());
             ImageLoader.getInstance().displayImage(fc.getImgUrl(), fvh.vImg, this.options);
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                fvh.cardView.setPreventCornerOverlap(false);
+            } else {
+                fvh.cardView.setPreventCornerOverlap(true); // Only supported if Android Version is >= Lollipop
+            }
         }
 
     }
@@ -100,6 +108,7 @@ public class MyFoodListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         protected TextView vSmallText;
         protected ImageView vImg;
         protected TextView vPrice;
+        protected CardView cardView;
 
         public FoodListViewHolder(View v) {
             super(v);
@@ -107,6 +116,7 @@ public class MyFoodListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             vSmallText = (TextView)  v.findViewById(R.id.foodSmall);
             vImg = (ImageView) v.findViewById(R.id.foodPicture);
             vPrice = (TextView) v.findViewById(R.id.foodMore);
+            cardView = (CardView) v.findViewById(R.id.card_food_list);
         }
     }
 }

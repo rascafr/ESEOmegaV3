@@ -22,13 +22,12 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.Timer;
@@ -989,13 +988,13 @@ public class GantierActivity extends Activity implements SensorEventListener {
                 @Override
                 protected String doInBackground(String... params) {
 
-                    List<NameValuePair> pairs = new ArrayList<>();
-                    pairs.add(new BasicNameValuePair(GantierActivity.this.getResources().getString(R.string.client), profile.getId()));
-                    pairs.add(new BasicNameValuePair(GantierActivity.this.getResources().getString(R.string.score), "" + score));
-                    pairs.add(new BasicNameValuePair(GantierActivity.this.getResources().getString(R.string.hash),
-                            EncryptUtils.sha256(GantierActivity.this.getResources().getString(R.string.HEADER_SYNC_SCORES) + profile.getId() + score)));
+                    HashMap<String, String> pairs = new HashMap<>();
+                    pairs.put(GantierActivity.this.getResources().getString(R.string.client), profile.getId());
+                    pairs.put(GantierActivity.this.getResources().getString(R.string.score), "" + score);
+                    pairs.put(GantierActivity.this.getResources().getString(R.string.hash),
+                            EncryptUtils.sha256(GantierActivity.this.getResources().getString(R.string.HEADER_SYNC_SCORES) + profile.getId() + score));
 
-                    return ConnexionUtils.postServerData(Constants.URL_GPGAME_POST_SCORES, pairs);
+                    return ConnexionUtils.postServerData(Constants.URL_GPGAME_POST_SCORES, pairs, GantierActivity.this);
                 }
 
                 @Override

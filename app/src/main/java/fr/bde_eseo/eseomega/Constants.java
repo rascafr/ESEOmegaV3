@@ -125,7 +125,7 @@ public class Constants {
     public static final String KEY_NEWS_LINK = "news.link";
     public static final String KEY_NEWS_IMGARRAY = "news.imgarray";
     public static final String KEY_NEWS_HTML = "news.html";
-    public static final String KEY_IMG = "news.img";
+    public static final String KEY_IMG = "activity.wide.img";
     public static final String KEY_CLUB_VIEW = "clubs.viewitem";
     public static final String KEY_MAIN_INTENT = "main.intent.start";
     public static final String KEY_MAIN_TITLE = "main.intent.title";

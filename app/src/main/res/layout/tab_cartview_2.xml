@@ -6,11 +6,11 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyList"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        />
+        android:visibility="visible" />
 
 
     <RelativeLayout
@@ -102,6 +102,34 @@
         android:layout_marginBottom="28dp"
         android:layout_alignBottom="@+id/relativeLayout6"
         android:layout_alignRight="@+id/relativeLayout2"
-        android:layout_alignEnd="@+id/relativeLayout2"/>
+        android:layout_alignEnd="@+id/relativeLayout2"
+        android:visibility="visible" />
+
+    <View
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:background="@drawable/circle_order"
+        android:layout_gravity="bottom|end"
+        android:visibility="invisible"
+        android:id="@+id/viewCircle"
+        android:layout_marginBottom="28dp"
+        android:layout_alignBottom="@+id/relativeLayout6"
+        android:layout_alignRight="@+id/relativeLayout2"
+        android:layout_alignEnd="@+id/relativeLayout2" />
+
+    <ProgressBar
+        android:id="@+id/progressLoading"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:indeterminate="true"
+        android:layout_margin="10dp"
+        android:layout_gravity="bottom|end"
+        android:visibility="visible"
+        android:layout_alignTop="@+id/viewCircle"
+        android:layout_alignLeft="@+id/viewCircle"
+        android:layout_alignStart="@+id/viewCircle"
+        android:layout_alignBottom="@+id/viewCircle"
+        android:layout_alignRight="@+id/viewCircle"
+        android:layout_alignEnd="@+id/viewCircle" />
 
 </RelativeLayout>

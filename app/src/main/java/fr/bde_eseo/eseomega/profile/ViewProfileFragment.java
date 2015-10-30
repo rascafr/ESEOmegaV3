@@ -23,11 +23,9 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import fr.bde_eseo.eseomega.R;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -175,19 +173,19 @@ public class ViewProfileFragment extends Fragment {
 
         @Override
         protected String doInBackground(UserProfile ... params) {
-            List<NameValuePair> pairs = new ArrayList<>();
-            pairs.add(new BasicNameValuePair(getResources().getString(R.string.client), this.profile.getId()));
-            pairs.add(new BasicNameValuePair(getResources().getString(R.string.password), this.profile.getPassword()));
-            pairs.add(new BasicNameValuePair(getResources().getString(R.string.os), Constants.APP_ID));
-            pairs.add(new BasicNameValuePair(getResources().getString(R.string.token), this.profile.getPushToken()));
-            pairs.add(new BasicNameValuePair(getResources().getString(R.string.hash), EncryptUtils.sha256(
+            HashMap<String, String> pairs = new HashMap<>();
+            pairs.put(getResources().getString(R.string.client), this.profile.getId());
+            pairs.put(getResources().getString(R.string.password), this.profile.getPassword());
+            pairs.put(getResources().getString(R.string.os), Constants.APP_ID);
+            pairs.put(getResources().getString(R.string.token), this.profile.getPushToken());
+            pairs.put(getResources().getString(R.string.hash), EncryptUtils.sha256(
                     getResources().getString(R.string.MESSAGE_DESYNC_PUSH) +
                             this.profile.getId() +
                             this.profile.getPassword() +
                             Constants.APP_ID +
-                            this.profile.getPushToken())));
+                            this.profile.getPushToken()));
 
-            return ConnexionUtils.postServerData(Constants.URL_DESYNC_PUSH, pairs);
+            return ConnexionUtils.postServerData(Constants.URL_DESYNC_PUSH, pairs, getActivity());
         }
 
         @Override

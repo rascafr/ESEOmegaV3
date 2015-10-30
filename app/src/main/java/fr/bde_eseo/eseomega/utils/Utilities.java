@@ -46,7 +46,7 @@ public class Utilities {
     // Try to connect directly to server using project's functions instead, because it causes problems on Galaxy S3 and other phone
     // By the way, it slows the phone because process is not asynchronous
     @Deprecated
-    public static boolean isPingOnline(Context context) {
+    /*public static boolean isPingOnline(Context context) {
 
         if (context != null) {
 
@@ -68,7 +68,7 @@ public class Utilities {
             } else
                 return false;
         } return false;
-    }
+    }*/
 
     public static String convertStreamToString(InputStream is) {
     /*
@@ -137,7 +137,6 @@ public class Utilities {
 
     // Use it only to check if device "could be" online
     // It returns true even if it's connected to a hotspot without account (cf ESEO's Wifi)
-    @Deprecated
     public static boolean isOnline(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();

@@ -24,6 +24,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:background="#a01a1a1a"
+        android:id="@+id/rlClubPicture"
         android:layout_above="@+id/relativeLayout4" >
 
         <TextView

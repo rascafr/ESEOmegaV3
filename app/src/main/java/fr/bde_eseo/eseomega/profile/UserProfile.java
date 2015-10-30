@@ -191,7 +191,7 @@ public class UserProfile {
         prefs_Write.putBoolean(Constants.PREFS_USER_PROFILE_EXISTS, this.isCreated);
         prefs_Write.putString(Constants.PREFS_USER_PROFILE_PICTURE, this.picturePath);
         prefs_Write.putString(Constants.PREFS_USER_PROFILE_PUSH_TOKEN, this.pushToken);
-        prefs_Write.commit();
+        prefs_Write.apply();
     }
 
     public void readProfilePromPrefs (Context context) {

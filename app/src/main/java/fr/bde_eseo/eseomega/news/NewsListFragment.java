@@ -197,7 +197,7 @@ public class NewsListFragment extends Fragment {
                             prefs_Read.getString(Constants.PREFS_NEWS_LAST_DOWNLOAD_DATE, "jamais")));
                         } else {
                             prefs_Write.putString(Constants.PREFS_NEWS_LAST_DOWNLOAD_DATE, Utilities.getCalendarAsString());
-                            prefs_Write.commit();
+                            prefs_Write.apply();
                         }
                     }
 

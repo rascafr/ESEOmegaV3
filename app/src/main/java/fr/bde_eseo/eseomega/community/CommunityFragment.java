@@ -6,9 +6,11 @@ import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -23,6 +25,8 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+
+import fr.bde_eseo.eseomega.BuildConfig;
 import fr.bde_eseo.eseomega.R;
 
 import org.json.JSONArray;
@@ -250,6 +254,11 @@ public class CommunityFragment extends Fragment {
             ClubViewHolder cvh = (ClubViewHolder) holder;
             cvh.name.setText(ci.getName());
             cvh.desc.setText(ci.getDesc());
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                cvh.cardView.setPreventCornerOverlap(false);
+            } else {
+                cvh.cardView.setPreventCornerOverlap(true); // Only supported if Android Version is >= Lollipop
+            }
             ImageLoader.getInstance().displayImage(ci.getImg(), cvh.img, options);
         }
 
@@ -263,12 +272,14 @@ public class CommunityFragment extends Fragment {
 
             protected TextView name, desc;
             protected ImageView img;
+            protected CardView cardView;
 
             public ClubViewHolder(View v) {
                 super(v);
                 name = (TextView) v.findViewById(R.id.tvClubName);
                 desc = (TextView) v.findViewById(R.id.tvClubDetails);
                 img = (ImageView) v.findViewById(R.id.imgClub);
+                cardView = (CardView) v.findViewById(R.id.cardCommunity);
             }
         }
 

@@ -1,6 +1,8 @@
 package fr.bde_eseo.eseomega.events;
 
 import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,7 +63,11 @@ public class MyEventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             } else {
                 eivh.name.setTextColor(0xFF454545);
             }
-            eivh.rlColor.setBackgroundColor(ei.getColor());
+
+            // For RelativeLayout : get background drawable, then change color
+            //LayerDrawable layerDrawable = (LayerDrawable) eivh.rlColor.getBackground();
+            //eivh.rlColor.setBackgroundColor(ei.getColor());
+            ((GradientDrawable)eivh.rlColor.getBackground()).setColor(ei.getColor());
 
             if (ei.getShortedDetails().length() > 1) {
                 eivh.details.setVisibility(View.VISIBLE);
