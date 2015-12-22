@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">ESEOmega</string>
+    <string name="app_name_inge">Éditions Ingénews</string>
     <string name="app_version_name">2.1.1</string>
     <string name="app_version_code">20</string>
 
@@ -12,6 +13,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <string name="action_ingenews">Édition Ingénews</string>
     <string name="action_info">Info</string>
     <string name="action_share">Partager</string>
     <string name="action_browser">Ouvrir dans le navigateur</string>
@@ -121,6 +123,9 @@ Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. N
 
     <string name="empty_header_club">Aucun club trouvé</string>
     <string name="empty_desc_club">Pourtant, on est pas tout seuls !\nDes clubs à l\'ESEO, y\'en a plein.\nVérifiez l\'état de votre connexion internet, puis rafraîchissez cette onglet.</string>
+
+    <string name="empty_header_inge">Aucune édition Ingénews trouvée</string>
+    <string name="empty_desc_inge">L\'équipe d\'Ingénews n\'a peut être pas encore mis en ligne leur édition !\nAu passage, vérifiez votre connexion internet.</string>
 
 
 </resources>

@@ -2,12 +2,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
 
+    <item android:id="@+id/action_ingenews"
+          android:title="@string/action_ingenews"
+          android:icon="@drawable/ic_inge_small"
+          app:showAsAction="ifRoom" />
+
     <item android:id="@+id/action_info"
           android:title="@string/action_info"
           android:icon="@drawable/ic_info"
           app:showAsAction="ifRoom" />
-
-
 
     <!--<item android:id="@+id/action_settings"
         android:title="@string/action_settings"

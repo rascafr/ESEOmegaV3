@@ -67,6 +67,7 @@ public class Constants {
     public static final String URL_JSON_EVENTS = URL_SERVERBIS + "jsondata/events_data/events.json";
     public static final String URL_JSON_CLUBS = URL_SERVERBIS + "jsondata/clubs_data/clubs.json";
     public static final String URL_NEWS_ANDROID = URL_SERVERBIS + "getData.php?smtype=ANDROID&";
+    public static final String URL_JSON_INGENEWS = URL_SERVERBIS + "jsondata/ingenews_data/ingenews.php";
 
     // JSON TAG
     public static final String JSON_TAG_CAT = "categories";

@@ -51,6 +51,8 @@ import fr.bde_eseo.eseomega.community.CommunityFragment;
 import fr.bde_eseo.eseomega.events.EventsFragment;
 import fr.bde_eseo.eseomega.gcmpush.QuickstartPreferences;
 import fr.bde_eseo.eseomega.gcmpush.RegistrationIntentService;
+import fr.bde_eseo.eseomega.ingenews.IngeListActivity;
+import fr.bde_eseo.eseomega.news.SimpleHTML;
 import fr.bde_eseo.eseomega.profile.ConnectProfileFragment;
 import fr.bde_eseo.eseomega.lacommande.DataManager;
 import fr.bde_eseo.eseomega.lacommande.OrderTabsFragment;
@@ -435,6 +437,12 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
                         }
                     })
                     .show();
+                return true;
+
+            case R.id.action_ingenews:
+
+                Intent i = new Intent(MainActivity.this, IngeListActivity.class);
+                startActivity(i);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

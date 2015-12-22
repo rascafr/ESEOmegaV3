@@ -329,7 +329,7 @@ public class NewsListFragment extends Fragment {
                         // On clic : intent to new activity
                         if (!ni.isHeader() && !ni.isFooter()) { // a simple news article
 
-                            Intent myIntent = new Intent(getActivity(), ViewNewsActivity.class);
+                            Intent myIntent = new Intent(getActivity(), ViewNewsActivityWV.class);
                             myIntent.putExtra(Constants.KEY_NEWS_TITLE, ni.getName());
                             myIntent.putExtra(Constants.KEY_NEWS_AUTHOR, ni.getAuthor());
                             myIntent.putExtra(Constants.KEY_NEWS_IMGARRAY, ni.getImgLinks());

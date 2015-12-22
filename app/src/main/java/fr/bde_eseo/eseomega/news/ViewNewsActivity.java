@@ -85,7 +85,10 @@ public class ViewNewsActivity extends AppCompatActivity {
             tvAuthor = (TextView) findViewById(R.id.tvAuthor);
             tvAuthor.setText(newsItem.getAuthor());
             tvHtml = (TextView) findViewById(R.id.tvHtml);
-            tvHtml.setText(Html.fromHtml(newsItem.getData()));
+
+            SimpleHTML simpleHTML = new SimpleHTML(newsItem.getData());
+            simpleHTML.simplify();
+            tvHtml.setText(Html.fromHtml(simpleHTML.getSimpleHTML()));
             tvHtml.setMovementMethod(LinkMovementMethod.getInstance());
             mAdapter.notifyDataSetChanged();
         }

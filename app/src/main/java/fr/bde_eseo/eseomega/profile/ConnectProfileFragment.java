@@ -214,6 +214,8 @@ public class ConnectProfileFragment extends Fragment {
 
             String res;
 
+            Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();
+
             if (Utilities.isNetworkDataValid(result)) {
 
                 //Log.d("RES", result);
