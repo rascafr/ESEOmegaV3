@@ -197,4 +197,8 @@ public class Utilities {
     public static boolean isNetworkDataValid (String data) {
         return data != null && data.length() > 0 && !data.startsWith("<!DOCTYPE");
     }
+
+    /**
+     * Returns the delay
+     */
 }

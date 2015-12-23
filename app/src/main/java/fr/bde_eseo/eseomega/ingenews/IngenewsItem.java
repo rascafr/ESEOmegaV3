@@ -5,6 +5,11 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
+import java.util.Locale;
+
+import fr.bde_eseo.eseomega.utils.SimplyDate;
+
 /**
  * Created by Rascafr on 22/12/2015.
  * Sur la bonne idée de Mr Naudet
@@ -15,11 +20,11 @@ public class IngenewsItem {
     private long size;
     private String name, date, file, details;
 
-    private final static long MBYTE = 1048576;
+    private final static double MBYTE = 1048576.0;
     private final static String MBYTE_STR = " Mio";
-    private final static long KBYTE = 1024;
+    private final static double KBYTE = 1024.0;
     private final static String KBYTE_STR = " Kio";
-    private final static long BYTE = 1;
+    private final static double BYTE = 1.0;
     private final static String BYTE_STR = " octets";
 
 
@@ -32,8 +37,10 @@ public class IngenewsItem {
         this.date = obj.getString("date");
         this.file = obj.getString("file");
         this.size = obj.getLong("size");
-        this.details = date + " · " + getFormattedSize();
-        Log.d("INGE", name + " , " + details);
+
+        SimplyDate simplyDate = new SimplyDate(date);
+        this.details = simplyDate.simplify() + " · " + getFormattedSize();
+        //Log.d("INGE", name + " , " + details);
     }
 
     public String getName() {
@@ -50,11 +57,11 @@ public class IngenewsItem {
 
     public String getFormattedSize() {
         if (size >= MBYTE) {
-            return (size / MBYTE) + MBYTE_STR;
+            return new DecimalFormat("0.0").format(size / MBYTE) + MBYTE_STR;
         } else if (size >= KBYTE && size < MBYTE) {
-            return (size / KBYTE) + KBYTE_STR;
+            return new DecimalFormat("0.0").format(size / KBYTE) + KBYTE_STR;
         } else {
-            return (size / BYTE) + BYTE_STR;
+            return new DecimalFormat("0.0").format(size / BYTE) + BYTE_STR;
         }
     }
 

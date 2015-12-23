@@ -9,15 +9,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyList"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:divider="@drawable/drawer_divider"
-            android:dividerHeight="0.7dp"
-            android:footerDividersEnabled="true"
-            android:drawSelectorOnTop="true"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyList"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:divider="@drawable/drawer_divider"
+                android:dividerHeight="0.7dp"
+                android:footerDividersEnabled="true"
+                android:drawSelectorOnTop="true"
+                android:layout_above="@+id/tvInfoIngenews"/>
+
+            <TextView
+                android:id="@+id/tvInfoIngenews"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:textStyle="italic"
+                android:textColor="@color/md_grey_500"
+                android:text="Cette page regroupe l'ensemble des éditions Ingénews que le club a mis en ligne sur nos serveurs.\nESEOmega n'est en aucun cas responsable du contenu contenu proposé."/>
+
+
+        </RelativeLayout>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

@@ -183,8 +183,6 @@ public class ConnectProfileFragment extends Fragment {
                         })
                         .show();
             }*/
-
-
         }
 
         @Override
@@ -214,11 +212,7 @@ public class ConnectProfileFragment extends Fragment {
 
             String res;
 
-            Toast.makeText(getActivity(), result, Toast.LENGTH_SHORT).show();
-
             if (Utilities.isNetworkDataValid(result)) {
-
-                //Log.d("RES", result);
 
                 if (result.length() > 2 && result.charAt(0) == '1') {
 
