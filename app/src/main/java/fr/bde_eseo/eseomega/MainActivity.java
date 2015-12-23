@@ -5,15 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
-import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -23,22 +18,14 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.android.gms.iid.InstanceID;
 import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -46,36 +33,27 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
+import java.io.File;
+import java.util.ArrayList;
+
 import fr.bde_eseo.eseomega.adapter.NavDrawerListAdapter;
 import fr.bde_eseo.eseomega.community.CommunityFragment;
 import fr.bde_eseo.eseomega.events.EventsFragment;
 import fr.bde_eseo.eseomega.gcmpush.QuickstartPreferences;
-import fr.bde_eseo.eseomega.gcmpush.RegistrationIntentService;
-import fr.bde_eseo.eseomega.ingenews.IngeListActivity;
-import fr.bde_eseo.eseomega.news.SimpleHTML;
-import fr.bde_eseo.eseomega.profile.ConnectProfileFragment;
-import fr.bde_eseo.eseomega.lacommande.DataManager;
-import fr.bde_eseo.eseomega.lacommande.OrderTabsFragment;
-import fr.bde_eseo.eseomega.profile.ViewProfileFragment;
 import fr.bde_eseo.eseomega.hintsntips.TipsFragment;
+import fr.bde_eseo.eseomega.ingenews.IngeListActivity;
 import fr.bde_eseo.eseomega.interfaces.OnItemAddToCart;
 import fr.bde_eseo.eseomega.interfaces.OnUserProfileChange;
-import fr.bde_eseo.eseomega.model.NavDrawerItem;
-import fr.bde_eseo.eseomega.profile.UserProfile;
+import fr.bde_eseo.eseomega.lacommande.DataManager;
 import fr.bde_eseo.eseomega.lacommande.OrderListFragment;
+import fr.bde_eseo.eseomega.lacommande.OrderTabsFragment;
+import fr.bde_eseo.eseomega.model.NavDrawerItem;
 import fr.bde_eseo.eseomega.news.NewsListFragment;
-import fr.bde_eseo.eseomega.utils.ConnexionUtils;
-import fr.bde_eseo.eseomega.utils.EncryptUtils;
+import fr.bde_eseo.eseomega.profile.ConnectProfileFragment;
+import fr.bde_eseo.eseomega.profile.UserProfile;
+import fr.bde_eseo.eseomega.profile.ViewProfileFragment;
 import fr.bde_eseo.eseomega.utils.ImageUtils;
 import fr.bde_eseo.eseomega.utils.Utilities;
-
-import java.io.File;
-import java.io.IOException;
-import java.security.MessageDigest;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity implements OnUserProfileChange, OnItemAddToCart {
 
@@ -83,34 +61,13 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
     private DrawerLayout mDrawerLayout;
-    private RecyclerView recList;
     private ActionBarDrawerToggle mDrawerToggle;
 
-    // GCM
-    //private BroadcastReceiver mRegistrationBroadcastReceiver;
-
-    // Store app verification
-    private final static String SIGNATURE = "mM6h5mqKyeuhXgBF8SLnMBKc7BE=";
-
-    // Log TAG
-    //private static final String TAG = "ESEOmain";
-
-    // Help Text
-    private static final String HELP_DIALOG_TEXT =  "Cette application est l'application officielle ESEOmega pour Android.\n\n" +
-                                                    "Développeur :\nFrançois Leparoux\n\n" +
-                                                    "Support technique :\ndevelopers.eseomega@gmail.com\n\n" +
-                                                    "© 2015 ESEOmega";
     // Developer mail
     private static final String MAIL_DIALOG = "developers.eseomega@gmail.com";
 
     // Others constant values
     public static final int MAX_PROFILE_SIZE = 256; // seems good
-
-    // Version app
-    private String appVersion = "2.0";
-
-    // nav drawer title
-    private CharSequence mDrawerTitle;
 
     // used to store app title
     private CharSequence mTitle;
@@ -142,13 +99,13 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
 
         // Global UI View
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
+        toolbar.setPadding(0, Utilities.getStatusBarHeight(this), 0, 0);
         setSupportActionBar(toolbar);
         mTitle = getTitle();
 
         // Check app auth
-        boolean installPlayStore = verifyInstaller(this);
-        boolean installSigned = checkAppSignature(this);
+        boolean installPlayStore = Utilities.verifyInstaller(this);
+        boolean installSigned = Utilities.checkAppSignature(this);
 
         if (!BuildConfig.DEBUG && (!installPlayStore || !installSigned)) {
             new MaterialDialog.Builder(this)
@@ -169,19 +126,13 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                //Log.d("NOTIF", "onReceive !");
                 SharedPreferences sharedPreferences =
                         PreferenceManager.getDefaultSharedPreferences(context);
                 boolean sentToken = sharedPreferences.getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
                 ConnectProfileFragment mFragment = (ConnectProfileFragment) getSupportFragmentManager().findFragmentByTag("frag0");
                 if (mFragment != null) {
                     mFragment.setPushRegistration(sentToken);
-                    //Log.d("FRAG", "mFragment = " + (mFragment.isVisible() ? "visible" : "invisible"));
-                } else {
-                    //Log.d("FRAG", "mFragment = null");
                 }
-
-
             }
         };
 
@@ -271,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
                     new MaterialDialog.Builder(this)
                             .title(title)
                             .content(message)
-                            .negativeText("Fermer")
+                            .negativeText(R.string.dialog_close)
                             .show();
                 }
             }
@@ -350,50 +301,14 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
                         .show();
             }
         }
-
-        // Test Token
-        // If changed -> send it
-        /*Intent intent = new Intent(this, RegistrationIntentService.class);
-        this.startService(intent);
-        Log.d("PUSH", "Current Token saved : " + profile.getPushToken());*/
-
-
-        // Test tablet mode
-        // TODO V2.1.1
-        /*Utilities.isTabletDevice(this);
-
-        boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
-        if (tabletSize) {
-            // do something
-            Toast.makeText(this, "Tablet mode enabled !", Toast.LENGTH_SHORT).show();
-        } else {
-            // do something else
-            Toast.makeText(this, "Phone mode enabled !", Toast.LENGTH_SHORT).show();
-        }*/
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                new IntentFilter(QuickstartPreferences.REGISTRATION_COMPLETE));
-    }
-
-    @Override
-    protected void onPause() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
-        super.onPause();
-    }
-
 
     /**
      * Slide menu item click listener
      * */
-    private class SlideMenuClickListener implements
-            ListView.OnItemClickListener {
+    private class SlideMenuClickListener implements ListView.OnItemClickListener {
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position,
-                                long id) {
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             // display view for selected nav drawer item
             displayView(position);
         }
@@ -406,12 +321,6 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
     }
 
     @Override
-    protected void onStop() {
-
-        super.onStop();
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // toggle nav drawer on selecting action bar app icon/title
         if (mDrawerToggle.onOptionsItemSelected(item)) {
@@ -419,37 +328,39 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         }
         // Handle action bar actions click
         switch (item.getItemId()) {
-            case R.id.action_info:
 
-                MaterialDialog md = new MaterialDialog.Builder(this)
-                    .title("A propos")
-                        .content(HELP_DIALOG_TEXT)
-                    .positiveText("Contact")
-                        .negativeText("Fermer")
+            // Info : "A Propos" de l'application
+            case R.id.action_info:
+                new MaterialDialog.Builder(this)
+                        .title(R.string.about_title)
+                        .content(R.string.about_content)
+                        .positiveText(R.string.dialog_contact)
+                        .negativeText(R.string.dialog_close)
                         .callback(new MaterialDialog.ButtonCallback() {
                             @Override
                             public void onPositive(MaterialDialog dialog) {
-                                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                                        "mailto", MAIL_DIALOG, null));
+                                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", MAIL_DIALOG, null));
                                 emailIntent.putExtra(Intent.EXTRA_SUBJECT, "[APP] Questions / Problèmes");
-                                emailIntent.putExtra(Intent.EXTRA_TEXT, "Version de l'application : " + appVersion + "\n\n" + "...");
+                                emailIntent.putExtra(Intent.EXTRA_TEXT, "Version de l'application : " + BuildConfig.VERSION_NAME + "\n\n" + "...");
                                 startActivity(Intent.createChooser(emailIntent, "Contacter les développeurs ..."));
-                        }
-                    })
-                    .show();
+                            }
+                        })
+                        .show();
                 return true;
 
+            // Ingénews : news du club du même nom, m'voyez
             case R.id.action_ingenews:
-
                 Intent i = new Intent(MainActivity.this, IngeListActivity.class);
                 startActivity(i);
                 return true;
+
+            // Action par défaut, aucune
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    /* *
+    /**
      * Called when invalidateOptionsMenu() is triggered
      */
     @Override
@@ -460,7 +371,7 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
     }
 
     /**
-     * Diplaying fragment view for selected nav drawer list item
+     * Displaying fragment view for selected nav drawer list item
      * */
     private void displayView(int position) {
         // update the main content by replacing fragments
@@ -509,20 +420,21 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
                     mDrawerLayout.closeDrawer(mDrawerList);
                 }
             }, 100);
-
-
-        } else {
-            // error in creating fragment
-            //Log.e("ESEOmega", "Error in creating fragment");
         }
     }
 
+    /**
+     * Sets the title of the current app window
+     */
     @Override
     public void setTitle(CharSequence title) {
         mTitle = title;
         getSupportActionBar().setTitle(mTitle);
     }
 
+    /**
+     * INTERFACE : Synchronises the new profile with the old one in drawer
+     */
     @Override
     public void OnUserProfileChange (UserProfile profile) {
         if (profile != null && navDrawerItems != null && navAdapter != null) {
@@ -530,57 +442,32 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
             navDrawerItems.set(0, profile.getDrawerProfile());
             navAdapter.notifyDataSetChanged();
             mDrawerLayout.openDrawer(mDrawerList);
-            navAdapter.setBitmap(profile.getPicturePath().length()==0?null:
+            navAdapter.setBitmap(profile.getPicturePath().length() == 0 ? null :
                     ImageUtils.getResizedBitmap(BitmapFactory.decodeFile(profile.getPicturePath()), MAX_PROFILE_SIZE));
         }
     }
 
+    /**
+     * INTERFACE : On item added to cart, refresh the content and title of order tab's title
+     */
     @Override
     public void OnItemAddToCart() {
         OrderTabsFragment mFragment = (OrderTabsFragment) getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_ORDER_TABS);
         mFragment.refreshCart();
     }
 
-    // A method to find height of the status bar
-    public int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
-    }
-
-
     /**
-     * When using the ActionBarDrawerToggle, you must call it during
-     * onPostCreate() and onConfigurationChanged()...
+     * On back pressed : asks user if he really want to loose the cart's content (if viewing OrderTabsFragment)
      */
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        // Pass any configuration change to the drawer toggls
-        mDrawerToggle.onConfigurationChanged(newConfig);
-    }
-
     @Override
     public void onBackPressed() {
-        // On back pressed : asks user if he really want to loose the cart's content (if viewing OrderTabsFragment)
         OrderTabsFragment fragment = (OrderTabsFragment) getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_ORDER_TABS);
         if (fragment != null && fragment.isVisible() && DataManager.getInstance().getNbCartItems() > 0) {
             new MaterialDialog.Builder(MainActivity.this)
-                    .title("Annuler la commande ?")
-                    .content("Vous êtes sur le point de vider définitivement votre panier.\nEn êtes-vous sûr ?")
-                    .positiveText("Oui")
-                    .negativeText("Non")
+                    .title(R.string.order_cancel_title)
+                    .content(R.string.order_cancel_message)
+                    .positiveText(R.string.dialog_yes)
+                    .negativeText(R.string.dialog_no)
                     .callback(new MaterialDialog.ButtonCallback() {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
@@ -593,33 +480,30 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         }
     }
 
-    public static boolean checkAppSignature(Context context) {
-
-        try {
-            PackageInfo packageInfo = context.getPackageManager() .getPackageInfo(context.getPackageName(), PackageManager.GET_SIGNATURES);
-
-            for (Signature signature : packageInfo.signatures) {
-                byte[] signatureBytes = signature.toByteArray();
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                final String currentSignature = Base64.encodeToString(md.digest(), Base64.NO_WRAP); // no '\n' character into string !
-                //compare signatures
-                //Log.d("SIGN", "Signature : app = " + currentSignature + ", certificate = " + SIGNATURE);
-                if (currentSignature.equals(SIGNATURE)){
-                    return true;
-                }
-            }
-
-        } catch (Exception e) {
-            //assumes an issue in checking signature., but we let the caller decide on what to do.
-        }
-        return false;
+    /**
+     * onStop : we don't care
+     */
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
-    private static final String PLAY_STORE_APP_ID = "com.android.vending";
+    /**
+     * onResume : Register listener for BroadcastReceiver
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(QuickstartPreferences.REGISTRATION_COMPLETE));
+    }
 
-    public static boolean verifyInstaller(final Context context) {
-        final String installer = context.getPackageManager().getInstallerPackageName(context.getPackageName());
-        return installer != null&& installer.startsWith(PLAY_STORE_APP_ID);
+    /**
+     * onPause : Unregister listener for BroadcastReceiver
+     */
+    @Override
+    protected void onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
+        super.onPause();
     }
 }

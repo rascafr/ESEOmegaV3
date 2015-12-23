@@ -97,7 +97,19 @@ Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. N
 
     <!-- Push -->
     <string name="play_api_push">409995288520</string>
-    <string name="certif_push">08dcf95932ba97c60361b329cb4ccf53bc5e9d3834f657a6e7e3895b4e764eaa</string>
+
+    <!-- Dialog -->
+    <string name="dialog_yes">Oui</string>
+    <string name="dialog_no">Non</string>
+    <string name="dialog_cancel">Annuler</string>
+    <string name="dialog_ok">Ok</string>
+    <string name="dialog_contact">Contact</string>
+    <string name="dialog_close">Fermer</string>
+
+    <!-- About -->
+    <string name="about_title">A propos</string>
+    <string name="about_content">Cette application est l\'application officielle ESEOmega pour Android.\n\nDéveloppeur :\nFrançois Leparoux\n\nSupport technique :\ndevelopers.eseomega@gmail.com\n\n© 2015 ESEOmega</string>
+
 
     <!-- UI -->
     <string name="bad_signature_title">Vous avez réussi</string>
@@ -127,5 +139,6 @@ Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. N
     <string name="empty_header_inge">Aucune édition Ingénews trouvée</string>
     <string name="empty_desc_inge">L\'équipe d\'Ingénews n\'a peut être pas encore mis en ligne leur édition !\nAu passage, vérifiez votre connexion internet.</string>
 
-
+    <string name="order_cancel_title">Annuler la commande ?</string>
+    <string name="order_cancel_message">Vous êtes sur le point de vider définitivement votre panier.\nEn êtes-vous sûr ?</string>
 </resources>
