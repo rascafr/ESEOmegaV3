@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <include
+        android:id="@+id/tool_bar"
+        layout="@layout/toolbar_design">
+    </include>
+
+    <fr.bde_eseo.eseomega.news.WebViewTitle
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layerType="software"
+        android:id="@+id/webview">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_below="@id/tool_bar">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#ff7d7d7d"
+                android:textSize="15sp"
+                android:id="@+id/tvAuthor"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="#ff0c0c0c"
+                android:typeface="serif"
+                android:textSize="24sp"
+                android:id="@+id/tvTitle"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyList"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:divider="@drawable/drawer_divider"
+                android:dividerHeight="0.7dp"
+                android:footerDividersEnabled="true"
+                android:drawSelectorOnTop="true"
+                android:layout_marginTop="8dp"/>
+
+        </LinearLayout>
+
+    </fr.bde_eseo.eseomega.news.WebViewTitle>
+
+</RelativeLayout>
