@@ -33,8 +33,6 @@
          space available using match_parent in both dimensions.-->
     <!-- Scroll bug fix-->
 
-
-
     <!-- android:layout_gravity="start" tells DrawerLayout to treat
          this as a sliding drawer on the left side for left-to-right
          languages and on the right side for right-to-left languages.
@@ -46,7 +44,6 @@
         android:id="@+id/list_slidermenu"
         android:layout_width="300dp"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
         android:choiceMode="singleChoice"
         android:divider="@null"
         android:clipToPadding="false"
