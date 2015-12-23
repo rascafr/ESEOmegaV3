@@ -198,7 +198,4 @@ public class Utilities {
         return data != null && data.length() > 0 && !data.startsWith("<!DOCTYPE");
     }
 
-    /**
-     * Returns the delay
-     */
 }
