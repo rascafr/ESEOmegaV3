@@ -1,4 +1,4 @@
-package fr.bde_eseo.eseomega.adapter;
+package fr.bde_eseo.eseomega.slidingmenu;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -13,49 +13,54 @@ import android.widget.TextView;
 
 import fr.bde_eseo.eseomega.R;
 
-import fr.bde_eseo.eseomega.model.NavDrawerItem;
-
 import java.util.ArrayList;
-import java.util.TreeSet;
 
 public class NavDrawerListAdapter extends BaseAdapter {
 
     // Custom definitions
     public static final int TYPE_DRAWER_ITEM = 0;
     public static final int TYPE_DRAWER_PROFILE = 1;
-    public static final int TYPE_MAX_COUNT = TYPE_DRAWER_ITEM + TYPE_DRAWER_PROFILE + 1; // profile - itemlist
+    public static final int TYPE_DRAWER_DIVIDER = 2;
+    public static final int TYPE_DRAWER_OPTION = 3;
+    public static final int TYPE_MAX_COUNT = 4; // profile - itemlist - divider - option
 
     private Context context;
 	private ArrayList<NavDrawerItem> navDrawerItems;
     private Bitmap bmp; // faster
 
     // Pour garder en mémoire la position du profile
-    private TreeSet<Integer> mSeparatorsSet = new TreeSet<Integer>();
+    //private TreeSet<Integer> mSeparatorsSet = new TreeSet<Integer>();
 
     // Custom constructor
-    public NavDrawerListAdapter(Context context, Bitmap bmp){
+    /*public NavDrawerListAdapter(Context context, Bitmap bmp){
         this.context = context;
         this.navDrawerItems = new ArrayList<>();
         this.bmp = bmp;
-    }
-
-    // faster than in listadapter operation process
-    public void setBitmap(Bitmap bmp) {
-        this.bmp = bmp;
-    }
+    }*/
 
     // Custom adders
+    /*
     public void addProfileItem(String title, String id) {
         navDrawerItems.add(new NavDrawerItem(title, id));
 
         // save separator position
         mSeparatorsSet.add(navDrawerItems.size() - 1);
         notifyDataSetChanged();
-    }
+    }*/
 
+    /**
+     * Default constructor for adapter
+     * @param context The app context
+     * @param navDrawerItems The items to put in listView
+     */
     public NavDrawerListAdapter(Context context, ArrayList<NavDrawerItem> navDrawerItems){
         this.context = context;
         this.navDrawerItems = navDrawerItems;
+    }
+
+    // faster than in listadapter operation process
+    public void setBitmap(Bitmap bmp) {
+        this.bmp = bmp;
     }
 
     @Override
@@ -70,11 +75,14 @@ public class NavDrawerListAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        return navDrawerItems.get(position).isProfile() ? TYPE_DRAWER_PROFILE : TYPE_DRAWER_ITEM;
+        return navDrawerItems.get(position).isProfile() ?
+                TYPE_DRAWER_PROFILE : (navDrawerItems.get(position).isDivider() ?
+                TYPE_DRAWER_DIVIDER : (navDrawerItems.get(position).isOption() ?
+                TYPE_DRAWER_OPTION : TYPE_DRAWER_ITEM));
     }
 
 	@Override
-	public Object getItem(int position) {		
+	public NavDrawerItem getItem(int position) {
 		return navDrawerItems.get(position);
 	}
 
@@ -88,19 +96,22 @@ public class NavDrawerListAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 
         NavDrawerItem ndi = navDrawerItems.get(position);
-        boolean isProfile = ndi.isProfile();
 
 		if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater)
                     context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 
-            if (isProfile)
+            if (ndi.isProfile())
                 convertView = mInflater.inflate(R.layout.drawer_profile, null);
+            else if (ndi.isDivider())
+                convertView = mInflater.inflate(R.layout.drawer_list_divider, null);
+            else if (ndi.isOption())
+                convertView = mInflater.inflate(R.layout.drawer_list_option, null);
             else
                 convertView = mInflater.inflate(R.layout.drawer_list_item, null);
         }
 
-        if (isProfile) {
+        if (ndi.isProfile()) {
             TextView txtName = (TextView) convertView.findViewById(R.id.tvProfileName);
             TextView txtEmail = (TextView) convertView.findViewById(R.id.tvProfileEmail);
             ImageView imgProfile = (ImageView) convertView.findViewById(R.id.circleView);
@@ -121,6 +132,11 @@ public class NavDrawerListAdapter extends BaseAdapter {
                     imgProfile.setImageResource(R.drawable.ic_unknown);
                 }
             }
+        } else if (ndi.isDivider()) {
+            // Nothing to do, it's just a divider
+        } else if (ndi.isOption()) {
+            TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
+            txtTitle.setText(ndi.getTitle());
         } else {
             ImageView imgIcon = (ImageView) convertView.findViewById(R.id.icon);
             TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
@@ -131,7 +147,6 @@ public class NavDrawerListAdapter extends BaseAdapter {
             txtCounter.setText(ndi.getCount());
             txtCounter.setVisibility(ndi.getCounterVisibility()?View.VISIBLE:View.INVISIBLE);
         }
-
 
         return convertView;
 	}

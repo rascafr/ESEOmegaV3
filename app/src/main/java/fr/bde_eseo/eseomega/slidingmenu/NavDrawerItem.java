@@ -1,4 +1,4 @@
-package fr.bde_eseo.eseomega.model;
+package fr.bde_eseo.eseomega.slidingmenu;
 
 // Model for our sidelist
 public class NavDrawerItem {
@@ -6,26 +6,58 @@ public class NavDrawerItem {
     private String title;
     private String id;
 	private String moreData;
+
+    // TODO in a int description type
     private boolean isProfile;
+	private boolean isDivider;
+    private boolean isOption;
+
 	private int icon;
 	private String count = "0";
 	// boolean to set visiblity of the counter
 	private boolean isCounterVisible = false;
-	
-	public NavDrawerItem(){}
 
+    /**
+     * Item
+     */
 	public NavDrawerItem(String title, int icon){
 		this.title = title;
 		this.icon = icon;
         isProfile = false;
+        isDivider = false;
+        isOption = false;
 	}
 
+    /**
+     * Profile
+     */
     public NavDrawerItem(String title, String id){
         this.title = title;
         this.id = id;
         isProfile = true;
+        isDivider = false;
+        isOption = false;
     }
 
+    /**
+     * Divider
+     */
+    public NavDrawerItem() {
+        isProfile = false;
+        isDivider = true;
+        isOption = false;
+    }
+
+    public NavDrawerItem(String title) {
+        this.title = title;
+        isProfile = false;
+        isDivider = false;
+        isOption = true;
+    }
+
+    /**
+     * All / not used now
+     */
 	public NavDrawerItem(String title, int icon, boolean isCounterVisible, String count){
 		this.title = title;
 		this.icon = icon;
@@ -61,9 +93,19 @@ public class NavDrawerItem {
         return this.count;
 	}
 
-    public boolean isProfile() { return this.isProfile; }
-	
-	public boolean getCounterVisibility(){
+    public boolean isProfile() {
+        return this.isProfile;
+    }
+
+    public boolean isDivider() {
+        return isDivider;
+    }
+
+    public boolean isOption() {
+        return isOption;
+    }
+
+    public boolean getCounterVisibility(){
 		return this.isCounterVisible;
 	}
 	

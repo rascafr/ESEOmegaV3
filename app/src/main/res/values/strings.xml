@@ -44,6 +44,10 @@ Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. N
         <item >Bons plans</item>
     </string-array>
 
+    <string-array name="nav_drawer_options">
+        <item >Réglages</item>
+    </string-array>
+
     <!-- Nav Drawer List Item Icons -->
     <!-- Keep them in order as the titles are in -->
     <array name="nav_drawer_icons">

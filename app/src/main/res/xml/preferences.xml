@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference     android:title="Écran d'accueil"
+                        android:summary="Choisissez l'écran que vous souhaitez voir au démarrage de l'application"
+                        android:key="homeScreen"
+                        android:defaultValue="1"
+                        android:entries="@array/nav_drawer_items"
+                        android:entryValues="@array/preferences_homescreen_values" />
+
+    <CheckBoxPreference android:title="Mises à jour auto"
+                        android:defaultValue="false"
+                        android:summary="Si coché, l'application effectuera une vérification des mises à jour à chaque démarrage."
+                        android:key="applicationUpdates" />
+</PreferenceScreen>

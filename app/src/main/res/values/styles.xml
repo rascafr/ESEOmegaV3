@@ -6,6 +6,10 @@
         <item name="colorPrimary">@color/md_blue_800</item>
         <item name="colorPrimaryDark">@color/md_blue_900</item>
         <item name="colorAccent">@color/color_primary</item>
+
+        <!-- Preferences Theme -->
+        <!--<item name="preferenceTheme">@style/PreferenceThemeOverlay.</item>-->
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
     <!-- single activity theme. -->

@@ -36,7 +36,8 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import java.io.File;
 import java.util.ArrayList;
 
-import fr.bde_eseo.eseomega.adapter.NavDrawerListAdapter;
+import fr.bde_eseo.eseomega.settings.SettingsFragment;
+import fr.bde_eseo.eseomega.slidingmenu.NavDrawerListAdapter;
 import fr.bde_eseo.eseomega.community.CommunityFragment;
 import fr.bde_eseo.eseomega.events.EventsFragment;
 import fr.bde_eseo.eseomega.gcmpush.QuickstartPreferences;
@@ -47,7 +48,7 @@ import fr.bde_eseo.eseomega.interfaces.OnUserProfileChange;
 import fr.bde_eseo.eseomega.lacommande.DataManager;
 import fr.bde_eseo.eseomega.lacommande.OrderListFragment;
 import fr.bde_eseo.eseomega.lacommande.OrderTabsFragment;
-import fr.bde_eseo.eseomega.model.NavDrawerItem;
+import fr.bde_eseo.eseomega.slidingmenu.NavDrawerItem;
 import fr.bde_eseo.eseomega.news.NewsListFragment;
 import fr.bde_eseo.eseomega.profile.ConnectProfileFragment;
 import fr.bde_eseo.eseomega.profile.UserProfile;
@@ -55,6 +56,10 @@ import fr.bde_eseo.eseomega.profile.ViewProfileFragment;
 import fr.bde_eseo.eseomega.utils.ImageUtils;
 import fr.bde_eseo.eseomega.utils.Utilities;
 
+/**
+ * Main Activity for ESEOmega app
+ * Too much things to describe here, check code please ...
+ */
 public class MainActivity extends AppCompatActivity implements OnUserProfileChange, OnItemAddToCart {
 
     /**
@@ -83,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
     private BroadcastReceiver mRegistrationBroadcastReceiver;
 
     // slide menu items
-    private String[] navMenuTitles;
+    private String[] navMenuTitles, navMenuOptions;
     private TypedArray navMenuIcons;
     private ListView mDrawerList;
     private NavDrawerListAdapter navAdapter;
@@ -126,8 +131,7 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                SharedPreferences sharedPreferences =
-                        PreferenceManager.getDefaultSharedPreferences(context);
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
                 boolean sentToken = sharedPreferences.getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
                 ConnectProfileFragment mFragment = (ConnectProfileFragment) getSupportFragmentManager().findFragmentByTag("frag0");
                 if (mFragment != null) {
@@ -138,6 +142,9 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
 
         // load slide menu items
         navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
+
+        // load slide menu options
+        navMenuOptions = getResources().getStringArray(R.array.nav_drawer_options);
 
         // nav drawer icons from resources
         navMenuIcons = getResources().obtainTypedArray(R.array.nav_drawer_icons);
@@ -154,6 +161,15 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         // adding nav drawer items to array
         for (int it=1;it<navMenuTitles.length;it++)
             navDrawerItems.add(new NavDrawerItem(navMenuTitles[it], navMenuIcons.getResourceId(it, -1)));
+
+        // add divider
+        navDrawerItems.add(new NavDrawerItem());
+        // ↑ Yes it'll be better to implement an algorithm to detect end of first list and put a divider
+        //   But LA FLEMME
+
+        // adding nav drawer options to array
+        for (int it=0;it<navMenuOptions.length;it++)
+            navDrawerItems.add(new NavDrawerItem(navMenuOptions[it]));
 
         // Recycle the typed array
         navMenuIcons.recycle();
@@ -397,6 +413,9 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
             case 5: // Bons plans
                 fragment = new TipsFragment();
                 break;
+            case 7: // Réglages
+                fragment = new SettingsFragment();
+                break;
 
             default:
                 break;
@@ -411,7 +430,12 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
             mDrawerList.setItemChecked(position, true);
             mDrawerList.setSelection(position);
             mDrawerList.setItemsCanFocus(true);
-            setTitle(navMenuTitles[position]);
+
+            if (position < navMenuTitles.length) {
+                setTitle(navMenuTitles[position]);
+            } else {
+                setTitle(navMenuOptions[position-navMenuTitles.length-1]);
+            }
 
             final Handler handler = new Handler();
             handler.postDelayed(new Runnable() {

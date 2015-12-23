@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 
 import fr.bde_eseo.eseomega.R;
 
-import fr.bde_eseo.eseomega.model.NavDrawerItem;
+import fr.bde_eseo.eseomega.slidingmenu.NavDrawerItem;
 import fr.bde_eseo.eseomega.utils.EncryptUtils;
 import fr.bde_eseo.eseomega.utils.StringUtils;
 import fr.bde_eseo.eseomega.Constants;
