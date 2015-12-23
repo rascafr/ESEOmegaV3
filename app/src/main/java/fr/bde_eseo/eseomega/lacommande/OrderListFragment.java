@@ -55,8 +55,6 @@ public class OrderListFragment extends Fragment {
 
     // Timezoone : CET ou GMT+01:00
     // ID Timezone : Europe/Paris
-    public static final int ONE_HOUR_MILLIS = 3600000;
-    public static final String TZ_EUROPE = "GMT+01:00";
     public static final String TZ_ID_PARIS = "Europe/Paris";
 
     public OrderListFragment() {}
@@ -185,13 +183,6 @@ public class OrderListFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                Calendar cal = Calendar.getInstance(); //Create Calendar-Object
-                //cal.setTime(new Date());               //Set the Calendar to now
-                int hour = cal.get(Calendar.HOUR_OF_DAY); //Get the hour from the calendar
-                //int minute = cal.get(Calendar.MINUTE);
-
-                //debug
-                if (BuildConfig.DEBUG) hour = 12;
                 TimeZone tz = Calendar.getInstance().getTimeZone();
                 //String tzStr = tz.getDisplayName(false, TimeZone.SHORT, Locale.FRANCE); // En locale France + daylight désactivé, le timezone est toujours GMT+01:00
 
@@ -212,16 +203,8 @@ public class OrderListFragment extends Fragment {
                             .negativeText("D'accord")
                             .cancelable(false)
                             .show();
-                } else if (!(hour >= 10 && hour <= 12)) { // 10h ... 12h59
-                    new MaterialDialog.Builder(getActivity())
-                            .title("Erreur")
-                            .content("La commande à la Cafet n'est possible que de 10h à 13h !")
-                            .negativeText("Fermer")
-                            .cancelable(false)
-                            .show();
                 } else {
 
-                    int versionCode = BuildConfig.VERSION_CODE;
                     String versionName = BuildConfig.VERSION_NAME;
 
                     /** Prepare data **/
@@ -384,7 +367,7 @@ public class OrderListFragment extends Fragment {
             try {
                 if (run && userProfile.isCreated()) {// && System.currentTimeMillis() - lastUpdate >= RUN_UPDATE) {
                     run = false;
-                    SyncHistory syncHistory = new SyncHistory(getActivity());
+                    SyncHistory syncHistory = new SyncHistory();
                     syncHistory.execute();
                 }
             } catch (NullPointerException e) { // Stop handler if fragment disappears
@@ -400,12 +383,7 @@ public class OrderListFragment extends Fragment {
     // Async Task Class
     class SyncHistory extends AsyncTask<String, String, String> {
 
-        private Context context;
         private HashMap<String, String> syncParam;
-
-        public SyncHistory(Context context) {
-            this.context = context;
-        }
 
         @Override
         protected void onPreExecute() {
