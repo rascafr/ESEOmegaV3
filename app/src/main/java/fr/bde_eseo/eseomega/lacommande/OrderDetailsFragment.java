@@ -58,6 +58,9 @@ public class OrderDetailsFragment extends Fragment {
     private static boolean run;
     private UserProfile profile;
 
+    // Couleurs des commandes
+    private int circle_preparing, blue_light, circle_done, gray_light, circle_ready, green_light, circle_error, orange_light;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -94,8 +97,15 @@ public class OrderDetailsFragment extends Fragment {
         layout.screenBrightness = 1F;
         getActivity().getWindow().setAttributes(layout);
 
-        // Delay to update data
-
+        // Couleurs
+        circle_preparing = getActivity().getResources().getColor(R.color.circle_preparing);
+        blue_light = getActivity().getResources().getColor(R.color.blue_light);
+        circle_done = getActivity().getResources().getColor(R.color.circle_done);
+        gray_light = getActivity().getResources().getColor(R.color.gray_light);
+        circle_ready = getActivity().getResources().getColor(R.color.circle_ready);
+        green_light = getActivity().getResources().getColor(R.color.green_light);
+        circle_error = getActivity().getResources().getColor(R.color.circle_error);
+        orange_light = getActivity().getResources().getColor(R.color.orange_light);
 
         //idcmd = -1; // in case of
 
@@ -195,23 +205,23 @@ public class OrderDetailsFragment extends Fragment {
                         tvOrderDetails.setText(txtDesc);
                         tvOrderPrice.setText(new DecimalFormat("0.00").format(jsonSync.getDouble("price")) + "€");
                         ImageLoader.getInstance().displayImage(Constants.URL_ASSETS + jsonSync.getString("imgurl"), imgCategory);
-                        int color = 0, color2 = 0;
+                        int color = 0;
                         switch (jsonSync.getInt("status")) {
                             case HistoryItem.STATUS_PREPARING:
-                                color = getActivity().getResources().getColor(R.color.circle_preparing);
-                                color2 = getActivity().getResources().getColor(R.color.blue_light);
+                                color = circle_preparing;
+                                rl2.setBackgroundColor(blue_light);
                                 break;
                             case HistoryItem.STATUS_DONE:
-                                color = getActivity().getResources().getColor(R.color.circle_done);
-                                color2 = getActivity().getResources().getColor(R.color.gray_light);
+                                color = circle_done;
+                                rl2.setBackgroundColor(gray_light);
                                 break;
                             case HistoryItem.STATUS_READY:
-                                color = getActivity().getResources().getColor(R.color.circle_ready);
-                                color2 = getActivity().getResources().getColor(R.color.green_light);
+                                color = circle_ready;
+                                rl2.setBackgroundColor(green_light);
                                 break;
                             case HistoryItem.STATUS_NOPAID:
-                                color = getActivity().getResources().getColor(R.color.circle_error);
-                                color2 = getActivity().getResources().getColor(R.color.orange_light);
+                                color = circle_error;
+                                rl2.setBackgroundColor(orange_light);
                                 break;
                         }
 
@@ -225,10 +235,11 @@ public class OrderDetailsFragment extends Fragment {
                         rl2.setVisibility(View.VISIBLE);
                         progressBar.setVisibility(View.INVISIBLE);
 
+                        // Assignation des couleurs
+                        rl1.setBackgroundColor(color);
                         tvOrderPrice.setTextColor(color);
                         tvDesc.setTextColor(color);
-                        rl1.setBackgroundColor(color);
-                        rl2.setBackgroundColor(color2);
+
                     } else {
                         progressBar.setVisibility(View.INVISIBLE);
                         tvOrderDate.setVisibility(View.INVISIBLE);
