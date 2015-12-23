@@ -31,6 +31,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -85,12 +86,10 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
     private DrawerLayout mDrawerLayout;
     private RecyclerView recList;
     private ActionBarDrawerToggle mDrawerToggle;
+    private LinearLayout mDrawerContent;
 
     // GCM
     //private BroadcastReceiver mRegistrationBroadcastReceiver;
-
-    // Store app verification
-    private final static String SIGNATURE = "mM6h5mqKyeuhXgBF8SLnMBKc7BE=";
 
     // Log TAG
     //private static final String TAG = "ESEOmain";
@@ -142,13 +141,13 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
 
         // Global UI View
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
+        toolbar.setPadding(0, Utilities.getStatusBarHeight(this), 0, 0);
         setSupportActionBar(toolbar);
         mTitle = getTitle();
 
         // Check app auth
-        boolean installPlayStore = verifyInstaller(this);
-        boolean installSigned = checkAppSignature(this);
+        boolean installPlayStore = Utilities.verifyInstaller(this);
+        boolean installSigned = Utilities.checkAppSignature(this);
 
         if (!BuildConfig.DEBUG && (!installPlayStore || !installSigned)) {
             new MaterialDialog.Builder(this)
@@ -169,19 +168,13 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                //Log.d("NOTIF", "onReceive !");
                 SharedPreferences sharedPreferences =
                         PreferenceManager.getDefaultSharedPreferences(context);
                 boolean sentToken = sharedPreferences.getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
                 ConnectProfileFragment mFragment = (ConnectProfileFragment) getSupportFragmentManager().findFragmentByTag("frag0");
                 if (mFragment != null) {
                     mFragment.setPushRegistration(sentToken);
-                    //Log.d("FRAG", "mFragment = " + (mFragment.isVisible() ? "visible" : "invisible"));
-                } else {
-                    //Log.d("FRAG", "mFragment = null");
                 }
-
-
             }
         };
 
@@ -191,12 +184,17 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         // nav drawer icons from resources
         navMenuIcons = getResources().obtainTypedArray(R.array.nav_drawer_icons);
 
+        // the global drawer layout
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
 
-        navDrawerItems = new ArrayList<>();
+        // the menu's listview
+        mDrawerList = (ListView) findViewById(R.id.listview_menu);
+
+        // the fragment slide container
+        mDrawerContent = (LinearLayout) findViewById(R.id.frame_slider);
 
         // add profile view item
+        navDrawerItems = new ArrayList<>();
         profile.readProfilePromPrefs(this);
         navDrawerItems.add(profile.getDrawerProfile());
 
@@ -207,8 +205,9 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         // Recycle the typed array
         navMenuIcons.recycle();
 
-        // Listen events
+        // Listen item choice events
         mDrawerList.setOnItemClickListener(new SlideMenuClickListener());
+        //mDrawerContent.setOnItemClickListener(new SlideMenuClickListener());
 
         // setting the nav drawer list adapter
         navAdapter = new NavDrawerListAdapter(getApplicationContext(), navDrawerItems);
@@ -316,7 +315,7 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
                         @Override
                         public void onNegative(MaterialDialog dialog) {
                             super.onNegative(dialog);
-                            mDrawerLayout.openDrawer(mDrawerList);
+                            mDrawerLayout.openDrawer(mDrawerContent);
                             prefs_Write.putBoolean(Constants.PREFS_APP_WELCOME_DATA, false);
                             prefs_Write.putString(Constants.PREFS_APP_VERSION, BuildConfig.VERSION_NAME); // prevent next message
                             prefs_Write.apply();
@@ -350,26 +349,6 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
                         .show();
             }
         }
-
-        // Test Token
-        // If changed -> send it
-        /*Intent intent = new Intent(this, RegistrationIntentService.class);
-        this.startService(intent);
-        Log.d("PUSH", "Current Token saved : " + profile.getPushToken());*/
-
-
-        // Test tablet mode
-        // TODO V2.1.1
-        /*Utilities.isTabletDevice(this);
-
-        boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
-        if (tabletSize) {
-            // do something
-            Toast.makeText(this, "Tablet mode enabled !", Toast.LENGTH_SHORT).show();
-        } else {
-            // do something else
-            Toast.makeText(this, "Phone mode enabled !", Toast.LENGTH_SHORT).show();
-        }*/
     }
 
     @Override
@@ -388,28 +367,26 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
 
     /**
      * Slide menu item click listener
+     * Get event for item selection in the menu's ListView
      * */
-    private class SlideMenuClickListener implements
-            ListView.OnItemClickListener {
+    private class SlideMenuClickListener implements ListView.OnItemClickListener {
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position,
-                                long id) {
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             // display view for selected nav drawer item
             displayView(position);
         }
     }
 
+    /**
+     * On create menu, add options : Ingénews, A propos, etc
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
-    @Override
-    protected void onStop() {
 
-        super.onStop();
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -506,57 +483,16 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    mDrawerLayout.closeDrawer(mDrawerList);
+                    mDrawerLayout.closeDrawer(mDrawerContent);
                 }
             }, 100);
-
-
-        } else {
-            // error in creating fragment
-            //Log.e("ESEOmega", "Error in creating fragment");
         }
     }
-
-    @Override
-    public void setTitle(CharSequence title) {
-        mTitle = title;
-        getSupportActionBar().setTitle(mTitle);
-    }
-
-    @Override
-    public void OnUserProfileChange (UserProfile profile) {
-        if (profile != null && navDrawerItems != null && navAdapter != null) {
-            this.profile = profile;
-            navDrawerItems.set(0, profile.getDrawerProfile());
-            navAdapter.notifyDataSetChanged();
-            mDrawerLayout.openDrawer(mDrawerList);
-            navAdapter.setBitmap(profile.getPicturePath().length()==0?null:
-                    ImageUtils.getResizedBitmap(BitmapFactory.decodeFile(profile.getPicturePath()), MAX_PROFILE_SIZE));
-        }
-    }
-
-    @Override
-    public void OnItemAddToCart() {
-        OrderTabsFragment mFragment = (OrderTabsFragment) getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_ORDER_TABS);
-        mFragment.refreshCart();
-    }
-
-    // A method to find height of the status bar
-    public int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
-    }
-
 
     /**
      * When using the ActionBarDrawerToggle, you must call it during
      * onPostCreate() and onConfigurationChanged()...
      */
-
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -571,16 +507,51 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
+    /**
+     * Sets the title of the current app window
+     */
+    @Override
+    public void setTitle(CharSequence title) {
+        mTitle = title;
+        getSupportActionBar().setTitle(mTitle);
+    }
+
+    /**
+     * INTERFACE : Synchronises the new profile with the old one in drawer
+     */
+    @Override
+    public void OnUserProfileChange (UserProfile profile) {
+        if (profile != null && navDrawerItems != null && navAdapter != null) {
+            this.profile = profile;
+            navDrawerItems.set(0, profile.getDrawerProfile());
+            navAdapter.notifyDataSetChanged();
+            mDrawerLayout.openDrawer(mDrawerContent);
+            navAdapter.setBitmap(profile.getPicturePath().length()==0?null:
+                    ImageUtils.getResizedBitmap(BitmapFactory.decodeFile(profile.getPicturePath()), MAX_PROFILE_SIZE));
+        }
+    }
+
+    /**
+     * INTERFACE : On item added to cart, refresh the content and title of order tab's title
+     */
+    @Override
+    public void OnItemAddToCart() {
+        OrderTabsFragment mFragment = (OrderTabsFragment) getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_ORDER_TABS);
+        mFragment.refreshCart();
+    }
+
+    /**
+     * On back pressed : asks user if he really want to loose the cart's content (if viewing OrderTabsFragment)
+     */
     @Override
     public void onBackPressed() {
-        // On back pressed : asks user if he really want to loose the cart's content (if viewing OrderTabsFragment)
         OrderTabsFragment fragment = (OrderTabsFragment) getSupportFragmentManager().findFragmentByTag(Constants.TAG_FRAGMENT_ORDER_TABS);
         if (fragment != null && fragment.isVisible() && DataManager.getInstance().getNbCartItems() > 0) {
             new MaterialDialog.Builder(MainActivity.this)
-                    .title("Annuler la commande ?")
-                    .content("Vous êtes sur le point de vider définitivement votre panier.\nEn êtes-vous sûr ?")
-                    .positiveText("Oui")
-                    .negativeText("Non")
+                    .title(R.string.order_cancel_title)
+                    .content(R.string.order_cancel_message)
+                    .positiveText(R.string.dialog_yes)
+                    .negativeText(R.string.dialog_no)
                     .callback(new MaterialDialog.ButtonCallback() {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
@@ -593,33 +564,11 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         }
     }
 
-    public static boolean checkAppSignature(Context context) {
-
-        try {
-            PackageInfo packageInfo = context.getPackageManager() .getPackageInfo(context.getPackageName(), PackageManager.GET_SIGNATURES);
-
-            for (Signature signature : packageInfo.signatures) {
-                byte[] signatureBytes = signature.toByteArray();
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                final String currentSignature = Base64.encodeToString(md.digest(), Base64.NO_WRAP); // no '\n' character into string !
-                //compare signatures
-                //Log.d("SIGN", "Signature : app = " + currentSignature + ", certificate = " + SIGNATURE);
-                if (currentSignature.equals(SIGNATURE)){
-                    return true;
-                }
-            }
-
-        } catch (Exception e) {
-            //assumes an issue in checking signature., but we let the caller decide on what to do.
-        }
-        return false;
-    }
-
-    private static final String PLAY_STORE_APP_ID = "com.android.vending";
-
-    public static boolean verifyInstaller(final Context context) {
-        final String installer = context.getPackageManager().getInstallerPackageName(context.getPackageName());
-        return installer != null&& installer.startsWith(PLAY_STORE_APP_ID);
+    /**
+     * On stop : we don't care
+     */
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 }

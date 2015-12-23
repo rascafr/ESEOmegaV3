@@ -2,11 +2,15 @@ package fr.bde_eseo.eseomega.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
@@ -23,10 +27,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.MessageDigest;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.MainActivity;
 
 /**
@@ -198,4 +204,49 @@ public class Utilities {
         return data != null && data.length() > 0 && !data.startsWith("<!DOCTYPE");
     }
 
+    /**
+     * Checks if installer is the Play Store (prevents from copies)
+     */
+    public static boolean verifyInstaller(final Context context) {
+        final String installer = context.getPackageManager().getInstallerPackageName(context.getPackageName());
+        return installer != null&& installer.startsWith(Constants.PLAY_STORE_APP_ID);
+    }
+
+    /**
+     * Checks if the signature certificate is good
+     */
+    public static boolean checkAppSignature(Context context) {
+
+        try {
+            PackageInfo packageInfo = context.getPackageManager() .getPackageInfo(context.getPackageName(), PackageManager.GET_SIGNATURES);
+
+            for (Signature signature : packageInfo.signatures) {
+                byte[] signatureBytes = signature.toByteArray();
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                final String currentSignature = Base64.encodeToString(md.digest(), Base64.NO_WRAP); // no '\n' character into string !
+                //compare signatures
+                //Log.d("SIGN", "Signature : app = " + currentSignature + ", certificate = " + SIGNATURE);
+                if (currentSignature.equals(Constants.SIGNATURE)){
+                    return true;
+                }
+            }
+
+        } catch (Exception e) {
+            //assumes an issue in checking signature., but we let the caller decide on what to do.
+        }
+        return false;
+    }
+
+    /**
+     * A method to find height of the status bar
+     */
+    public static int getStatusBarHeight(Context context) {
+        int result = 0;
+        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = context.getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
 }

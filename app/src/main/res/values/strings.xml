@@ -99,6 +99,12 @@ Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. N
     <string name="play_api_push">409995288520</string>
     <string name="certif_push">08dcf95932ba97c60361b329cb4ccf53bc5e9d3834f657a6e7e3895b4e764eaa</string>
 
+    <!-- Dialog -->
+    <string name="dialog_yes">Oui</string>
+    <string name="dialog_no">Non</string>
+    <string name="dialog_cancel">Annuler</string>
+    <string name="dialog_ok">Ok</string>
+
     <!-- UI -->
     <string name="bad_signature_title">Vous avez réussi</string>
     <string name="bad_signature_content">Décompiler et recompiler une application Android n\'est pas si facile que ça : Bravo à vous.\nEn revanche, cela ne vous donne pas tous les droits.\n(Bien tenté)</string>
@@ -127,5 +133,7 @@ Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. N
     <string name="empty_header_inge">Aucune édition Ingénews trouvée</string>
     <string name="empty_desc_inge">L\'équipe d\'Ingénews n\'a peut être pas encore mis en ligne leur édition !\nAu passage, vérifiez votre connexion internet.</string>
 
+    <string name="order_cancel_title">Annuler la commande ?</string>
+    <string name="order_cancel_message">Vous êtes sur le point de vider définitivement votre panier.\nEn êtes-vous sûr ?</string>
 
 </resources>

@@ -8,7 +8,12 @@ public class Constants {
     // Register all constants here
     // Try to get the writing order like this :
     // package.class.NAME
+    public static final String PLAY_STORE_APP_ID = "com.android.vending";
 
+    // Store app verification
+    public final static String SIGNATURE = "mM6h5mqKyeuhXgBF8SLnMBKc7BE=";
+
+    // Preferences
     public static final String PREFS_NEWS_KEY = "fragment.NewsFragment.KEY";
     public static final String PREFS_APP_WELCOME = "mainactivity.welcome";
     public static final String PREFS_APP_VERSION = "mainactivity.appversion";

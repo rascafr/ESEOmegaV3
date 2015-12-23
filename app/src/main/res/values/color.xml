@@ -2,8 +2,8 @@
 <resources>
 
     <!-- Customs -->
-    <color name="drawer_text">#757575</color>
-    <color name="drawer_background">#fefefe</color>
+    <color name="drawer_text">#f1f1f1</color>
+    <color name="drawer_background">#262626</color>
     <color name="drawer_pressed">#e6e6e6</color>
     <color name="drawer_divider">#e6e6e6</color>
     <color name="color_primary">#009688</color>
