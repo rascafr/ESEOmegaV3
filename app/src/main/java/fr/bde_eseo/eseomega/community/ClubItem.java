@@ -18,7 +18,7 @@ public class ClubItem {
 
     public ClubItem (JSONObject obj) throws JSONException {
         name = obj.getString("nom");
-        desc = obj.getString("desc");
+        desc = obj.getString("desc").replace("\\n", "\n");
         details = obj.getString("detail");
         img = obj.getString("img");
         fb = obj.getString("fb");
