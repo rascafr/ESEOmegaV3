@@ -1,0 +1,51 @@
+{
+  "project_info": {
+    "project_id": "projet-eseomega",
+    "project_number": "409995288520",
+    "name": "Projet ESEOmega"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:409995288520:android:b16c3e4ef4f1f81b",
+        "client_id": "android:fr.bde_eseo.eseomega",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "fr.bde_eseo.eseomega"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "409995288520-g0bm7j89dmnvfiqu7o51ens8p6brlfjj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "fr.bde_eseo.eseomega",
+            "certificate_hash": "98CEA1E66A8AC9EBA15E0045F122E730129CEC11"
+          }
+        }
+      ],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 2
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}
