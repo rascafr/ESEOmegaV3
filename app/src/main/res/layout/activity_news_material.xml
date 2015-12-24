@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/tool_bar"
+        layout="@layout/toolbar_design">
+    </include>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:scaleType="centerCrop"
+        android:id="@+id/imgHeaderNews"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="#70000000"
+        android:layout_alignParentTop="true"
+        android:layout_alignBottom="@id/imgHeaderNews"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingLeft="32dp"
+        android:layout_alignBottom="@id/imgHeaderNews"
+        android:layout_below="@+id/tool_bar">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/md_white_1000"
+            android:textSize="22sp"
+            android:id="@+id/tvTitle"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="16dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="4dp"
+            android:background="#7ff7f7f7"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#c0f7f7f7"
+            android:layout_marginLeft="6dp"
+            android:textSize="12sp"
+            android:id="@+id/tvAuthor"
+            android:layout_marginTop="4dp"
+            android:layout_marginRight="16dp"/>
+
+    </LinearLayout>
+
+    <WebView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/webview"
+        android:layout_below="@+id/imgHeaderNews"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>

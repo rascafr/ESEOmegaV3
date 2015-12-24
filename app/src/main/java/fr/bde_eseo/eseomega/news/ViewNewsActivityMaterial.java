@@ -1,6 +1,7 @@
 package fr.bde_eseo.eseomega.news;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -9,8 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,40 +22,45 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.R;
+import fr.bde_eseo.eseomega.utils.Blur;
+import fr.bde_eseo.eseomega.utils.Utilities;
 
 /**
  * Created by Rascafr on 30/08/2015.
  */
-public class ViewNewsActivityWV extends AppCompatActivity {
+public class ViewNewsActivityMaterial extends AppCompatActivity {
 
     private Toolbar toolbar;
     private NewsItem newsItem;
-    private MyImageAdapter mAdapter;
-    private RecyclerView recList;
+    //private MyImageAdapter mAdapter;
+    //private RecyclerView recList;
+    private ImageView imageView;
     private TextView tvName, tvAuthor;
-    private WebViewTitle webView;
+    private WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_news_wv);
+        setContentView(R.layout.activity_news_material);
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        toolbar.setPadding(0, Utilities.getStatusBarHeight(this), 0, 0);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#10ffffff")));
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00263238")));
         getSupportActionBar().setStackedBackgroundDrawable(new ColorDrawable(Color.parseColor("#550000ff")));
 
         // Get parameters
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             if(extras == null) {
-                Toast.makeText(ViewNewsActivityWV.this, "Erreur de l'application (c'est pas normal)", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ViewNewsActivityMaterial.this, "Erreur de l'application (c'est pas normal)", Toast.LENGTH_SHORT).show();
                 finish();
             } else {
                 newsItem = new NewsItem(
@@ -71,14 +75,23 @@ public class ViewNewsActivityWV extends AppCompatActivity {
         }
 
         if (newsItem != null) {
-            mAdapter = new MyImageAdapter();
+            /*mAdapter = new MyImageAdapter();
             recList = (RecyclerView) findViewById(R.id.recyList);
             recList.setAdapter(mAdapter);
             recList.setVisibility(View.VISIBLE);
             recList.setHasFixedSize(true);
             LinearLayoutManager llm = new LinearLayoutManager(this);
             llm.setOrientation(LinearLayoutManager.HORIZONTAL);
-            recList.setLayoutManager(llm);
+            recList.setLayoutManager(llm);*/
+            imageView = (ImageView) findViewById(R.id.imgHeaderNews);
+            ImageLoader imageLoader = ImageLoader.getInstance();
+            // Load image, decode it to Bitmap and return Bitmap to callback
+            imageLoader.loadImage(newsItem.getImgLinks().get(0), new SimpleImageLoadingListener() {
+                @Override
+                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                    imageView.setImageBitmap(Blur.fastblur(ViewNewsActivityMaterial.this, loadedImage, 12)); // seems ok
+                }
+            });
             tvName = (TextView) findViewById(R.id.tvTitle);
             tvName.setText(newsItem.getName());
             tvAuthor = (TextView) findViewById(R.id.tvAuthor);
@@ -87,9 +100,10 @@ public class ViewNewsActivityWV extends AppCompatActivity {
             tvHtml = (TextView) findViewById(R.id.tvHtml);
             tvHtml.setText(Html.fromHtml(newsItem.getData()));
             tvHtml.setMovementMethod(LinkMovementMethod.getInstance());*/
-            webView = (WebViewTitle) findViewById(R.id.webview);
+            webView = (WebView) findViewById(R.id.webview);
             webView.setBackgroundColor(Color.TRANSPARENT);
             webView.setHapticFeedbackEnabled(false);
+            webView.getSettings().setDefaultFontSize(13);
             webView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -97,8 +111,8 @@ public class ViewNewsActivityWV extends AppCompatActivity {
                 }
             });
             webView.setLongClickable(false);
-            webView.loadData(newsItem.getData(), "text/html; charset=UTF-8", null);
-            mAdapter.notifyDataSetChanged();
+            webView.loadData("<body style=\"margin:20px 10px 20px 10px\">" + newsItem.getData() + "</body>", "text/html; charset=UTF-8", null);
+            //mAdapter.notifyDataSetChanged();
         }
     }
 
@@ -134,7 +148,7 @@ public class ViewNewsActivityWV extends AppCompatActivity {
                 if (i.resolveActivity(getPackageManager()) != null)
                     startActivity(i);
                 else
-                    Toast.makeText(ViewNewsActivityWV.this, "Pas d'application installée pour ça", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ViewNewsActivityMaterial.this, "Pas d'application installée pour ça", Toast.LENGTH_SHORT).show();
                 return true;
 
             default:
@@ -165,7 +179,7 @@ public class ViewNewsActivityWV extends AppCompatActivity {
             nih.img.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent myIntent = new Intent(ViewNewsActivityWV.this, ImageViewActivity.class);
+                    Intent myIntent = new Intent(ViewNewsActivityMaterial.this, ImageViewActivity.class);
                     myIntent.putExtra(Constants.KEY_IMG, link);
                     startActivity(myIntent);
                 }
