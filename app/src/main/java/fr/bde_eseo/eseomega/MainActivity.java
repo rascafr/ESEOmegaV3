@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
     // Preferences
     private SharedPreferences prefs_Read;
     private SharedPreferences.Editor prefs_Write;
+    private SharedPreferences prefsUser;
 
     // GCM
     private BroadcastReceiver mRegistrationBroadcastReceiver;
@@ -219,10 +220,15 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
+        // Initialise preference objects
+        prefs_Read = getSharedPreferences(Constants.PREFS_APP_WELCOME, 0);
+        prefs_Write = prefs_Read.edit();
+        prefsUser = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
         // Receive Intent from notification
         Bundle extras = getIntent().getExtras();
         String message, title;
-        int intendID = 1; // default if news
+        int intendID = Integer.parseInt(prefsUser.getString("homeScreen", "1")); // default if news
         boolean passInstance = false;
 
         if (extras != null) {
@@ -265,9 +271,6 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         // END - UNIVERSAL IMAGE LOADER SETUP
 
         // If needed, show a welcome message
-        prefs_Read = getSharedPreferences(Constants.PREFS_APP_WELCOME, 0);
-        prefs_Write = prefs_Read.edit();
-
         // For V2.1.1, prevent profile suppression
         prefs_Write.putString(Constants.PREFS_APP_VERSION, BuildConfig.VERSION_NAME);
         prefs_Write.apply();
