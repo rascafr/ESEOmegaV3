@@ -80,8 +80,6 @@ public class MyTipsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         svh.name.setText(si.getName());
         svh.details.setText(si.getDetail());
 
-        Log.d("SPON", "Got : " + si.getDetail());
-
         if (si.getUrl() == null) {
             svh.url.setVisibility(View.GONE);
         } else {
