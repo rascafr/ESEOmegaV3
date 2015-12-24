@@ -12,7 +12,7 @@ public class SponsorItem {
 
     public SponsorItem(String name, String detail, String img, String url, String adr, ArrayList<String> avantages) {
         this.name = name;
-        this.detail = detail;
+        this.detail = detail.replace("\\n", "\n"); // Parse JSON newline code
         this.img = img;
         this.url = url;
         this.adr = adr;
