@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
@@ -169,8 +170,7 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         //   But LA FLEMME
 
         // adding nav drawer options to array
-        for (int it=0;it<navMenuOptions.length;it++)
-            navDrawerItems.add(new NavDrawerItem(navMenuOptions[it]));
+        for (String navMenuOption : navMenuOptions) navDrawerItems.add(new NavDrawerItem(navMenuOption));
 
         // Recycle the typed array
         navMenuIcons.recycle();
@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-        // Initialise preference objects
+        // Initialize preference objects
         prefs_Read = getSharedPreferences(Constants.PREFS_APP_WELCOME, 0);
         prefs_Write = prefs_Read.edit();
         prefsUser = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
@@ -228,9 +228,17 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         // Receive Intent from notification
         Bundle extras = getIntent().getExtras();
         String message, title;
-        int intendID = Integer.parseInt(prefsUser.getString("homeScreen", "1")); // default if news
+
+        // Set the user's preferred theme for menu
+        // Keep clear theme for now
+        //mDrawerList.setBackgroundColor(getResources().getColor(R.color.drawer_background_dark));
+
+        // Get the user's preferred homescreen
+        int intendID = Integer.parseInt(prefsUser.getString(Constants.PREFS_GENERAL_HOMESCREEN, "1")); // default if news
+
         boolean passInstance = false;
 
+        // If we've just received intent from push notification event, we handle it
         if (extras != null) {
             title = extras.getString(Constants.KEY_MAIN_TITLE);
             message = extras.getString(Constants.KEY_MAIN_MESSAGE);
@@ -252,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
 
         if (savedInstanceState == null || passInstance) {
             // on first time display view for first nav item
-            displayView(intendID); // 0 is profile
+            displayView(intendID); // Note : 0 is profile
         }
 
         // UNIVERSAL IMAGE LOADER SETUP
@@ -387,6 +395,24 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         // if nav drawer is opened, hide the action items
         // boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList); // not used
         return super.onPrepareOptionsMenu(menu);
+    }
+
+    /**
+     * When using the ActionBarDrawerToggle, you must call it during
+     * onPostCreate() and onConfigurationChanged()...
+     */
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggls
+        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     /**

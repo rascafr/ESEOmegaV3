@@ -30,6 +30,12 @@
     <color name="fab_valid_button_rpl">#53d3bf</color>
     <color name="text_light_header">#838383</color>
 
+    <!-- Menu Themes -->
+    <color name="drawer_text_dark">#e0e0e0</color>
+    <color name="drawer_background_dark">#212121</color>
+    <color name="drawer_pressed_dark">#424242</color>
+    <color name="drawer_divider_dark">#424242</color>
+
     <!-- BDE colors -->
     <color name="color_bde_eldorado">#ff661C</color>
     <color name="color_bde_eseomega">#1E88E5</color>

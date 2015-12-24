@@ -29,6 +29,9 @@ public class Constants {
     public static final String PREFS_USER_PROFILE_PICTURE = "model.UserProfile.PICTURE";
     public static final String PREFS_USER_PROFILE_PUSH_TOKEN = "model.UserProfile.PUSHTOKEN";
 
+    // SharedPref class
+    public static final String PREFS_GENERAL_HOMESCREEN = "settings.general.homescreen";
+
     // Notifications
     public static final int NOTIF_GENERAL = 0;
     public static final int NOTIF_NEWS = 1;
