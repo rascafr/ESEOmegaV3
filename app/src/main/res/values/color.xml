@@ -3,9 +3,11 @@
 
     <!-- Customs -->
     <color name="drawer_text">#757575</color>
+    <color name="drawer_text_item">#616161</color>
     <color name="drawer_background">#fefefe</color>
     <color name="drawer_pressed">#e6e6e6</color>
     <color name="drawer_divider">#e6e6e6</color>
+    <color name="drawer_divider_list">#bdbdbd</color>
     <color name="color_primary">#009688</color>
     <color name="color_splash">#1b488c</color>
     <color name="color_custom_header">#303740</color>

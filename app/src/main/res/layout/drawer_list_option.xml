@@ -14,7 +14,7 @@
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
         android:textColor="@color/drawer_text"
         android:gravity="center_vertical"
-        android:layout_marginLeft="16dp"
+        android:layout_marginLeft="72dp"
         android:layout_marginRight="16dp"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/icon"

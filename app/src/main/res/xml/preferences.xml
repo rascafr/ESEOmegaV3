@@ -3,7 +3,7 @@
 
     <ListPreference     android:title="Écran d'accueil"
                         android:summary="Choisissez l'écran que vous souhaitez voir au démarrage de l'application"
-                        android:key="homeScreen"
+                        android:key="settings.general.homescreen"
                         android:defaultValue="1"
                         android:entries="@array/nav_drawer_items"
                         android:entryValues="@array/preferences_homescreen_values" />

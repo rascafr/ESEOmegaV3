@@ -75,6 +75,7 @@ public class OrderListFragment extends Fragment {
     private File cacheHistoryJSON;
     private HashMap<String, String> params;
     private long lastUpdate = 0;
+    private Context context;
 
     private TextView tvNothing, tvNothing2;
     private ImageView imgNothing;
@@ -113,6 +114,9 @@ public class OrderListFragment extends Fragment {
 
         // Find elements and attach listView / floating button
         View rootView = inflater.inflate(R.layout.fragment_cafet_history, container, false);
+
+        // Get current fragment's context
+        context = getActivity();
 
         // Get user's data
         userProfile = new UserProfile();
@@ -184,10 +188,7 @@ public class OrderListFragment extends Fragment {
             public void onClick(View v) {
 
                 TimeZone tz = Calendar.getInstance().getTimeZone();
-                //String tzStr = tz.getDisplayName(false, TimeZone.SHORT, Locale.FRANCE); // En locale France + daylight désactivé, le timezone est toujours GMT+01:00
-
                 String tzStr = tz.getID();
-                //Toast.makeText(getActivity(), "TZ : " + tzStr + ", " + tz.getID(), Toast.LENGTH_SHORT).show();
 
                 if (!userProfile.isCreated()) {
                     new MaterialDialog.Builder(getActivity())
@@ -268,7 +269,7 @@ public class OrderListFragment extends Fragment {
 
         @Override
         protected String doInBackground(String... sUrl) {
-            return ConnexionUtils.postServerData(Constants.URL_POST_TOKEN, params, getActivity());
+            return ConnexionUtils.postServerData(Constants.URL_POST_TOKEN, params, context);
         }
 
         @Override
@@ -398,9 +399,9 @@ public class OrderListFragment extends Fragment {
 
             // Prepare param array
             syncParam.clear(); // in case of ...
-            syncParam.put(getActivity().getResources().getString(R.string.client), userLogin);
-            syncParam.put(getActivity().getResources().getString(R.string.password), userPass);
-            syncParam.put(getActivity().getResources().getString(R.string.hash), EncryptUtils.sha256(getActivity().getResources().getString(R.string.MESSAGE_HISTORY_USER) + userLogin + userPass));
+            syncParam.put(context.getResources().getString(R.string.client), userLogin);
+            syncParam.put(context.getResources().getString(R.string.password), userPass);
+            syncParam.put(context.getResources().getString(R.string.hash), EncryptUtils.sha256(context.getResources().getString(R.string.MESSAGE_HISTORY_USER) + userLogin + userPass));
 
         }
 
@@ -411,7 +412,7 @@ public class OrderListFragment extends Fragment {
             String jsonStr;
 
             // Try to fetch data from server
-            jsonStr = ConnexionUtils.postServerData(Constants.URL_SYNC_HISTORY, syncParam, getActivity());
+            jsonStr = ConnexionUtils.postServerData(Constants.URL_SYNC_HISTORY, syncParam, context);
 
             // If data is empty
             if (!Utilities.isNetworkDataValid(jsonStr)) {

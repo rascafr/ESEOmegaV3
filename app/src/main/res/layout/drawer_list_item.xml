@@ -18,11 +18,12 @@
     <TextView
         android:id="@+id/title"
         android:text="Événements"
+        android:textStyle="bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
-        android:textColor="@color/drawer_text"
+        android:textColor="@color/drawer_text_item"
         android:gravity="center_vertical"
         android:layout_marginRight="16dp"
         android:layout_alignParentTop="true"

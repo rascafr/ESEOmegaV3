@@ -20,6 +20,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -85,6 +86,9 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
     private SharedPreferences prefs_Read;
     private SharedPreferences.Editor prefs_Write;
     private SharedPreferences prefsUser;
+
+    // Latch to remember position of fragment
+    private int fragPosition = 0;
 
     // GCM
     private BroadcastReceiver mRegistrationBroadcastReceiver;
@@ -234,6 +238,7 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         //mDrawerList.setBackgroundColor(getResources().getColor(R.color.drawer_background_dark));
 
         // Get the user's preferred homescreen
+        Log.d("PREF", "Read ; " + prefsUser.getString(Constants.PREFS_GENERAL_HOMESCREEN, "1"));
         int intendID = Integer.parseInt(prefsUser.getString(Constants.PREFS_GENERAL_HOMESCREEN, "1")); // default if news
 
         boolean passInstance = false;
@@ -343,7 +348,8 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
+        if (fragPosition == 1) getMenuInflater().inflate(R.menu.main, menu); // with Ingenews option
+        else getMenuInflater().inflate(R.menu.main_less, menu); // without Ingenews
         return true;
     }
 
@@ -459,6 +465,10 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
             mDrawerList.setItemChecked(position, true);
             mDrawerList.setSelection(position);
             mDrawerList.setItemsCanFocus(true);
+
+            // Invalidate Menu to redraw it : Ingenews only visible from fragment n°1 (news)
+            invalidateOptionsMenu();
+            fragPosition = position;
 
             if (position < navMenuTitles.length) {
                 setTitle(navMenuTitles[position]);
