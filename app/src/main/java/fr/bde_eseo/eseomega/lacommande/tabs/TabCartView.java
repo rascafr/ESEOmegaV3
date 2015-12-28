@@ -266,8 +266,10 @@ public class TabCartView extends Fragment {
 
                     new MaterialDialog.Builder(getActivity())
                             .title("Commande validée !")
-                            .content("Celle-ci " + (hour<12?"va être traitée après 12h":"est en cours de préparation") + " et sera disponible après avoir payé au comptoir.\n\nBon appétit !")
-                            .negativeText("Merci")
+                            .content("Celle-ci " + (hour<12?"va être traitée après 12h":"est en cours de préparation") + " et sera disponible après avoir payé.\n\nBon appétit !")
+                            .positiveText("Payer immédiatement avec Lydia")
+                            .positiveColor(getActivity().getResources().getColor(R.color.md_blue_700))
+                            .negativeText("Payer plus tard au comptoir")
                             .cancelable(false)
                             .callback(new MaterialDialog.ButtonCallback() {
                                 @Override

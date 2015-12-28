@@ -6,6 +6,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,6 +27,8 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+
 import fr.bde_eseo.eseomega.R;
 
 import java.util.ArrayList;
@@ -34,6 +37,7 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.news.ImageViewActivity;
+import fr.bde_eseo.eseomega.utils.Blur;
 
 /**
  * Created by Rascafr on 31/08/2015.
@@ -100,7 +104,16 @@ public class ClubViewActivity extends AppCompatActivity {
                 .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2)
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .build();
-        ImageLoader.getInstance().displayImage(clubItem.getImg(), imgClub, options);
+
+        ImageLoader imageLoader = ImageLoader.getInstance();
+
+        // Load image, decode it to Bitmap and return Bitmap to callback
+        imageLoader.loadImage(clubItem.getImg(), new SimpleImageLoadingListener() {
+            @Override
+            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                imgClub.setImageBitmap(Blur.fastblur(ClubViewActivity.this, loadedImage, 12)); // seems ok
+            }
+        });
 
         // Image visibility
         if (clubItem.hasWeb()) iWeb.setVisibility(View.VISIBLE);

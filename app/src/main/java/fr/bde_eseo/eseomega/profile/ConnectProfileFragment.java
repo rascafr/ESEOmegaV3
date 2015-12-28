@@ -29,6 +29,9 @@ import fr.bde_eseo.eseomega.utils.Utilities;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -200,7 +203,7 @@ public class ConnectProfileFragment extends Fragment {
             pairs.put(getActivity().getResources().getString(R.string.hash), EncryptUtils.sha256(userID + enPass + getActivity().getResources().getString(R.string.MEMORY_SYNC_USER)));
 
             if (Utilities.isOnline(getActivity())) {
-                return ConnexionUtils.postServerData(Constants.URL_LOGIN, pairs, getActivity());
+                return ConnexionUtils.postServerData(Constants.URL_API_CLIENT_CONNECT, pairs, getActivity());
             } else {
                 return null;
             }
@@ -210,54 +213,57 @@ public class ConnectProfileFragment extends Fragment {
         @Override
         protected void onPostExecute(String result) {
 
-            String res;
+            String res, info = "";
+            int status = 0;
 
+            // Vérification des données reçues
             if (Utilities.isNetworkDataValid(result)) {
 
-                if (result.length() > 2 && result.charAt(0) == '1') {
+                try {
+                    JSONObject obj = new JSONObject(result);
+                    status = obj.getInt("status");
 
-                    userName = result.substring(2);
-
-                    profile = new UserProfile(ctx, userName, userID, userPassword);
-                    profile.guessEmailAddress();
-                    profile.registerProfileInPrefs(getActivity());
-
-                    // Check Services, then start Registration class
-                    if (Utilities.checkPlayServices(getActivity())) {
-                        mdProgress.setContent("Enregistrement de l'appareil");
-                        // Start IntentService to register this application with GCM.
-                        Intent intent = new Intent(getActivity(), RegistrationIntentService.class);
-                        getActivity().startService(intent);
+                    if (status == 1) {
+                        JSONObject data = obj.getJSONObject("data");
+                        userName = data.getString("username");
+                        info = data.getString("info");
                     }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
 
-                } else {
-                    mdProgress.dismiss();
-                    res = result.contains("-2")?"Mauvaise combinaison identifiant - mot de passe\n" +
-                            "Veuillez vérifier vos informations, puis réessayer.":"Erreur inconnue, impossible de valider votre connexion sur nos serveurs.\n";
+            // Pas d'erreur ? Mdp ok ?
+            if (status == 1) {
 
-                    mdProgress = new MaterialDialog.Builder(ctx)
-                            .title("Oups ...")
-                            .content(res)
-                            .negativeText("Fermer")
-                            .iconRes(R.drawable.ic_dizzy)
-                            .show();
+                // On crée le profil
+                // Le nom / prénom de l'utilisateur est stocké dans le champ "username" du JSON retourné
+                profile = new UserProfile(ctx, userName, userID, userPassword);
+                profile.guessEmailAddress();
+                profile.registerProfileInPrefs(getActivity());
+
+                // On check les Services Google, puis on démarre la classe Registration
+                if (Utilities.checkPlayServices(getActivity())) {
+                    mdProgress.setContent("Enregistrement de l'appareil");
+                    // Start IntentService to register this application with GCM.
+                    Intent intent = new Intent(getActivity(), RegistrationIntentService.class);
+                    getActivity().startService(intent);
                 }
             } else {
+
+                // Erreur : -2 →
                 mdProgress.dismiss();
+                res = (status==-2) ?
+                        "Mauvaise combinaison identifiant - mot de passe\nVeuillez vérifier vos informations, puis réessayer.":
+                        "Erreur inconnue, impossible de valider votre connexion sur nos serveurs.\n";
+
                 mdProgress = new MaterialDialog.Builder(ctx)
                         .title("Oups ...")
-                        .content("Impossible d'accéder au réseau. Veuillez vérifier votre connexion, puis réessayer.")
+                        .content(res)
                         .negativeText("Fermer")
-                        .cancelable(false)
-                        .iconRes(R.drawable.ic_facepalm)
-                        .limitIconToDefaultSize()
-                        .callback(new MaterialDialog.ButtonCallback() {
-                            @Override
-                            public void onNegative(MaterialDialog dialog) {
-                                AsyncLogin.this.cancel(true);
-                            }
-                        })
+                        .iconRes(R.drawable.ic_dizzy)
                         .show();
+
             }
         }
     }

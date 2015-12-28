@@ -412,7 +412,7 @@ public class OrderListFragment extends Fragment {
             String jsonStr;
 
             // Try to fetch data from server
-            jsonStr = ConnexionUtils.postServerData(Constants.URL_SYNC_HISTORY, syncParam, context);
+            jsonStr = ConnexionUtils.postServerData(Constants.URL_API_ORDER_LIST, syncParam, context);
 
             // If data is empty
             if (!Utilities.isNetworkDataValid(jsonStr)) {
@@ -427,13 +427,24 @@ public class OrderListFragment extends Fragment {
             } else {
 
                 // Else, there is a server response : phone is online
-                if ((jsonStr.charAt(0) == '1')) {
+                try {
+                    JSONObject servJson = new JSONObject(jsonStr);
 
-                    // good : delete server's validation flag
-                    jsonStr = jsonStr.substring(1);
+                    // Check if there are no errors
+                    if (servJson.getInt("status") == 1) {
 
-                } else {
-                    // other error / bad password (-2) : display nothing
+                        jsonStr = servJson.getString("data");
+
+                    } else {
+                        // bad password (-2) : display nothing
+                        jsonStr = null;
+                    }
+
+                } catch (JSONException e) {
+
+                    e.printStackTrace();
+
+                    // other error : display nothing
                     jsonStr = null;
                 }
             }

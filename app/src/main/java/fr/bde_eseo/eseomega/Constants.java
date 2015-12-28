@@ -59,15 +59,21 @@ public class Constants {
     //public static final String URL_SYNC_SINGLE = URL_SERVER + "lacommande/apps/syncSingle.php"; // post ok
 
     // URL V2.1
-    public static final String URL_LOGIN = URL_SERVER + "lacommande/apps/v21/connectProfile.php";
+    //public static final String URL_LOGIN = URL_SERVER + "lacommande/apps/v21/connectProfile.php";
     public static final String URL_POST_TOKEN = URL_SERVER + "lacommande/apps/v21/syncDate-token.php";
-    public static final String URL_SYNC_HISTORY = URL_SERVER + "lacommande/apps/v21/syncClientHistory.php";
-    public static final String URL_SYNC_SINGLE = URL_SERVER + "lacommande/apps/v21/syncClientHistorySingle.php";
+    //public static final String URL_SYNC_HISTORY = URL_SERVER + "lacommande/apps/v21/syncClientHistory.php";
+    //public static final String URL_SYNC_SINGLE = URL_SERVER + "lacommande/apps/v21/syncClientHistorySingle.php";
     public static final String URL_SYNC_PUSH = URL_SERVER + "lacommande/apps/v21/registerPushClient.php";
     public static final String URL_POST_CART = URL_SERVER + "lacommande/apps/v21/syncOrder-token.php";
     public static final String URL_DESYNC_PUSH = URL_SERVER + "lacommande/apps/v21/unregisterPushClient.php";
     public static final String URL_JSON_LACMD_DATA = URL_SERVER + "lacommande/apps/v21/syncData.php";
     public static final String URL_GPGAME_POST_SCORES = URL_SERVER + "lacommande/apps/v21/syncGPScores.php";
+
+    // API V3.0
+    private static final String URL_API_BASE = URL_SERVER + "lacommande/api/";
+    public static final String URL_API_CLIENT_CONNECT = URL_API_BASE + "client/connect.php";
+    public static final String URL_API_ORDER_LIST = URL_API_BASE + "order/list.php";
+    public static final String URL_API_ORDER_RESUME = URL_API_BASE + "order/resume.php";
 
     // Data from Naudet-Sonasi
     public static final String URL_SERVERBIS = "http://79.170.44.147/eseonews.fr/";
