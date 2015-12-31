@@ -1,4 +1,4 @@
-package fr.bde_eseo.eseomega.lacommande.lydia;
+package fr.bde_eseo.eseomega.lydia;
 
 import android.content.Context;
 import android.content.Intent;
@@ -29,7 +29,6 @@ import java.util.List;
 
 import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.R;
-import fr.bde_eseo.eseomega.lacommande.DataManager;
 import fr.bde_eseo.eseomega.profile.UserProfile;
 import fr.bde_eseo.eseomega.utils.ConnexionUtils;
 import fr.bde_eseo.eseomega.utils.EncryptUtils;

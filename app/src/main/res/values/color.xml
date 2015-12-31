@@ -31,6 +31,7 @@
     <color name="fab_valid_button_prs">#009889</color>
     <color name="fab_valid_button_rpl">#53d3bf</color>
     <color name="text_light_header">#838383</color>
+    <color name="color_lydia_base">#5992CE</color>
 
     <!-- Menu Themes -->
     <color name="drawer_text_dark">#e0e0e0</color>

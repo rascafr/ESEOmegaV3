@@ -84,6 +84,15 @@
         </activity>
 
         <activity
+            android:name=".lydia.LydiaTestActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
+            android:windowSoftInputMode="adjustResize|stateHidden"
+            android:theme="@style/AppTheme">
+        </activity>
+
+        <activity
             android:name=".news.ViewNewsActivityMaterial"
             android:label="@string/app_name"
             android:screenOrientation="portrait"

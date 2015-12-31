@@ -1,10 +1,10 @@
 package fr.bde_eseo.eseomega.lacommande.tabs;
 
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
@@ -33,9 +33,8 @@ import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.R;
 import fr.bde_eseo.eseomega.lacommande.DataManager;
 import fr.bde_eseo.eseomega.lacommande.MyCartAdapter;
-import fr.bde_eseo.eseomega.lacommande.OrderDetailsFragment;
 import fr.bde_eseo.eseomega.lacommande.OrderTabsFragment;
-import fr.bde_eseo.eseomega.lacommande.lydia.LydiaTestFragment;
+import fr.bde_eseo.eseomega.lydia.LydiaTestActivity;
 import fr.bde_eseo.eseomega.lacommande.model.LacmdMenu;
 import fr.bde_eseo.eseomega.listeners.RecyclerItemClickListener;
 import fr.bde_eseo.eseomega.utils.ConnexionUtils;
@@ -291,15 +290,13 @@ public class TabCartView extends Fragment {
                                     @Override
                                     public void onPositive(MaterialDialog dialog) {
                                         super.onPositive(dialog);
-                                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                                        LydiaTestFragment fragment = new LydiaTestFragment();
-                                        fragment.setOrderID(idstr);
-                                        fragment.setOrderPrice(price);
-                                        fragmentManager.beginTransaction()
-                                                .setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.slide_in, R.anim.slide_out)
-                                                .replace(R.id.frame_container, fragment, "FRAG_LYDIA_TEST")
-                                                .addToBackStack("BACK")
-                                                .commit();
+
+                                        Intent i = new Intent(getActivity(), LydiaTestActivity.class);
+                                        i.putExtra(Constants.KEY_LYDIA_ORDER_ID, idstr);
+                                        i.putExtra(Constants.KEY_LYDIA_ORDER_PRICE, price);
+                                        getActivity().startActivity(i);
+
+                                        getFragmentManager().popBackStackImmediate();
                                     }
 
                                     @Override

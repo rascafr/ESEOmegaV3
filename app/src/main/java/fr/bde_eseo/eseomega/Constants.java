@@ -149,5 +149,9 @@ public class Constants {
     public static final String KEY_MAIN_MESSAGE = "main.intent.message";
     public static final String KEY_GANTIER_INTENT = "gp.intent.start";
 
+    // LYDIA
+    public static final String KEY_LYDIA_ORDER_ID = "lydia.order_id";
+    public static final String KEY_LYDIA_ORDER_PRICE = "lydia.order_price";
+
 
 }
