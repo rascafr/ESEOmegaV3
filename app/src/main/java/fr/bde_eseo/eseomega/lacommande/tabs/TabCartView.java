@@ -4,9 +4,11 @@ import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,9 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.melnykov.fab.FloatingActionButton;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.util.Calendar;
@@ -28,7 +33,9 @@ import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.R;
 import fr.bde_eseo.eseomega.lacommande.DataManager;
 import fr.bde_eseo.eseomega.lacommande.MyCartAdapter;
+import fr.bde_eseo.eseomega.lacommande.OrderDetailsFragment;
 import fr.bde_eseo.eseomega.lacommande.OrderTabsFragment;
+import fr.bde_eseo.eseomega.lacommande.lydia.LydiaTestFragment;
 import fr.bde_eseo.eseomega.lacommande.model.LacmdMenu;
 import fr.bde_eseo.eseomega.listeners.RecyclerItemClickListener;
 import fr.bde_eseo.eseomega.utils.ConnexionUtils;
@@ -233,7 +240,7 @@ public class TabCartView extends Fragment {
                 pairs.put(getActivity().getResources().getString(R.string.token), DataManager.getInstance().getToken());
                 pairs.put(getActivity().getResources().getString(R.string.data), Base64.encodeToString(JSONstr.getBytes("UTF-8"), Base64.NO_WRAP));
                 pairs.put(getActivity().getResources().getString(R.string.instructions), Base64.encodeToString(instr.getBytes("UTF-8"), Base64.NO_WRAP));
-                resp = ConnexionUtils.postServerData(Constants.URL_POST_CART, pairs, getActivity());
+                resp = ConnexionUtils.postServerData(Constants.URL_API_ORDER_SEND, pairs, getActivity());
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -251,46 +258,72 @@ public class TabCartView extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+        protected void onPostExecute(String data) {
+            super.onPostExecute(data);
+
+            Log.d("ODR", "Got from server : " + data);
 
             progressBarOrder.setVisibility(View.INVISIBLE);
             floatingShop.setVisibility(View.VISIBLE);
             viewOrder.setVisibility(View.INVISIBLE);
 
-            if (Utilities.isNetworkDataValid(s)) {
-                if (s.equals("1")) {
+            if (Utilities.isNetworkDataValid(data)) {
 
-                    Calendar cal = Calendar.getInstance(); //Create Calendar-Object
-                    int hour = cal.get(Calendar.HOUR_OF_DAY);
+                try {
+                    JSONObject obj = new JSONObject(data);
+                    if (obj.getInt("status") == 1) {
 
-                    new MaterialDialog.Builder(getActivity())
-                            .title("Commande validée !")
-                            .content("Celle-ci " + (hour<12?"va être traitée après 12h":"est en cours de préparation") + " et sera disponible après avoir payé.\n\nBon appétit !")
-                            .positiveText("Payer immédiatement avec Lydia")
-                            .positiveColor(getActivity().getResources().getColor(R.color.md_blue_700))
-                            .negativeText("Payer plus tard au comptoir")
-                            .cancelable(false)
-                            .callback(new MaterialDialog.ButtonCallback() {
-                                @Override
-                                public void onNegative(MaterialDialog dialog) {
-                                    super.onNegative(dialog);
-                                    getFragmentManager().popBackStackImmediate();
-                                }
-                            })
-                            .show();
-                } else {
-                    new MaterialDialog.Builder(getActivity())
-                            .title("Oups")
-                            .content("Erreur avec les données envoyées / mauvaise réponse du serveur.")
-                            .negativeText("Fermer")
-                            .callback(new MaterialDialog.ButtonCallback() {
-                                @Override
-                                public void onNegative(MaterialDialog dialog) {
-                                    super.onNegative(dialog);
-                                }
-                            })
-                            .show();
+                        JSONObject objData = obj.getJSONObject("data");
+                        final int idstr = objData.getInt("idcmd");
+                        final double price = objData.getDouble("price");
+
+                        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Create Calendar-Object and get hour
+
+                        new MaterialDialog.Builder(getActivity())
+                                .title("Commande validée !")
+                                .content("Celle-ci " + (hour<12?"va être traitée après 12h":"est en cours de préparation") + " et sera disponible après avoir payé.\n\nBon appétit !")
+                                .positiveText("Payer immédiatement avec Lydia")
+                                .positiveColor(getActivity().getResources().getColor(R.color.md_blue_700))
+                                .negativeText("Payer plus tard au comptoir")
+                                .cancelable(false)
+                                .callback(new MaterialDialog.ButtonCallback() {
+
+                                    @Override
+                                    public void onPositive(MaterialDialog dialog) {
+                                        super.onPositive(dialog);
+                                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                                        LydiaTestFragment fragment = new LydiaTestFragment();
+                                        fragment.setOrderID(idstr);
+                                        fragment.setOrderPrice(price);
+                                        fragmentManager.beginTransaction()
+                                                .setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.slide_in, R.anim.slide_out)
+                                                .replace(R.id.frame_container, fragment, "FRAG_LYDIA_TEST")
+                                                .addToBackStack("BACK")
+                                                .commit();
+                                    }
+
+                                    @Override
+                                    public void onNegative(MaterialDialog dialog) {
+                                        super.onNegative(dialog);
+                                        getFragmentManager().popBackStackImmediate();
+                                    }
+                                })
+                                .show();
+                    } else {
+                        new MaterialDialog.Builder(getActivity())
+                                .title("Oups")
+                                .content("Erreur avec les données envoyées / mauvaise réponse du serveur.\n\n(Cause : " + obj.getString("cause") + ")")
+                                .negativeText("Fermer")
+                                .callback(new MaterialDialog.ButtonCallback() {
+                                    @Override
+                                    public void onNegative(MaterialDialog dialog) {
+                                        super.onNegative(dialog);
+                                    }
+                                })
+                                .show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             } else {
                 new MaterialDialog.Builder(getActivity())

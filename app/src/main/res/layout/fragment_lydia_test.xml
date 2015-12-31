@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_margin="16dp"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="22sp"
+        android:typeface="monospace"
+        android:text="Test Lydia :"/>
+
+    <EditText
+        android:id="@+id/etLydiaPhone"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Numéro de téléphone"
+        android:inputType="phone"
+        android:ems="10"
+        android:maxEms="10"/>
+
+    <Button
+        android:id="@+id/bpLydiaPay"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Payer"/>
+
+    <TextView
+        android:id="@+id/tvConsole"
+        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/md_blue_grey_900"
+        android:textColor="@color/md_white_1000"
+        android:padding="8dp"
+        android:typeface="monospace"
+        android:text="rascafr@unix:"/>
+
+</LinearLayout>
