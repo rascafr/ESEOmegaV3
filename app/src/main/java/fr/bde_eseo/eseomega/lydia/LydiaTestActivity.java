@@ -28,6 +28,7 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.R;
@@ -49,7 +50,7 @@ public class LydiaTestActivity extends AppCompatActivity {
     private Toolbar toolbar;
 
     private double orderPrice = 0.0;
-    private int orderID = 0;
+    private int orderID = -1;
     private UserProfile userProfile;
 
     @Override
@@ -68,10 +69,23 @@ public class LydiaTestActivity extends AppCompatActivity {
 
         // Get parameters
         if (savedInstanceState == null) {
-            Bundle extras = getIntent().getExtras();
-            if (extras == null) {
-                Toast.makeText(LydiaTestActivity.this, "Erreur de l'application (c'est pas normal)", Toast.LENGTH_SHORT).show();
-                finish();
+            Intent intent = getIntent();
+            Bundle extras = intent.getExtras();
+            String action = intent.getAction();
+            if (extras == null && action != null) {
+
+                if (action.equals(Constants.EXTERNAL_INTENT_LYDIA_CAFET)) {
+                    Log.d("Intent", "Got : " + intent.getData().getQuery());
+                    String query = intent.getData().getQuery();
+                    if (query.contains("id=")) {
+                        orderID = Integer.parseInt(query.substring(query.indexOf("id=") + 3, query.length()));
+                    }
+                }
+
+                if (orderID == -1) {
+                    Toast.makeText(LydiaTestActivity.this, "Erreur de l'application (c'est pas normal)", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
             } else {
                 orderID = extras.getInt(Constants.KEY_LYDIA_ORDER_ID);
                 orderPrice = extras.getDouble(Constants.KEY_LYDIA_ORDER_PRICE);

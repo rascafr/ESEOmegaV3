@@ -9,13 +9,20 @@
         layout="@layout/toolbar_design">
     </include>
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:scaleType="centerInside"
+        android:background="@drawable/bluecard"
+        android:layout_alignBottom="@+id/ll1"
+        android:layout_alignParentTop="true"/>
+
     <LinearLayout
         android:id="@+id/ll1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:background="@color/color_lydia_base">
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/tvLydiaOrder"

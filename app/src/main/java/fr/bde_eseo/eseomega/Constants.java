@@ -153,5 +153,8 @@ public class Constants {
     public static final String KEY_LYDIA_ORDER_ID = "lydia.order_id";
     public static final String KEY_LYDIA_ORDER_PRICE = "lydia.order_price";
 
+    // External Intents
+    public static final String EXTERNAL_INTENT_LYDIA_CAFET = "fr.bde_eseomega.eseomega.LYDIA_CAFET";
+
 
 }
