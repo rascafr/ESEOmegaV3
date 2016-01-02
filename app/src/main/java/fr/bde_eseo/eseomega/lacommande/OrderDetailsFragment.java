@@ -47,15 +47,16 @@ import fr.bde_eseo.eseomega.utils.Utilities;
 public class OrderDetailsFragment extends Fragment {
 
     private float oldScreenBrightness;
-    private TextView tvOrderDetails, tvOrderPrice, tvOrderDate, tvOrderNumero, tvDesc;
+    private TextView tvOrderDetails, tvOrderPrice, tvOrderDate, tvOrderNumero, tvDesc, tvInstruction, tvInstrHeader;
     private ImageView imgCategory;
     private ProgressBar progressBar;
     private RelativeLayout rl1, rl2;
     private int idcmd;
     private static Handler mHandler;
-    private static final int RUN_UPDATE = 15000;
+    private static final int RUN_UPDATE = 5000;
     private static final int RUN_START = 100;
     private static boolean run;
+    private String oldData = "";
     private UserProfile profile;
 
     // Couleurs des commandes
@@ -71,6 +72,8 @@ public class OrderDetailsFragment extends Fragment {
         tvOrderPrice = (TextView) rootView.findViewById(R.id.tvCommandPrice);
         tvOrderDetails = (TextView) rootView.findViewById(R.id.tvOrderDetail);
         tvOrderNumero = (TextView) rootView.findViewById(R.id.tvCommandNumero);
+        tvInstruction = (TextView) rootView.findViewById(R.id.tvOrderInstructions);
+        tvInstrHeader = (TextView) rootView.findViewById(R.id.tvHeaderInstructions);
         progressBar = (ProgressBar) rootView.findViewById(R.id.progressDetails);
         tvDesc = (TextView) rootView.findViewById(R.id.textView3);
         imgCategory = (ImageView) rootView.findViewById(R.id.imgOrder);
@@ -194,71 +197,86 @@ public class OrderDetailsFragment extends Fragment {
             super.onPostExecute(str);
 
             if (Utilities.isNetworkDataValid(str)) {
-                try {
-                    JSONObject obj = new JSONObject(str);
 
-                    if (obj.getInt("status") == 1) {
+                if (!str.equals(oldData)) {
+                    oldData = str;
+                    try {
+                        JSONObject obj = new JSONObject(str);
 
-                        JSONArray array = new JSONArray(obj.getString("data"));
-                        if (array.length() > 0) {
-                            JSONObject jsonSync = array.getJSONObject(0);
-                            tvOrderDate.setText("Votre commande du\n" + getFrenchDate(jsonSync.getString("datetime")));
-                            tvOrderNumero.setText(jsonSync.getString("strcmd") + " " + new DecimalFormat("000").format(jsonSync.getInt("modcmd")));
-                            String txtDesc = jsonSync.getString("resume");
-                            txtDesc = " - " + txtDesc.replaceAll("<br>", "\n - ");
-                            tvOrderDetails.setText(txtDesc);
-                            tvOrderPrice.setText(new DecimalFormat("0.00").format(jsonSync.getDouble("price")) + "€");
-                            ImageLoader.getInstance().displayImage(Constants.URL_ASSETS + jsonSync.getString("imgurl"), imgCategory);
-                            int color = 0;
-                            switch (jsonSync.getInt("status")) {
-                                case HistoryItem.STATUS_PREPARING:
-                                    color = circle_preparing;
-                                    rl2.setBackgroundColor(blue_light);
-                                    break;
-                                case HistoryItem.STATUS_DONE:
-                                    color = circle_done;
-                                    rl2.setBackgroundColor(gray_light);
-                                    break;
-                                case HistoryItem.STATUS_READY:
-                                    color = circle_ready;
-                                    rl2.setBackgroundColor(green_light);
-                                    break;
-                                case HistoryItem.STATUS_NOPAID:
-                                    color = circle_error;
-                                    rl2.setBackgroundColor(orange_light);
-                                    break;
+                        if (obj.getInt("status") == 1) {
+
+                            JSONArray array = new JSONArray(obj.getString("data"));
+                            if (array.length() > 0) {
+                                JSONObject jsonSync = array.getJSONObject(0);
+                                tvOrderDate.setText("Votre commande du\n" + getFrenchDate(jsonSync.getString("datetime")));
+                                tvOrderNumero.setText(jsonSync.getString("strcmd") + " " + new DecimalFormat("000").format(jsonSync.getInt("modcmd")));
+
+                                String txtInstr = jsonSync.getString("instructions");
+                                if (txtInstr.length() > 0) {
+                                    tvInstruction.setText(txtInstr);
+                                    tvInstrHeader.setVisibility(View.VISIBLE);
+                                    tvInstruction.setVisibility(View.VISIBLE);
+                                } else {
+                                    tvInstrHeader.setVisibility(View.GONE);
+                                    tvInstruction.setVisibility(View.GONE);
+                                }
+
+                                String txtDesc = jsonSync.getString("resume");
+                                txtDesc = " - " + txtDesc.replaceAll("<br>", "\n - ");
+                                tvOrderDetails.setText(txtDesc);
+                                tvOrderPrice.setText(new DecimalFormat("0.00").format(jsonSync.getDouble("price")) + "€");
+                                ImageLoader.getInstance().displayImage(Constants.URL_ASSETS + jsonSync.getString("imgurl"), imgCategory);
+                                int color = 0;
+                                switch (jsonSync.getInt("status")) {
+                                    case HistoryItem.STATUS_PREPARING:
+                                        color = circle_preparing;
+                                        rl2.setBackgroundColor(blue_light);
+                                        break;
+                                    case HistoryItem.STATUS_DONE:
+                                        color = circle_done;
+                                        rl2.setBackgroundColor(gray_light);
+                                        break;
+                                    case HistoryItem.STATUS_READY:
+                                        color = circle_ready;
+                                        rl2.setBackgroundColor(green_light);
+                                        break;
+                                    case HistoryItem.STATUS_NOPAID:
+                                        color = circle_error;
+                                        rl2.setBackgroundColor(orange_light);
+                                        break;
+                                }
+
+                                tvOrderDate.setVisibility(View.VISIBLE);
+                                tvOrderPrice.setVisibility(View.VISIBLE);
+                                tvOrderDetails.setVisibility(View.VISIBLE);
+                                tvOrderNumero.setVisibility(View.VISIBLE);
+                                tvDesc.setVisibility(View.VISIBLE);
+                                imgCategory.setVisibility(View.VISIBLE);
+                                rl1.setVisibility(View.VISIBLE);
+                                rl2.setVisibility(View.VISIBLE);
+                                progressBar.setVisibility(View.INVISIBLE);
+
+                                // Assignation des couleurs
+                                rl1.setBackgroundColor(color);
+                                tvOrderPrice.setTextColor(color);
+                                tvDesc.setTextColor(color);
+
+                            } else {
+                                progressBar.setVisibility(View.INVISIBLE);
+                                tvOrderDate.setVisibility(View.INVISIBLE);
+                                tvOrderPrice.setVisibility(View.INVISIBLE);
+                                tvOrderDetails.setVisibility(View.INVISIBLE);
+                                tvOrderNumero.setVisibility(View.INVISIBLE);
+                                tvDesc.setVisibility(View.INVISIBLE);
+                                imgCategory.setVisibility(View.INVISIBLE);
+                                rl1.setVisibility(View.INVISIBLE);
+                                rl2.setVisibility(View.INVISIBLE);
                             }
-
-                            tvOrderDate.setVisibility(View.VISIBLE);
-                            tvOrderPrice.setVisibility(View.VISIBLE);
-                            tvOrderDetails.setVisibility(View.VISIBLE);
-                            tvOrderNumero.setVisibility(View.VISIBLE);
-                            tvDesc.setVisibility(View.VISIBLE);
-                            imgCategory.setVisibility(View.VISIBLE);
-                            rl1.setVisibility(View.VISIBLE);
-                            rl2.setVisibility(View.VISIBLE);
-                            progressBar.setVisibility(View.INVISIBLE);
-
-                            // Assignation des couleurs
-                            rl1.setBackgroundColor(color);
-                            tvOrderPrice.setTextColor(color);
-                            tvDesc.setTextColor(color);
-
-                        } else {
-                            progressBar.setVisibility(View.INVISIBLE);
-                            tvOrderDate.setVisibility(View.INVISIBLE);
-                            tvOrderPrice.setVisibility(View.INVISIBLE);
-                            tvOrderDetails.setVisibility(View.INVISIBLE);
-                            tvOrderNumero.setVisibility(View.INVISIBLE);
-                            tvDesc.setVisibility(View.INVISIBLE);
-                            imgCategory.setVisibility(View.INVISIBLE);
-                            rl1.setVisibility(View.INVISIBLE);
-                            rl2.setVisibility(View.INVISIBLE);
                         }
-                    }
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             } else {
                 if (getActivity() != null) {

@@ -238,7 +238,6 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         //mDrawerList.setBackgroundColor(getResources().getColor(R.color.drawer_background_dark));
 
         // Get the user's preferred homescreen
-        Log.d("PREF", "Read ; " + prefsUser.getString(Constants.PREFS_GENERAL_HOMESCREEN, "1"));
         int intendID = Integer.parseInt(prefsUser.getString(Constants.PREFS_GENERAL_HOMESCREEN, "1")); // default if news
 
         boolean passInstance = false;

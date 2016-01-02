@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,7 +71,11 @@ public class OrderTabsFragment extends Fragment {
         return rootView;
     }
 
-
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.d("FRAG", "Fragment detached");
+    }
 
     // Used to refresh cart's item numbers
     public void refreshCart () {
