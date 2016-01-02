@@ -13,6 +13,7 @@ A venir :
 - Fermeture cafet depuis serveur uniquement ✓
 - Paiement Cafet depuis Lydia → en cours
 - Paiement Events depuis Lydia
+- Préférences de l'app : page de démarrage, mises à jour auto, etc ... ✓ (en partie)
 
 En pause :
 - Nouveau design / Thème sombre (Autre branche)
