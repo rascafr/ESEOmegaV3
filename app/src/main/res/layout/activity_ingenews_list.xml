@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+                xmlns:fab="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/md_blue_grey_100">
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/inge_refresh"
@@ -11,31 +12,31 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyList"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_above="@+id/tvInfoIngenews"
                 android:divider="@drawable/drawer_divider"
                 android:dividerHeight="0.7dp"
-                android:footerDividersEnabled="true"
                 android:drawSelectorOnTop="true"
-                android:layout_above="@+id/tvInfoIngenews"/>
+                android:footerDividersEnabled="true"/>
 
             <TextView
                 android:id="@+id/tvInfoIngenews"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="8dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:textStyle="italic"
+                android:text="@string/warn_text_inge"
                 android:textColor="@color/md_grey_500"
-                android:text="@string/warn_text_inge"/>
+                android:textStyle="italic"/>
 
 
         </RelativeLayout>
@@ -48,7 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:indeterminate="true" />
+        android:indeterminate="true"/>
 
     <RelativeLayout
         android:layout_width="fill_parent"
@@ -66,28 +67,26 @@
             android:src="@drawable/ic_no_inge"/>
 
         <TextView
-            android:layout_below="@id/imgNoInge"
             android:id="@+id/tvListNothing"
-            android:gravity="center"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/imgNoInge"
             android:layout_marginBottom="14dp"
+            android:gravity="center"
             android:text="@string/empty_header_inge"
             android:textSize="18sp"
             android:textStyle="bold"/>
 
         <TextView
-            android:layout_below="@id/tvListNothing"
             android:id="@+id/tvListNothing2"
-            android:gravity="center"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/tvListNothing"
+            android:gravity="center"
             android:text="@string/empty_desc_inge"
-            android:textColor="@color/text_light_header" />
+            android:textColor="@color/text_light_header"/>
 
     </RelativeLayout>
-
-
 
 
 </RelativeLayout>

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+                xmlns:fab="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/md_blue_grey_100">
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/events_refresh"
@@ -16,8 +17,8 @@
             android:layout_alignParentBottom="true"
             android:divider="@drawable/drawer_divider"
             android:dividerHeight="0.7dp"
-            android:footerDividersEnabled="true"
-            android:drawSelectorOnTop="true"/>
+            android:drawSelectorOnTop="true"
+            android:footerDividersEnabled="true"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
@@ -27,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:indeterminate="true" />
+        android:indeterminate="true"/>
 
     <RelativeLayout
         android:layout_width="fill_parent"
@@ -45,28 +46,26 @@
             android:src="@drawable/ic_noevent"/>
 
         <TextView
-            android:layout_below="@id/imgNoEvent"
             android:id="@+id/tvListNothing"
-            android:gravity="center"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/imgNoEvent"
             android:layout_marginBottom="14dp"
+            android:gravity="center"
             android:text="@string/empty_header_event"
             android:textSize="18sp"
             android:textStyle="bold"/>
 
         <TextView
-            android:layout_below="@id/tvListNothing"
             android:id="@+id/tvListNothing2"
-            android:gravity="center"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/tvListNothing"
+            android:gravity="center"
             android:text="@string/empty_desc_event"
-            android:textColor="@color/text_light_header" />
+            android:textColor="@color/text_light_header"/>
 
     </RelativeLayout>
-
-
 
 
 </RelativeLayout>

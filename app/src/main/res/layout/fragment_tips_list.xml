@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/md_blue_grey_100">
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/tips_refresh"
@@ -15,8 +16,8 @@
             android:layout_alignParentBottom="true"
             android:divider="@drawable/drawer_divider"
             android:dividerHeight="0.7dp"
-            android:footerDividersEnabled="true"
-            android:drawSelectorOnTop="true"/>
+            android:drawSelectorOnTop="true"
+            android:footerDividersEnabled="true"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
@@ -26,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:indeterminate="true" />
+        android:indeterminate="true"/>
 
     <RelativeLayout
         android:layout_width="fill_parent"
@@ -44,24 +45,24 @@
             android:src="@drawable/juan_cor_no"/>
 
         <TextView
-            android:layout_below="@id/imgNoSponsor"
             android:id="@+id/tvListNothing"
-            android:gravity="center"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/imgNoSponsor"
+            android:gravity="center"
             android:text="@string/empty_header_tips"
             android:textSize="18dp"
             android:textStyle="bold"/>
 
         <TextView
-            android:layout_below="@id/tvListNothing"
             android:id="@+id/tvListNothing2"
-            android:gravity="center"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/tvListNothing"
             android:layout_marginTop="8dp"
+            android:gravity="center"
             android:text="@string/empty_desc_tips"
-            android:textColor="@color/text_light_header" />
+            android:textColor="@color/text_light_header"/>
 
     </RelativeLayout>
 
