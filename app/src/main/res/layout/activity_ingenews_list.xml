@@ -35,7 +35,7 @@
                 android:layout_centerHorizontal="true"
                 android:textStyle="italic"
                 android:textColor="@color/md_grey_500"
-                android:text="Cette page regroupe l'ensemble des éditions Ingénews que le club a mis en ligne sur nos serveurs.\nESEOmega n'est en aucun cas responsable du contenu contenu proposé."/>
+                android:text="@string/warn_text_inge"/>
 
 
         </RelativeLayout>

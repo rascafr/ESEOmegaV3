@@ -9,11 +9,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
 
@@ -27,6 +30,7 @@ public class MyIngeNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private ArrayList<IngenewsItem> ingenewsItems;
     private Context ctx;
+    private ImageLoader imageLoader;
 
     public ArrayList<IngenewsItem> getIngenewsItems() {
         return ingenewsItems;
@@ -39,11 +43,12 @@ public class MyIngeNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public MyIngeNewsAdapter(Context ctx, ArrayList<IngenewsItem> ingenewsItems) {
         this.ingenewsItems = ingenewsItems;
         this.ctx = ctx;
+        this.imageLoader = ImageLoader.getInstance();
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new IngeNewsItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_ingenews, parent, false));
+        return new IngeNewsItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_item_ingenews, parent, false));
     }
 
     @Override
@@ -58,16 +63,18 @@ public class MyIngeNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         inivh.name.setText(ii.getName());
         inivh.details.setText(ii.getDetails());
 
+        imageLoader.displayImage(ii.getImgLink(), inivh.imgThumb);
+
         // On click listener → open PDF file (intent)
         //Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(ingenewsItems.get(position).getFile()));
-        inivh.cardInge.setOnClickListener(new View.OnClickListener() {
+        inivh.llGlobal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 // Old code ...
-                /*Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(ingenewsItems.get(position).getFile()));
-                ctx.startActivity(i);*/
+                //Intent i = new Intent(Intent.ACTION_VIEW);
+                //i.setData(Uri.parse(ingenewsItems.get(position).getFile()));
+                //ctx.startActivity(i);
 
                 // Ask to view directly
                 Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(ingenewsItems.get(position).getFile()));
@@ -80,31 +87,16 @@ public class MyIngeNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         });
 
         // On long click listener → share link to a friend
-        inivh.cardInge.setOnLongClickListener(new View.OnLongClickListener() {
+        inivh.icShare.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View v) {
+            public void onClick(View v) {
 
-                new MaterialDialog.Builder(ctx)
-                        .title(ingenewsItems.get(position).getName())
-                        .content("Que souhaitez vous faire ?")
-                        .positiveText("Partager")
-                        .negativeText("Fermer")
-                        .callback(new MaterialDialog.ButtonCallback() {
-                            @Override
-                            public void onPositive(MaterialDialog dialog) {
-                                super.onPositive(dialog);
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_SEND);
+                intent.setType("text/plain"); // texte brut (lien de la news en pdf ...)
+                intent.putExtra(Intent.EXTRA_TEXT, "\"" + ingenewsItems.get(position).getName() + "\"\n" + ingenewsItems.get(position).getFile());
+                ctx.startActivity(Intent.createChooser(intent, "Partager ..."));
 
-                                Intent intent = new Intent();
-                                intent.setAction(Intent.ACTION_SEND);
-                                intent.setType("text/plain"); // texte brut (lien de la news en pdf ...)
-                                intent.putExtra(Intent.EXTRA_TEXT, "\"" + ingenewsItems.get(position).getName() + "\"\n" + ingenewsItems.get(position).getFile());
-                                ctx.startActivity(Intent.createChooser(intent, "Partager ..."));
-                            }
-                        })
-                        .show();
-
-                // Consume callback
-                return true;
             }
         });
     }
@@ -118,13 +110,17 @@ public class MyIngeNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public class IngeNewsItemViewHolder extends RecyclerView.ViewHolder {
 
         protected TextView name, details;
-        protected CardView cardInge;
+        protected ImageView imgThumb;
+        protected RelativeLayout icShare;
+        protected LinearLayout llGlobal;
 
         public IngeNewsItemViewHolder(View v) {
             super(v);
             name = (TextView) v.findViewById(R.id.tvNameIngeNews);
             details = (TextView) v.findViewById(R.id.tvDetailsIngeNews);
-            cardInge = (CardView) v.findViewById(R.id.cardInge); // For local-adapter on click listener
+            llGlobal = (LinearLayout) v.findViewById(R.id.llGlobal); // For local-adapter on click listener
+            imgThumb = (ImageView) v.findViewById(R.id.imgThumbFile);
+            icShare = (RelativeLayout) v.findViewById(R.id.icShare);
         }
     }
 }

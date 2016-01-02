@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -88,9 +89,17 @@ public class IngeListActivity extends AppCompatActivity {
         recList.setAdapter(mAdapter);
         recList.setHasFixedSize(false);
         recList.setVisibility(View.VISIBLE);
+
+        /*
         LinearLayoutManager llm = new LinearLayoutManager(this);
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        recList.setLayoutManager(llm);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);*/
+
+        GridLayoutManager glm = new GridLayoutManager(this, 2);
+        glm.setOrientation(LinearLayoutManager.VERTICAL);
+        glm.setReverseLayout(false);
+        recList.setLayoutManager(glm);
+
+        //recList.setLayoutManager(llm);
         mAdapter.notifyDataSetChanged();
 
         // Start download of data

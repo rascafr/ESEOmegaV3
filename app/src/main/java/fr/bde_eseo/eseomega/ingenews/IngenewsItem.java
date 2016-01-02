@@ -18,7 +18,7 @@ public class IngenewsItem {
 
     private int id;
     private long size;
-    private String name, date, file, details;
+    private String name, date, file, details, imgLink;
 
     private final static double MBYTE = 1048576.0;
     private final static String MBYTE_STR = " Mio";
@@ -37,6 +37,7 @@ public class IngenewsItem {
         this.date = obj.getString("date");
         this.file = obj.getString("file");
         this.size = obj.getLong("size");
+        this.imgLink = obj.getString("img");
 
         SimplyDate simplyDate = new SimplyDate(date);
         this.details = simplyDate.simplify() + " · " + getFormattedSize();
@@ -53,6 +54,10 @@ public class IngenewsItem {
 
     public String getFile() {
         return file;
+    }
+
+    public String getImgLink() {
+        return imgLink;
     }
 
     public String getFormattedSize() {

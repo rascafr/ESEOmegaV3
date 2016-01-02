@@ -280,28 +280,42 @@ public class TabCartView extends Fragment {
 
                         new MaterialDialog.Builder(getActivity())
                                 .title("Commande validée !")
-                                .content("Celle-ci " + (hour<12?"va être traitée après 12h":"est en cours de préparation") + " et sera disponible après avoir payé.\n\nBon appétit !")
+                                .content("Celle-ci " + (hour < 12 ? "va être traitée après 12h" : "est en cours de préparation") + " et sera disponible après avoir payé.\n\nBon appétit !")
                                 .positiveText("Payer immédiatement avec Lydia")
-                                .positiveColor(getActivity().getResources().getColor(R.color.md_blue_700))
+                                .positiveColor(
+                                        (DataManager.getInstance().getCartPrice() >= 0.5) ?
+                                                getActivity().getResources().getColor(R.color.md_blue_700):
+                                                getActivity().getResources().getColor(R.color.md_grey_500)
+                                )
                                 .negativeText("Payer plus tard au comptoir")
                                 .cancelable(false)
+                                .autoDismiss(false)
                                 .callback(new MaterialDialog.ButtonCallback() {
 
                                     @Override
                                     public void onPositive(MaterialDialog dialog) {
                                         super.onPositive(dialog);
 
-                                        Intent i = new Intent(getActivity(), LydiaTestActivity.class);
-                                        i.putExtra(Constants.KEY_LYDIA_ORDER_ID, idstr);
-                                        i.putExtra(Constants.KEY_LYDIA_ORDER_PRICE, price);
-                                        getActivity().startActivity(i);
+                                        // Paiement uniquement si somme > 50c€
+                                        if (DataManager.getInstance().getCartPrice() >= 0.5) {
 
-                                        getFragmentManager().popBackStackImmediate();
+                                            dialog.hide();
+
+                                            Intent i = new Intent(getActivity(), LydiaTestActivity.class);
+                                            i.putExtra(Constants.KEY_LYDIA_ORDER_ID, idstr);
+                                            i.putExtra(Constants.KEY_LYDIA_ORDER_PRICE, price);
+                                            getActivity().startActivity(i);
+
+                                            getFragmentManager().popBackStackImmediate();
+                                        } else {
+                                            Toast.makeText(getActivity(), "Le paiement par Lydia ne peut se faire qu'avec une somme d'au moins de 0,50€", Toast.LENGTH_SHORT).show();
+                                        }
                                     }
 
                                     @Override
                                     public void onNegative(MaterialDialog dialog) {
                                         super.onNegative(dialog);
+                                        dialog.hide();
                                         getFragmentManager().popBackStackImmediate();
                                     }
                                 })

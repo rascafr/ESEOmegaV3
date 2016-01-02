@@ -142,6 +142,7 @@ Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. N
 
     <string name="empty_header_inge">Aucune édition Ingénews trouvée</string>
     <string name="empty_desc_inge">L\'équipe d\'Ingénews n\'a peut être pas encore mis en ligne leur édition !\nAu passage, vérifiez votre connexion internet.</string>
+    <string name="warn_text_inge">Cette page regroupe l\'ensemble des éditions Ingénews que le club a mis en ligne sur nos serveurs.\nESEOmega n\'est en aucun cas responsable du contenu proposé.</string>
 
     <string name="order_cancel_title">Annuler la commande ?</string>
     <string name="order_cancel_message">Vous êtes sur le point de vider définitivement votre panier.\nEn êtes-vous sûr ?</string>

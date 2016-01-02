@@ -172,15 +172,20 @@ public class LydiaTestActivity extends AppCompatActivity {
             Log.d("ODR", "Got from Lydia : " + data);
             tvConsole.setText("Got from Lydia : " + data);
 
+            int result = 0;
+            String msg = "Erreur réseau / serveur";
+
             // Check data
             if (Utilities.isNetworkDataValid(data)) {
 
                 try {
                     // Get object
                     JSONObject obj = new JSONObject(data);
+                    result = obj.getInt("status");
+                    msg = obj.getString("cause");
 
                     // Get error-status
-                    if (obj.getInt("status") == 1) {
+                    if (result == 1) {
 
                         // Get shared data
                         JSONObject sharedData = obj.getJSONObject("data");
@@ -204,6 +209,14 @@ public class LydiaTestActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
+            }
+
+            if (result != 1) {
+                new MaterialDialog.Builder(LydiaTestActivity.this)
+                        .title("Erreur")
+                        .content("Cause : " + msg + "\n(code : " + result + ")")
+                        .negativeText("Fermer")
+                        .show();
             }
         }
     }
