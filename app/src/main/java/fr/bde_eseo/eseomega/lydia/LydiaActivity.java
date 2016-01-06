@@ -370,10 +370,12 @@ public class LydiaActivity extends AppCompatActivity {
 
                         // Configure and make Lydia Intent
                         String intentUri;
+                        boolean closeAfter = false;
 
                         // Package Lydia exists ?
                         if (Utilities.isPackageExisted(context, "com.lydia")) {
                             intentUri = "lydiahomologation://pendinglist?request_id=" + requestID;
+                            closeAfter = true;
                         } else {
                             intentUri = mobileUrl; // Package doesn't exists : open URL
                         }
@@ -381,6 +383,7 @@ public class LydiaActivity extends AppCompatActivity {
                         Intent i = new Intent(Intent.ACTION_VIEW);
                         i.setData(Uri.parse(intentUri));
                         startActivity(i);
+                        if (closeAfter) close(); // prevent app-resume with null orderID
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
