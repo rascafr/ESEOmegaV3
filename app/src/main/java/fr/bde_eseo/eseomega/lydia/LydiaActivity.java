@@ -189,6 +189,7 @@ public class LydiaActivity extends AppCompatActivity {
             // Send request to server
             AsyncRequestLydia asyncRequestLydia = new AsyncRequestLydia();
             asyncRequestLydia.execute();
+
         } else {
 
             // Current title
@@ -318,7 +319,7 @@ public class LydiaActivity extends AppCompatActivity {
         protected String doInBackground(String... params) {
             String resp = null;
             try {
-                String b64phone = Base64.encodeToString(clientPhone.getBytes("UTF-8"), Base64.NO_WRAP);
+                String b64phone = Base64.encodeToString(userProfile.getPhoneNumber().getBytes("UTF-8"), Base64.NO_WRAP);
                 String strOrder = String.valueOf(orderID);
                 HashMap<String, String> pairs = new HashMap<>();
                 pairs.put("username", userProfile.getId());
