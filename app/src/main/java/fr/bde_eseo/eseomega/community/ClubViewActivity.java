@@ -235,7 +235,7 @@ public class ClubViewActivity extends AppCompatActivity {
                             }
                         });
 
-                if (isPackageExisted(COM_SNAPCHAT_ANDROID))
+                if (Utilities.isPackageExisted(ClubViewActivity.this, COM_SNAPCHAT_ANDROID))
                     mdb.positiveText("Ouvrir Snapchat");
 
                 mdb.show();
@@ -440,20 +440,6 @@ public class ClubViewActivity extends AppCompatActivity {
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse(url));
         startActivity(i);
-    }
-
-    // Package exists ?
-    public boolean isPackageExisted(String targetPackage){
-        List<ApplicationInfo> packages;
-        PackageManager pm;
-
-        pm = getPackageManager();
-        packages = pm.getInstalledApplications(0);
-        for (ApplicationInfo packageInfo : packages) {
-            if(packageInfo.packageName.equals(targetPackage))
-                return true;
-        }
-        return false;
     }
 
     /** Open another app.

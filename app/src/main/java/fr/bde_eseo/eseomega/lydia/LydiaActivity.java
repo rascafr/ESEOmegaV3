@@ -373,7 +373,6 @@ public class LydiaActivity extends AppCompatActivity {
                         JSONObject sharedData = obj.getJSONObject("data");
 
                         // Get Lydia pay values
-                        Toast.makeText(context, "Référence : " + sharedData.getString("order_ref"), Toast.LENGTH_SHORT).show();
                         String mobileUrl = sharedData.getString("lydia_url"); // IMPORTANT : Utiliser si app Lydia non installée !
                         String requestID = sharedData.getString("request_id");
 
