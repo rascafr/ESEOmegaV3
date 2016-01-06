@@ -91,19 +91,11 @@ public class LydiaActivity extends AppCompatActivity {
         // Init intent flag
         INTENT_REQUEST intent_request = INTENT_REQUEST.ERROR;
 
-        Log.d("Intent", "savedInstanceState = " + savedInstanceState == null ? "null" : "n/null");
-
         // Get intent parameters
         if (savedInstanceState == null) {
             Intent intent = getIntent();
             Bundle extras = intent.getExtras();
             String action = intent.getAction();
-
-            Log.d("Intent", "intent : " + intent.toString());
-            if (extras != null) Log.d("Intent", "extras : " + extras.toString());
-            else Log.d("Intent", "extras : null");
-            if (action != null) Log.d("Intent", "action : " + action);
-            else Log.d("Intent", "action : null");
 
             if (extras == null && action != null) {
 
