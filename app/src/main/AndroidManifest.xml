@@ -84,22 +84,30 @@
             android:theme="@style/SplashTheme">
         </activity>
 
-        <!-- Activity to see / pay an order (or anything else ... Bluemmon ?) -->
+        <!-- Activity to see / pay an order (or anything else ... Bluemoon ?) -->
         <!-- Intent scheme : eseomega_pay:// -->
         <activity
-            android:name=".lydia.LydiaTestActivity"
-            android:label="@string/app_name"
+            android:name=".lydia.LydiaActivity"
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden"
             android:windowSoftInputMode="adjustResize|stateHidden"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppThemeLydia">
 
             <intent-filter>
-                <action android:name="fr.bde_eseomega.eseomega.LYDIA_CAFET" />
+                <!--<action android:name="fr.bde_eseomega.eseomega.LYDIA_CAFET" />-->
+                <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="eseomega" /> <!--android:host="fr.bde_eseo.eseomega"-->
+                <data android:scheme="eseomega" />
             </intent-filter>
+
+            <!--<intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="217.199.187.59/francoisle.fr/lacommande/experimental/app.php" />
+                <data android:scheme="http" />
+                <data android:pathPattern="/app/pay" />
+            </intent-filter>-->
         </activity>
 
         <activity
@@ -126,7 +134,7 @@
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden"
             android:windowSoftInputMode="adjustResize|stateHidden"
-            android:theme="@style/SplashTheme">
+            android:theme="@style/AppTheme">
         </activity>
 
         <activity

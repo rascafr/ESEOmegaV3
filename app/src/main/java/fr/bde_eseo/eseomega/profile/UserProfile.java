@@ -2,6 +2,10 @@ package fr.bde_eseo.eseomega.profile;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.telephony.PhoneNumberUtils;
+import android.util.Patterns;
+
+import java.util.regex.Pattern;
 
 import fr.bde_eseo.eseomega.R;
 
@@ -16,6 +20,8 @@ import fr.bde_eseo.eseomega.Constants;
 public class UserProfile {
 
     public static final String RESEAU_ESEO_FR = "@reseau.eseo.fr";
+    public static final Pattern PHONE_PATTERN = Pattern.compile("/^((\\+|00)33\\s?|0)[679](\\s?\\d{2}){4}$/");
+
     private String name;
     private String id;
     private String email;
@@ -23,6 +29,7 @@ public class UserProfile {
     private boolean isCreated;
     private String picturePath;
     private String pushToken;
+    private String phoneNumber; // Lydia oblige
 
     private final static int MAX_TEXT_LENGTH = 39;
 
@@ -89,6 +96,28 @@ public class UserProfile {
     public String getPicturePath() {
 
         return picturePath;
+    }
+
+    /**
+     * Vérifie le numéro de téléphone du client
+     * @param phoneNumber le numéro de téléphone
+     * @return false si mauvais, true si correct
+     */
+    public boolean verifyPhoneNumber (String phoneNumber) {
+
+        // 0600223344 -> ok (10)
+        // +33600223344 -> ok aussi (12)
+        // Balek du reste car le serveur check tout + le serveur de Lydia aussi
+
+        return Patterns.PHONE.matcher(phoneNumber).matches() && phoneNumber.length() == 10 || phoneNumber.length() == 12;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
     public boolean isCreated () {
@@ -191,6 +220,7 @@ public class UserProfile {
         prefs_Write.putBoolean(Constants.PREFS_USER_PROFILE_EXISTS, this.isCreated);
         prefs_Write.putString(Constants.PREFS_USER_PROFILE_PICTURE, this.picturePath);
         prefs_Write.putString(Constants.PREFS_USER_PROFILE_PUSH_TOKEN, this.pushToken);
+        prefs_Write.putString(Constants.PREFS_USER_PROFILE_PHONE, this.phoneNumber);
         prefs_Write.apply();
     }
 
@@ -207,6 +237,7 @@ public class UserProfile {
         this.isCreated = prefs_Read.getBoolean(Constants.PREFS_USER_PROFILE_EXISTS, false);
         this.picturePath = prefs_Read.getString(Constants.PREFS_USER_PROFILE_PICTURE, "");
         this.pushToken = prefs_Read.getString(Constants.PREFS_USER_PROFILE_PUSH_TOKEN, "");
+        this.phoneNumber = prefs_Read.getString(Constants.PREFS_USER_PROFILE_PHONE, "");
     }
 
     public void removeProfileFromPrefs (Context context) {
@@ -217,6 +248,7 @@ public class UserProfile {
         this.email = "";
         this.encodedPassword = "";
         this.picturePath = "";
+        this.phoneNumber = "";
         registerProfileInPrefs(context);
     }
 

@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +40,12 @@ import fr.bde_eseo.eseomega.utils.Utilities;
 
 /**
  * Created by Rascafr on 29/12/2015.
+ * Activité permettant :
+ * - d'envoyer un paiement pour payer une commande / autre chose ...
+ *   → Utilisation Intent interne (need type, idcmd et price)
+ *
+ *
+ * - de voir l'état d'une commande
  */
 public class LydiaTestActivity extends AppCompatActivity {
 
@@ -48,10 +55,12 @@ public class LydiaTestActivity extends AppCompatActivity {
     private Button bpPay;
     private String clientPhone;
     private Toolbar toolbar;
+    private CheckBox checkRememberPhone;
 
     private double orderPrice = 0.0;
     private int orderID = -1;
     private UserProfile userProfile;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +68,8 @@ public class LydiaTestActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lydia_test);
+
+
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         toolbar.setPadding(0, Utilities.getStatusBarHeight(this), 0, 0);
         setSupportActionBar(toolbar);
@@ -74,7 +85,7 @@ public class LydiaTestActivity extends AppCompatActivity {
             String action = intent.getAction();
             if (extras == null && action != null) {
 
-                if (action.equals(Constants.EXTERNAL_INTENT_LYDIA_CAFET)) {
+                if (action.equals(Intent.ACTION_VIEW)) {
                     Log.d("Intent", "Got : " + intent.getData().getQuery());
                     String query = intent.getData().getQuery();
                     if (query.contains("id=")) {
@@ -96,22 +107,24 @@ public class LydiaTestActivity extends AppCompatActivity {
         // Get current fragment's context
         context = LydiaTestActivity.this;
 
+        // Get current profile
+        userProfile = new UserProfile();
+        userProfile.readProfilePromPrefs(context);
+
         // Get layout objects
         etPhone = (EditText) findViewById(R.id.etLydiaPhone);
         bpPay = (Button) findViewById(R.id.bpLydiaPay);
         tvConsole = (TextView) findViewById(R.id.tvConsole);
         tvRequest = (TextView) findViewById(R.id.tvLydiaRequest);
         tvOrder = (TextView) findViewById(R.id.tvLydiaOrder);
+        checkRememberPhone = (CheckBox) findViewById(R.id.checkRememberPhone);
 
         // Set layout values
+        etPhone.setText(userProfile.getPhoneNumber());
         bpPay.setText("Payer " + orderPrice + "€");
         tvConsole.setText("");
         tvRequest.setText("request_id : ---");
         tvOrder.setText("order_id : " + orderID);
-
-        // Get current profile
-        userProfile = new UserProfile();
-        userProfile.readProfilePromPrefs(context);
 
         // On button click listener
         bpPay.setOnClickListener(new View.OnClickListener() {
@@ -120,9 +133,27 @@ public class LydiaTestActivity extends AppCompatActivity {
                 clientPhone = etPhone.getText().toString();
                 tvConsole.setText("");
 
-                // Send request to server
-                AsyncRequestLydia asyncRequestLydia = new AsyncRequestLydia();
-                asyncRequestLydia.execute();
+                // Check if phone is correct
+                if (userProfile.verifyPhoneNumber(clientPhone)) {
+
+                    // Save it to preferences if checkbox checked
+                    if (checkRememberPhone.isChecked()) {
+                        userProfile.setPhoneNumber(clientPhone);
+                        userProfile.registerProfileInPrefs(context);
+                    }
+
+                    // Send request to server
+                    AsyncRequestLydia asyncRequestLydia = new AsyncRequestLydia();
+                    asyncRequestLydia.execute();
+
+                } else {
+                    // Phone syntax is bad
+                    new MaterialDialog.Builder(context)
+                            .title("Numéro incorrect")
+                            .content("Vous pouvez écrire votre téléphone sous la forme +33 ou 06")
+                            .negativeText("Fermer")
+                            .show();
+                }
             }
         });
     }

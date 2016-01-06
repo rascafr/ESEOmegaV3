@@ -4,6 +4,7 @@
     android:background="@color/md_blue_grey_100"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <include
         android:id="@+id/tool_bar"
         layout="@layout/toolbar_design">
@@ -11,22 +12,31 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="240dp"
         android:id="@+id/imgClub"
         android:scaleType="centerCrop"
-        android:layout_below="@+id/tool_bar"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tool_bar"
+        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:background="#a01a1a1a"
-        android:id="@+id/rlClubPicture"
         android:layout_above="@+id/relativeLayout4" >
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/tool_bar"
+        android:id="@+id/rlClubPicture"
+        android:layout_above="@+id/relativeLayout4">
 
         <TextView
             android:layout_width="match_parent"
@@ -41,6 +51,7 @@
             android:textColor="@color/md_white_1000"
             android:text="Le bureau des élèves blah blah blah !"
             android:id="@+id/tvDescClub"/>
+
     </RelativeLayout>
 
     <RelativeLayout

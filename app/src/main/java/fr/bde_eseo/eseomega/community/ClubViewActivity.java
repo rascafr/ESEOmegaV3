@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -38,6 +41,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.news.ImageViewActivity;
 import fr.bde_eseo.eseomega.utils.Blur;
+import fr.bde_eseo.eseomega.utils.Utilities;
 
 /**
  * Created by Rascafr on 31/08/2015.
@@ -57,11 +61,17 @@ public class ClubViewActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_club_view);
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        toolbar.setPadding(0, Utilities.getStatusBarHeight(this), 0, 0);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00263238")));
+        getSupportActionBar().setStackedBackgroundDrawable(new ColorDrawable(Color.parseColor("#550000ff")));
 
         // Get parameters
         if (savedInstanceState == null) {

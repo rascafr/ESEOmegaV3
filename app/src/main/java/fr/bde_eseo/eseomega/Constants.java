@@ -28,6 +28,7 @@ public class Constants {
     public static final String PREFS_USER_PROFILE_EXISTS = "model.UserProfile.EXISTS";
     public static final String PREFS_USER_PROFILE_PICTURE = "model.UserProfile.PICTURE";
     public static final String PREFS_USER_PROFILE_PUSH_TOKEN = "model.UserProfile.PUSHTOKEN";
+    public static final String PREFS_USER_PROFILE_PHONE = "model.UserProfile.PHONE";
 
     // SharedPref class
     public static final String PREFS_GENERAL_HOMESCREEN = "settings.general.homescreen";
@@ -75,7 +76,9 @@ public class Constants {
     public static final String URL_API_ORDER_LIST = URL_API_BASE + "order/list.php";
     public static final String URL_API_ORDER_RESUME = URL_API_BASE + "order/resume.php";
     public static final String URL_API_ORDER_SEND = URL_API_BASE + "order/send.php";
+    public static final String URL_API_INFO_SERVICE = URL_API_BASE + "info/service.php";
     public static final String URL_API_LYDIA_ASK = URL_API_BASE + "lydia/ask.php";
+    public static final String URL_API_LYDIA_CHECK = URL_API_BASE + "lydia/check.php";
 
     // Data from Naudet-Sonasi
     public static final String URL_SERVERBIS = "http://79.170.44.147/eseonews.fr/";

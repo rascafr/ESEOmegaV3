@@ -28,12 +28,22 @@
         <item name="colorAccent">@color/color_primary</item>
     </style>
 
-    <!-- Splash activity theme. -->
+    <!-- Image view activity theme. -->
     <style name="ImageViewTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/md_grey_800</item>
         <item name="colorPrimaryDark">@color/md_grey_900</item>
         <item name="colorAccent">@color/color_primary</item>
+    </style>
+
+    <!-- Lydia Activity - Dialog like theme -->
+    <style name="AppThemeLydia" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/backgournd_lydia_dial</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
     </style>
 
 </resources>

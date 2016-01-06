@@ -11,7 +11,7 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
     </style>
 
-    <!-- Splash activity theme. -->
+    <!-- Image view theme. -->
     <style name="ImageViewTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/md_grey_800</item>

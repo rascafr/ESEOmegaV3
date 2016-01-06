@@ -114,6 +114,9 @@ Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. N
     <string name="about_title">A propos</string>
     <string name="about_content">Cette application est l\'application officielle ESEOmega pour Android.\n\nDéveloppeur :\nFrançois Leparoux\n\nSupport technique :\ndevelopers.eseomega@gmail.com\n\n© 2015 ESEOmega</string>
 
+    <!-- Lydia -->
+    <string name="lydia_phone">Votre numéro de téléphone portable est utilisé par Lydia afin de lier la commande à votre compte.\nIl n\'est pas stocké sur nos serveurs.</string>
+    <string name="lydia_wait">Cette page est actualisée automatiquement. </string>
 
     <!-- UI -->
     <string name="bad_signature_title">Vous avez réussi</string>

@@ -77,7 +77,7 @@ public class OrderListFragment extends Fragment {
     private long lastUpdate = 0;
     private Context context;
 
-    private TextView tvNothing, tvNothing2;
+    private TextView tvNothing, tvNothing2, tvServiceInfo;
     private ImageView imgNothing;
 
     @Override
@@ -132,6 +132,7 @@ public class OrderListFragment extends Fragment {
         viewToken = rootView.findViewById(R.id.viewCircle);
         tvNothing = (TextView) rootView.findViewById(R.id.tvListNothing);
         tvNothing2 = (TextView) rootView.findViewById(R.id.tvListNothing2);
+        tvServiceInfo = (TextView) rootView.findViewById(R.id.tvServiceInfo);
         imgNothing = (ImageView) rootView.findViewById(R.id.imgNoCommand);
         recList.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
@@ -242,6 +243,10 @@ public class OrderListFragment extends Fragment {
                 }
             }
         ));
+
+        // Who's cooking ?
+        AsyncInfoService asyncInfoService = new AsyncInfoService();
+        asyncInfoService.execute();
 
         return rootView;
     }
@@ -569,6 +574,43 @@ public class OrderListFragment extends Fragment {
 
             mHandler.postDelayed(updateTimerThread, RUN_UPDATE);
             run = true;
+        }
+    }
+
+    /**
+     * Custom class to get information about cafeteria (current club ...)
+     */
+    private class AsyncInfoService extends AsyncTask <String, String, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            return ConnexionUtils.postServerData(Constants.URL_API_INFO_SERVICE, null, getActivity());
+        }
+
+        @Override
+        protected void onPostExecute(String data) {
+            super.onPostExecute(data);
+
+            if (Utilities.isNetworkDataValid(data)) {
+                try {
+                    JSONObject jsResp = new JSONObject(data);
+                    JSONObject jsData = jsResp.getJSONObject("data");
+                    String service = jsData.getString("service");
+
+                    if (service.length() > 0) {
+                        tvServiceInfo.setText(service);
+                        tvServiceInfo.setVisibility(View.VISIBLE);
+                    } else {
+                        tvServiceInfo.setVisibility(View.GONE);
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+                tvServiceInfo.setVisibility(View.GONE);
+            }
         }
     }
 }

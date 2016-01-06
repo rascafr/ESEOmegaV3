@@ -53,7 +53,7 @@ public class OrderDetailsFragment extends Fragment {
     private RelativeLayout rl1, rl2;
     private int idcmd;
     private static Handler mHandler;
-    private static final int RUN_UPDATE = 5000;
+    private static final int RUN_UPDATE = 8000;
     private static final int RUN_START = 100;
     private static boolean run;
     private String oldData = "";

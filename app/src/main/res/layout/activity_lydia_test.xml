@@ -57,6 +57,16 @@
 
     </LinearLayout>
 
+    <CheckBox
+        android:id="@+id/checkRememberPhone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll1"
+        android:layout_centerHorizontal="true"
+        android:checked="true"
+        android:layout_marginTop="16dp"
+        android:text="Se souvenir de mon numéro"/>
+
     <TextView
         android:id="@+id/tvConsole"
         android:layout_width="match_parent"

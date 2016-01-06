@@ -34,6 +34,7 @@ import fr.bde_eseo.eseomega.R;
 import fr.bde_eseo.eseomega.lacommande.DataManager;
 import fr.bde_eseo.eseomega.lacommande.MyCartAdapter;
 import fr.bde_eseo.eseomega.lacommande.OrderTabsFragment;
+import fr.bde_eseo.eseomega.lydia.LydiaActivity;
 import fr.bde_eseo.eseomega.lydia.LydiaTestActivity;
 import fr.bde_eseo.eseomega.lacommande.model.LacmdMenu;
 import fr.bde_eseo.eseomega.listeners.RecyclerItemClickListener;
@@ -260,8 +261,6 @@ public class TabCartView extends Fragment {
         protected void onPostExecute(String data) {
             super.onPostExecute(data);
 
-            Log.d("ODR", "Got from server : " + data);
-
             progressBarOrder.setVisibility(View.INVISIBLE);
             floatingShop.setVisibility(View.VISIBLE);
             viewOrder.setVisibility(View.INVISIBLE);
@@ -301,7 +300,7 @@ public class TabCartView extends Fragment {
 
                                             dialog.hide();
 
-                                            Intent i = new Intent(getActivity(), LydiaTestActivity.class);
+                                            Intent i = new Intent(getActivity(), LydiaActivity.class);
                                             i.putExtra(Constants.KEY_LYDIA_ORDER_ID, idstr);
                                             i.putExtra(Constants.KEY_LYDIA_ORDER_PRICE, price);
                                             getActivity().startActivity(i);
