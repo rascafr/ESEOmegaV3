@@ -377,14 +377,22 @@ public class LydiaActivity extends AppCompatActivity {
                         String requestID = sharedData.getString("request_id");
 
                         // Configure and make Lydia Intent
+                        String intentUri;
+
+                        // Package Lydia exists ?
+                        if (Utilities.isPackageExisted(context, "com.lydia")) {
+                            intentUri = "lydiahomologation://pendinglist?request_id=" + requestID;
+                        } else {
+                            intentUri = mobileUrl; // Package doesn't exists : open URL
+                        }
+
                         Intent i = new Intent(Intent.ACTION_VIEW);
-                        i.setData(Uri.parse("lydiahomologation://pendinglist?request_id=" + requestID));
+                        i.setData(Uri.parse(intentUri));
                         startActivity(i);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
 
             if (result != 1) {
