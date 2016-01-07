@@ -375,9 +375,9 @@ public class LydiaActivity extends AppCompatActivity {
                         // Package Lydia exists ?
                         if (Utilities.isPackageExisted(context, "com.lydia")) {
                             intentUri = "lydiahomologation://pendinglist?request_id=" + requestID;
-                            closeAfter = true;
                         } else {
                             intentUri = mobileUrl; // Package doesn't exists : open URL
+                            closeAfter = true; // @see comment below
                         }
 
                         Intent i = new Intent(Intent.ACTION_VIEW);
