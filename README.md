@@ -7,6 +7,8 @@ Application Android du BDE ESEOmega (2015 - 2016) :
 
 Note : Ceci est le dépôt utilisé en ce moment (phase de tests + release)
 
+- 07/01/2015 : Passage à l'API LaCommande entièrement effectué (iOS + Android) → Les URL en v21 sont donc dépréciées
+
 A venir :
 - Edition Ingénews ✓ Nouveau style "grille" (+ favoris ?)
 - News ESEOmega en webview ✓
