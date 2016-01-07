@@ -171,7 +171,7 @@ public class LydiaActivity extends AppCompatActivity {
     /**
      * Initialise un dialogue avec une entrée texte téléphone
      * Les boutons Annuler / Payer permettent de fermer l'activité et d'effectuer une demande de paiement auprès de Lydia
-     * TODO → passage direct à l'AsyncTask si téléphone déjà renseigné
+     * → passage direct à l'AsyncTask si téléphone déjà renseigné → ok done
      */
     void dialogFromApp () {
 
