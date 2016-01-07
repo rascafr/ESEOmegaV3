@@ -73,7 +73,7 @@ public class TabListFood extends Fragment {
 
         // Try to download categories's data
         AsyncGetData asyncGetData = new AsyncGetData();
-        asyncGetData.execute(Constants.URL_JSON_LACMD_DATA);
+        asyncGetData.execute(Constants.URL_API_ORDER_ITEMS);
 
         recList.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
             @Override

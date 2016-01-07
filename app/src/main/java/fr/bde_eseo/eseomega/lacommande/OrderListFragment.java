@@ -221,7 +221,7 @@ public class OrderListFragment extends Fragment {
 
                     /** Call async task **/
                     SyncTimeToken syncTimeToken = new SyncTimeToken(getActivity());
-                    syncTimeToken.execute(Constants.URL_POST_TOKEN);
+                    syncTimeToken.execute(Constants.URL_API_ORDER_PREPARE);
                 }
 
             }
@@ -274,28 +274,51 @@ public class OrderListFragment extends Fragment {
 
         @Override
         protected String doInBackground(String... sUrl) {
-            return ConnexionUtils.postServerData(Constants.URL_POST_TOKEN, params, context);
+            return ConnexionUtils.postServerData(Constants.URL_API_ORDER_PREPARE, params, context);
         }
 
         @Override
         protected void onPostExecute(String data) {
 
+            String err = "";
+            int retCode = 0;
+            String jsonToken = "";
+
             /** Check if response is token, or an error **/
-            if (!Utilities.isNetworkDataValid(data) || data.length() != 64 || data.contains("-")) { // 64 : nb chars for a SHA256 value
+            if (Utilities.isNetworkDataValid(data)) { // 64 : nb chars for a SHA256 value
+                try {
+                    JSONObject obj = new JSONObject(data);
+                    retCode = obj.getInt("status");
+                    err = obj.getString("cause");
 
-                // Error
-                int e = -1; // unknown error
-                if (data != null) {
-                    if (data.contains("<!DOCTYPE")) {
-                        e = Constants.ERROR_HOTSPOT;
-                    } else if (data.contains("-")) {
-                        e = data.charAt(1) - 0x30;
+                    if (retCode == 1) {
+                        jsonToken = obj.getJSONObject("data").getString("token");
                     }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-                String errorStr, errorCode;
-                //Log.d("DATA", "Error code : " + e);
+            }
 
-                switch (e) {
+            // Check service answer
+            if (retCode == 1) {
+                // Success !
+                run = false;
+                DataManager.getInstance().reset(); // reset data before writing in it
+                DataManager.getInstance().setToken(jsonToken); // Sets the Token
+
+                OrderTabsFragment fragment = new OrderTabsFragment();
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.slide_in, R.anim.slide_out)
+                        .replace(R.id.frame_container, fragment, Constants.TAG_FRAGMENT_ORDER_TABS)
+                        .addToBackStack("BACK")
+                        .commit();
+            } else {
+
+                retCode = -retCode; // -5 => error n°5
+                String errorStr;
+
+                switch (retCode) {
                     case Constants.ERROR_TIMESTAMP:
                         errorStr = Constants.ERROR_TIMESTAMP_STR;
                         break;
@@ -312,19 +335,10 @@ public class OrderListFragment extends Fragment {
                         errorStr = Constants.ERROR_APP_PB_STR;
                         break;
                     case Constants.ERROR_USER_BAN:
-                        String msg = "Inconnue", t;
-                        if (data.contains("#")) {
-                            t = data.substring(data.indexOf("#")+1);
-                            if (t.length() > 0)
-                                msg = t;
-                        }
-                        errorStr = Constants.ERROR_USER_BAN_STR + msg + ")";
+                        errorStr = Constants.ERROR_USER_BAN_STR + err + ")";
                         break;
                     case Constants.ERROR_BAD_VERSION:
                         errorStr = Constants.ERROR_BAD_VERSION_STR;
-                        break;
-                    case Constants.ERROR_HOTSPOT:
-                        errorStr = Constants.ERROR_HOTSPOT_STR;
                         break;
                     case Constants.ERROR_NETWORK:
                         errorStr = Constants.ERROR_NETWORK_STR;
@@ -344,22 +358,6 @@ public class OrderListFragment extends Fragment {
                         .cancelable(false)
                         .negativeText("Fermer")
                         .show();
-
-            } else {
-
-                // Success !
-                run = false;
-                DataManager.getInstance().reset(); // reset data before writing in it
-                DataManager.getInstance().setToken(data); // Sets the Token
-
-                OrderTabsFragment fragment = new OrderTabsFragment();
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.slide_in, R.anim.slide_out)
-                        .replace(R.id.frame_container, fragment, Constants.TAG_FRAGMENT_ORDER_TABS)
-                        .addToBackStack("BACK")
-                        .commit();
-
             }
         }
     }

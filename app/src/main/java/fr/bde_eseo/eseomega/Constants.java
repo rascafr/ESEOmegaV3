@@ -54,31 +54,38 @@ public class Constants {
     // URL's
     public static final String URL_SERVER = "http://217.199.187.59/francoisle.fr/";
     public static final String URL_ASSETS = URL_SERVER + "lacommande/assets/";
-    //public static final String URL_JSON_LACMD_DATA = URL_SERVER + "lacommande/apps/syncData.php";
-    //public static final String URL_SYNC_HISTORY = URL_SERVER + "lacommande/apps/syncClientHistory.php"; // post ok
-    //public static final String URL_GPGAME_POST_SCORES = URL_SERVER + "lacommande/apps/syncGPScores.php"; // post ok
-    //public static final String URL_SYNC_SINGLE = URL_SERVER + "lacommande/apps/syncSingle.php"; // post ok
 
-    // URL V2.1
-    //public static final String URL_LOGIN = URL_SERVER + "lacommande/apps/v21/connectProfile.php";
-    public static final String URL_POST_TOKEN = URL_SERVER + "lacommande/apps/v21/syncDate-token.php";
-    //public static final String URL_SYNC_HISTORY = URL_SERVER + "lacommande/apps/v21/syncClientHistory.php";
-    //public static final String URL_SYNC_SINGLE = URL_SERVER + "lacommande/apps/v21/syncClientHistorySingle.php";
-    public static final String URL_SYNC_PUSH = URL_SERVER + "lacommande/apps/v21/registerPushClient.php";
-    public static final String URL_POST_CART = URL_SERVER + "lacommande/apps/v21/syncOrder-token.php";
-    public static final String URL_DESYNC_PUSH = URL_SERVER + "lacommande/apps/v21/unregisterPushClient.php";
-    public static final String URL_JSON_LACMD_DATA = URL_SERVER + "lacommande/apps/v21/syncData.php";
-    public static final String URL_GPGAME_POST_SCORES = URL_SERVER + "lacommande/apps/v21/syncGPScores.php";
+    /**
+     * API V3.0 - Since December 2015 ↔ January 2016
+     */
 
-    // API V3.0
+    // Base URL
     private static final String URL_API_BASE = URL_SERVER + "lacommande/api/";
+
+    // Connexion
     public static final String URL_API_CLIENT_CONNECT = URL_API_BASE + "client/connect.php";
+
+    // Gantier game
+    public static final String URL_API_GANTIER_SCORES = URL_API_BASE + "gantier/scores.php";
+
+    // Push notifications
+    public static final String URL_API_PUSH_REGISTER = URL_API_BASE + "push/register.php";
+    public static final String URL_API_PUSH_UNREGISTER = URL_API_BASE + "push/unregister.php";
+
+    // LaCommande
+    public static final String URL_API_ORDER_ITEMS = URL_API_BASE + "order/items.php";
     public static final String URL_API_ORDER_LIST = URL_API_BASE + "order/list.php";
     public static final String URL_API_ORDER_RESUME = URL_API_BASE + "order/resume.php";
+    public static final String URL_API_ORDER_PREPARE = URL_API_BASE + "order/prepare.php";
     public static final String URL_API_ORDER_SEND = URL_API_BASE + "order/send.php";
+
+    // General & Specific Informations
     public static final String URL_API_INFO_SERVICE = URL_API_BASE + "info/service.php";
+
+    // Lydia
     public static final String URL_API_LYDIA_ASK = URL_API_BASE + "lydia/ask.php";
     public static final String URL_API_LYDIA_CHECK = URL_API_BASE + "lydia/check.php";
+
 
     // Data from Naudet-Sonasi
     public static final String URL_SERVERBIS = "http://79.170.44.147/eseonews.fr/";
@@ -99,7 +106,7 @@ public class Constants {
     // Errors
     public static final int ERROR_TIMESTAMP = 1;
     public static final String ERROR_TIMESTAMP_STR = "On dirait que votre smartphone n'est pas à l'heure.\n" +
-                                                    "Bien tenté, mais vous ne pouvez pas tricher pour commander à la cafet avant les autres.";
+                                                    "Bien tenté, mais vous ne pouvez pas tricher pour commander à la cafet avant les autres.\n(Et puis de toute manière ça sert à rien)";
 
     public static final int ERROR_USERREGISTER = 2;
     public static final String ERROR_USERREGISTER_STR = "Votre mot de passe est incorrect.\n" +
@@ -127,7 +134,7 @@ public class Constants {
     public static final int ERROR_HOTSPOT = -2;
     public static final String ERROR_HOTSPOT_STR = "La connexion semble passer par un hotspot : avez vous bien renseigné vos identifiants de connexion Wifi ?";
 
-    public static final int ERROR_NETWORK = -1;
+    public static final int ERROR_NETWORK = 0;
     public static final String ERROR_NETWORK_STR = "Impossible de se connecter au serveur. Veuillez vérifier votre connexion ou réessayer plus tard.";
 
     public static final String ERROR_UNKNOWN = "Veuillez réessayer plus tard, le service semble indisponible.";

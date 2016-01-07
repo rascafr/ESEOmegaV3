@@ -35,7 +35,6 @@ import fr.bde_eseo.eseomega.lacommande.DataManager;
 import fr.bde_eseo.eseomega.lacommande.MyCartAdapter;
 import fr.bde_eseo.eseomega.lacommande.OrderTabsFragment;
 import fr.bde_eseo.eseomega.lydia.LydiaActivity;
-import fr.bde_eseo.eseomega.lydia.LydiaTestActivity;
 import fr.bde_eseo.eseomega.lacommande.model.LacmdMenu;
 import fr.bde_eseo.eseomega.listeners.RecyclerItemClickListener;
 import fr.bde_eseo.eseomega.utils.ConnexionUtils;

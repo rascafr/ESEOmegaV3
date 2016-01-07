@@ -24,6 +24,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import fr.bde_eseo.eseomega.R;
 
 import java.io.File;
@@ -189,23 +193,30 @@ public class ViewProfileFragment extends Fragment {
                             Constants.APP_ID +
                             this.profile.getPushToken()));
 
-            return ConnexionUtils.postServerData(Constants.URL_DESYNC_PUSH, pairs, getActivity());
+            return ConnexionUtils.postServerData(Constants.URL_API_PUSH_UNREGISTER, pairs, getActivity());
         }
 
         @Override
         protected void onPostExecute(String data) {
 
-            // If disconnexion is not successfull (network problem)
-            if (!Utilities.isNetworkDataValid(data)) {
-                //materialDialog.hide();
-                materialDialog.dismiss();
-                materialDialog = new MaterialDialog.Builder(getActivity())
-                        .title("Erreur de déconnexion")
-                        .content("Impossible d'accéder au serveur.\nVeuiller vérifier votre connexion au réseau puis réessayer.")
-                        .negativeText("Fermer")
-                        .cancelable(false)
-                        .show();
-            } else {
+            int retCode = -1;
+            String err = "";
+
+            // If disconnexion is successfull (no network problem)
+            if (Utilities.isNetworkDataValid(data)) {
+
+                try {
+                    JSONObject obj = new JSONObject(data);
+                    retCode = obj.getInt("status");
+                    err = obj.getString("cause");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            // Check server's answer
+            if (retCode == 1) {
+
                 // Success ! Remove profile from preferences
                 materialDialog.dismiss();
                 this.profile.removeProfileFromPrefs(ctx);
@@ -224,6 +235,15 @@ public class ViewProfileFragment extends Fragment {
                         .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                         .replace(R.id.frame_container, new ConnectProfileFragment(), "frag0")
                         .commit();
+            } else {
+
+                materialDialog.dismiss();
+                materialDialog = new MaterialDialog.Builder(getActivity())
+                        .title("Erreur de déconnexion")
+                        .content("Impossible d'accéder au serveur.\nVeuiller vérifier votre connexion au réseau puis réessayer.\n" + retCode + ", " + err)
+                        .negativeText("Fermer")
+                        .cancelable(false)
+                        .show();
             }
         }
     }
@@ -233,8 +253,6 @@ public class ViewProfileFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == INTENT_GALLERY_ID && resultCode == RESULT_OK && data != null) {
-
-            Log.d("SD", "Got : " + data.getData());
 
             Uri profPicture = data.getData();
             String[] filePathColumn = { MediaStore.Images.Media.DATA };

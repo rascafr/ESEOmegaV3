@@ -74,7 +74,6 @@ public class OrderTabsFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        Log.d("FRAG", "Fragment detached");
     }
 
     // Used to refresh cart's item numbers

@@ -1,10 +1,8 @@
 package fr.bde_eseo.eseomega.community;
 
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,27 +19,18 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 
-import fr.bde_eseo.eseomega.BuildConfig;
-import fr.bde_eseo.eseomega.R;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.util.ArrayList;
 
 import fr.bde_eseo.eseomega.Constants;
-import fr.bde_eseo.eseomega.events.EventItem;
-import fr.bde_eseo.eseomega.events.MyEventsAdapter;
+import fr.bde_eseo.eseomega.R;
 import fr.bde_eseo.eseomega.listeners.RecyclerItemClickListener;
-import fr.bde_eseo.eseomega.news.ImageViewActivity;
-import fr.bde_eseo.eseomega.news.ViewNewsActivity;
 import fr.bde_eseo.eseomega.utils.JSONUtils;
 import fr.bde_eseo.eseomega.utils.Utilities;
 

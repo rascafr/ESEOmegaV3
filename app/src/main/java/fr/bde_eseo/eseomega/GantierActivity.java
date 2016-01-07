@@ -18,9 +18,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,6 +38,7 @@ import java.util.TimerTask;
 import fr.bde_eseo.eseomega.profile.UserProfile;
 import fr.bde_eseo.eseomega.utils.ConnexionUtils;
 import fr.bde_eseo.eseomega.utils.EncryptUtils;
+import fr.bde_eseo.eseomega.utils.Utilities;
 
 /**
  * Created by Rascafr on 15/08/2015.
@@ -568,10 +571,11 @@ public class GantierActivity extends Activity implements SensorEventListener {
             public static final int GAME_LOOSE = 1;
             private int status = GAME_PLAY;
             private boolean stOnce = false;
-            private String strJson = null;
+            private JSONObject jsonScoresObj = null;
             private long lastLive = 0;
             private long delayBomb = 0;
             private boolean netError = false;
+            private boolean srvError = false;
 
             public int getStatus () {
                 return status;
@@ -651,8 +655,9 @@ public class GantierActivity extends Activity implements SensorEventListener {
                     stOnce = false;
                     lives = 3;
                     score = 0;
-                    strJson = null;
+                    jsonScoresObj = null;
                     netError = false;
+                    srvError = false;
                     delayBomb = System.currentTimeMillis();
                 }
             }
@@ -721,13 +726,12 @@ public class GantierActivity extends Activity implements SensorEventListener {
                     }
 
                     // Now draw scores if != null
-                    if (strJson != null) {
+                    if (jsonScoresObj != null) {
 
                         try {
-                            JSONObject obj = new JSONObject(strJson);
-                            int rank = obj.getInt("rank");
-                            int bscore = obj.getInt("bscore");
-                            JSONArray array = obj.getJSONArray("best");
+                            int rank = jsonScoresObj.getInt("rank");
+                            int bscore = jsonScoresObj.getInt("bscore");
+                            JSONArray array = jsonScoresObj.getJSONArray("best");
 
                             Paint paintHigh = new Paint(textPaint);
                             paintHigh.setColor(0xc0e5e5e5);
@@ -755,8 +759,11 @@ public class GantierActivity extends Activity implements SensorEventListener {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                    } else if (netError){
+                    } else if (netError) {
                         canvas.drawText(" -- Pas de reseau --", (int)(screen_w*0.124), (int)(screen_h*0.224), textPaint);
+                        canvas.drawBitmap(bug, screen_w/2-bug.getWidth()/2, screen_h/2-bug.getHeight()/2, null);
+                    } else if (srvError) {
+                        canvas.drawText(" -- Err.  serveur --", (int)(screen_w*0.124), (int)(screen_h*0.224), textPaint);
                         canvas.drawBitmap(bug, screen_w/2-bug.getWidth()/2, screen_h/2-bug.getHeight()/2, null);
                     }
                 }
@@ -994,14 +1001,38 @@ public class GantierActivity extends Activity implements SensorEventListener {
                     pairs.put(GantierActivity.this.getResources().getString(R.string.hash),
                             EncryptUtils.sha256(GantierActivity.this.getResources().getString(R.string.HEADER_SYNC_SCORES) + profile.getId() + score));
 
-                    return ConnexionUtils.postServerData(Constants.URL_GPGAME_POST_SCORES, pairs, GantierActivity.this);
+                    return ConnexionUtils.postServerData(Constants.URL_API_GANTIER_SCORES, pairs, GantierActivity.this);
                 }
 
                 @Override
-                protected void onPostExecute(String result) {
-                    strJson = result;
-                    if (strJson == null) {
-                        netError = true;
+                protected void onPostExecute(String data) {
+
+                    int retCode = -1;
+                    String err = "inconnue";
+
+                    if (Utilities.isNetworkDataValid(data)) {
+                        try {
+                            JSONObject obj = new JSONObject(data);
+                            retCode = obj.getInt("status");
+                            err = obj.getString("cause");
+
+                            if (retCode == 1) {
+                                jsonScoresObj = obj.getJSONObject("data");
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            retCode = -8;
+                        }
+                    }
+
+                    if (retCode != 1) {
+                        if (retCode == -8) { // server error
+                            srvError = true;
+                            netError = false;
+                        } else {
+                            netError = true;
+                            srvError = false;
+                        }
                     }
                 }
             }

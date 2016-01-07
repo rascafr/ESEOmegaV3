@@ -28,6 +28,10 @@ import android.util.Log;
 import com.google.android.gms.gcm.GcmPubSub;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import fr.bde_eseo.eseomega.R;
 
 import java.io.IOException;
@@ -39,6 +43,7 @@ import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.profile.UserProfile;
 import fr.bde_eseo.eseomega.utils.ConnexionUtils;
 import fr.bde_eseo.eseomega.utils.EncryptUtils;
+import fr.bde_eseo.eseomega.utils.Utilities;
 
 public class RegistrationIntentService extends IntentService {
 
@@ -135,25 +140,32 @@ public class RegistrationIntentService extends IntentService {
         }
 
         @Override
-        protected void onPreExecute() {
-            //Log.d("GcmPushToken", "[OK] Preparing to register ...");
-        }
+        protected void onPostExecute(String data) {
 
-        @Override
-        protected void onPostExecute(String s) {
+            String err = "";
+            int retCode = -1;
 
-            if (s!= null && s.equals("1")) {
+            if (Utilities.isNetworkDataValid(data)) {
+
+                try {
+                    JSONObject obj = new JSONObject(data);
+                    retCode = obj.getInt("status");
+                    err = obj.getString("cause");
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (retCode == 1) {
                 // Notify UI that registration has completed, so the progress indicator can be hidden.
-                //Log.d("NOTIF", "Registration complete");
                 sharedPreferences.edit().putBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, true).apply();
             } else {
-                //Log.d("NOTIF", "Registration failed");
                 sharedPreferences.edit().putBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false).apply();
             }
 
             Intent registrationStatus = new Intent(QuickstartPreferences.REGISTRATION_COMPLETE);
             LocalBroadcastManager.getInstance(RegistrationIntentService.this).sendBroadcast(registrationStatus);
-
         }
 
         @Override
@@ -176,7 +188,7 @@ public class RegistrationIntentService extends IntentService {
                                 Constants.APP_ID +
                                 params[0]));
 
-                pushResult = ConnexionUtils.postServerData(Constants.URL_SYNC_PUSH, pairs, RegistrationIntentService.this);
+                pushResult = ConnexionUtils.postServerData(Constants.URL_API_PUSH_REGISTER, pairs, RegistrationIntentService.this);
 
                 // Save token into profile
                 profile.setPushToken(params[0]);
