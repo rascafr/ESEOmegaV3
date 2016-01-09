@@ -28,6 +28,7 @@ public class EventItem {
     private final static String JSON_KEY_ITEM_URL = "url";
     private final static String JSON_KEY_ITEM_LIEU = "lieu";
     private final static String JSON_KEY_ITEM_DATEFIN = "dateFin";
+    private final static String JSON_KEY_ITEM_PRICE = "prix";
     private final static String JSON_KEY_ARRAY_COLOR = "color";
 
     private static final String HOUR_PASS_ALLDAY = "00:02";
@@ -46,7 +47,9 @@ public class EventItem {
         this.setAdditionnal(
                 obj.getString(JSON_KEY_ITEM_CLUB),
                 obj.getString(JSON_KEY_ITEM_URL),
-                obj.getString(JSON_KEY_ITEM_LIEU));
+                obj.getString(JSON_KEY_ITEM_LIEU),
+                obj.getDouble(JSON_KEY_ITEM_PRICE)
+        );
         this.performShortedDetails();
 
         JSONArray colorsJSON = obj.getJSONArray(JSON_KEY_ARRAY_COLOR);
@@ -88,10 +91,11 @@ public class EventItem {
         calFin.setTime(datefin);
     }
 
-    public void setAdditionnal (String club, String url, String lieu) {
+    public void setAdditionnal (String club, String url, String lieu, double price) {
         this.club = club;
         this.url = url;
         this.lieu = lieu;
+        this.price = price;
     }
 
     public void setColors (ArrayList<String> colors) {
@@ -246,5 +250,13 @@ public class EventItem {
 
     public boolean setIsPassed () {
         return isPassed;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public boolean couldPay () {
+        return price > 0;
     }
 }

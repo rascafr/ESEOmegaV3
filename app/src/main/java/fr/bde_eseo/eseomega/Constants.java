@@ -32,6 +32,7 @@ public class Constants {
 
     // SharedPref class
     public static final String PREFS_GENERAL_HOMESCREEN = "settings.general.homescreen";
+    public static final String PREFS_LYDIA_PHONE = "settings.lydia.phone";
 
     // Notifications
     public static final int NOTIF_GENERAL = 0;

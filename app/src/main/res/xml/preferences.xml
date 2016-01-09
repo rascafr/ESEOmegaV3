@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <PreferenceCategory android:title="Général">
+
     <ListPreference     android:title="Écran d'accueil"
                         android:summary="Choisissez l'écran que vous souhaitez voir au démarrage de l'application"
                         android:key="settings.general.homescreen"
@@ -11,5 +13,18 @@
     <CheckBoxPreference android:title="Mises à jour auto"
                         android:defaultValue="false"
                         android:summary="Si coché, l'application effectuera une vérification des mises à jour à chaque démarrage."
-                        android:key="applicationUpdates" />
+                        android:key="settings.general.autoupdate" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Lydia">
+
+        <EditTextPreference android:title="Numéro de téléphone"
+                            android:summary="Vous pouvez changer le numéro de téléphone portable utilisé par défaut lors d'une commande avec Lydia"
+                            android:key="settings.lydia.phone"
+                            android:inputType="phone"
+                            android:defaultValue=""/>
+
+
+    </PreferenceCategory>
 </PreferenceScreen>

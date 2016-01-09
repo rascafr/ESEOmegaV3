@@ -3,11 +3,13 @@ package fr.bde_eseo.eseomega.lydia;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
@@ -64,6 +66,7 @@ public class LydiaActivity extends AppCompatActivity {
     private UserProfile userProfile;
     private String clientPhone;
     private boolean hasBeenPaused = false;
+    private SharedPreferences prefsUser;
 
     // Intent-from
     private double orderPrice = 0.0;
@@ -94,6 +97,7 @@ public class LydiaActivity extends AppCompatActivity {
             Bundle extras = intent.getExtras();
             String action = intent.getAction();
 
+            // TODO VERIFIER INTENT PROVENANT DE CHROME ! SCHEME URL CORRECTE !
             if (extras == null && action != null) {
 
                 // Check if intent's action is correct (obviously yes, but prevents Manifest modifications)
@@ -134,6 +138,7 @@ public class LydiaActivity extends AppCompatActivity {
         // Get objects
         userProfile = new UserProfile();
         userProfile.readProfilePromPrefs(context);
+        prefsUser = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
         // Init dialog
         dialogInit();
@@ -351,6 +356,8 @@ public class LydiaActivity extends AppCompatActivity {
             int result = 0;
             String msg = "Erreur réseau / serveur";
 
+            Log.d("DBG", "Got : " + data);
+
             // Check data
             if (Utilities.isNetworkDataValid(data)) {
 
@@ -368,15 +375,20 @@ public class LydiaActivity extends AppCompatActivity {
 
                         // Get Lydia pay values
                         String mobileUrl = sharedData.getString("lydia_url"); // IMPORTANT : Utiliser si app Lydia non installée !
-                        String requestID = sharedData.getString("request_id");
+
+                        //@deprecated
+                        //String requestID = sharedData.getString("request_id");
+
+                        String lydiaPackage = sharedData.getString("lydia_package");
+                        String lydiaIntent = sharedData.getString("lydia_intent");
 
                         // Configure and make Lydia Intent
                         String intentUri;
                         boolean closeAfter = false;
 
                         // Package Lydia exists ?
-                        if (Utilities.isPackageExisted(context, Constants.LYDIA_APP_ID)) {
-                            intentUri = "lydiahomologation://pendinglist?request_id=" + requestID;
+                        if (Utilities.isPackageExisted(context, lydiaPackage)) {
+                            intentUri = lydiaIntent;
                         } else {
                             intentUri = mobileUrl; // Package doesn't exists : open URL
                             closeAfter = true; // @see comment below

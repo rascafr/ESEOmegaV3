@@ -2,6 +2,7 @@ package fr.bde_eseo.eseomega.profile;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.telephony.PhoneNumberUtils;
 import android.util.Patterns;
 
@@ -208,10 +209,14 @@ public class UserProfile {
     public void registerProfileInPrefs (Context context) {
 
         SharedPreferences prefs_Read;
+        SharedPreferences prefs_Single;
         SharedPreferences.Editor prefs_Write;
+        SharedPreferences.Editor prefs_WriteSingle;
 
         prefs_Read = context.getSharedPreferences(Constants.PREFS_USER_PROFILE_KEY, 0);
         prefs_Write = prefs_Read.edit();
+        prefs_Single = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs_WriteSingle = prefs_Single.edit();
 
         prefs_Write.putString(Constants.PREFS_USER_PROFILE_NAME, this.name);
         prefs_Write.putString(Constants.PREFS_USER_PROFILE_MAIL, this.email);
@@ -220,15 +225,17 @@ public class UserProfile {
         prefs_Write.putBoolean(Constants.PREFS_USER_PROFILE_EXISTS, this.isCreated);
         prefs_Write.putString(Constants.PREFS_USER_PROFILE_PICTURE, this.picturePath);
         prefs_Write.putString(Constants.PREFS_USER_PROFILE_PUSH_TOKEN, this.pushToken);
-        prefs_Write.putString(Constants.PREFS_USER_PROFILE_PHONE, this.phoneNumber);
+        prefs_WriteSingle.putString(Constants.PREFS_LYDIA_PHONE, this.phoneNumber);
         prefs_Write.apply();
+        prefs_WriteSingle.apply();
     }
 
     public void readProfilePromPrefs (Context context) {
 
-        SharedPreferences prefs_Read;
+        SharedPreferences prefs_Read, prefs_Single;
 
         prefs_Read = context.getSharedPreferences(Constants.PREFS_USER_PROFILE_KEY, 0);
+        prefs_Single = PreferenceManager.getDefaultSharedPreferences(context);
 
         this.name = prefs_Read.getString(Constants.PREFS_USER_PROFILE_NAME, "");
         this.email = prefs_Read.getString(Constants.PREFS_USER_PROFILE_MAIL, "");
@@ -237,7 +244,7 @@ public class UserProfile {
         this.isCreated = prefs_Read.getBoolean(Constants.PREFS_USER_PROFILE_EXISTS, false);
         this.picturePath = prefs_Read.getString(Constants.PREFS_USER_PROFILE_PICTURE, "");
         this.pushToken = prefs_Read.getString(Constants.PREFS_USER_PROFILE_PUSH_TOKEN, "");
-        this.phoneNumber = prefs_Read.getString(Constants.PREFS_USER_PROFILE_PHONE, "");
+        this.phoneNumber = prefs_Single.getString(Constants.PREFS_LYDIA_PHONE, "");
     }
 
     public void removeProfileFromPrefs (Context context) {
