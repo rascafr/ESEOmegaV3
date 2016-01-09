@@ -42,7 +42,6 @@ import fr.bde_eseo.eseomega.utils.Utilities;
  * Activité permettant de vérifier si, lors du retour de l'app Lydia, la commande a bien été passée
  * + également passer une demande de paiement + redir Lydia
  * V1.2
- * <p/>
  * Sous la forme d'un dialogue ? tests
  */
 public class LydiaActivity extends AppCompatActivity {
@@ -378,12 +377,22 @@ public class LydiaActivity extends AppCompatActivity {
                         } else {
                             intentUri = mobileUrl; // Package doesn't exists : open URL
                             closeAfter = true; // @see comment below
+                            Toast.makeText(context, "Le navigateur va être ouvert.", Toast.LENGTH_SHORT).show();
                         }
 
                         Intent i = new Intent(Intent.ACTION_VIEW);
                         i.setData(Uri.parse(intentUri));
                         startActivity(i);
-                        if (closeAfter) close(); // prevent app-resume with null orderID
+                        if (closeAfter) {
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    md.dismiss();
+                                    close(); // prevent app-resume with null orderID
+                                    Toast.makeText(context, "Closing LydiaActivity ...", Toast.LENGTH_SHORT).show();
+                                }
+                            }, 1000);
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -456,6 +465,8 @@ public class LydiaActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(final String data) {
             super.onPostExecute(data);
+
+            Log.d("DBG", "Got : " + data);
 
             new Handler().postDelayed(new Runnable() {
 

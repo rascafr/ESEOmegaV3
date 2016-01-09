@@ -162,9 +162,10 @@ public class Constants {
     // LYDIA
     public static final String KEY_LYDIA_ORDER_ID = "lydia.order_id";
     public static final String KEY_LYDIA_ORDER_PRICE = "lydia.order_price";
+    public static final String TYPE_LYDIA_CAFET = "CAFET";
+    public static final String TYPE_LYDIA_EVENT = "EVENT";
 
     // External Intents
-    public static final String EXTERNAL_INTENT_LYDIA_CAFET = "fr.bde_eseomega.eseomega.LYDIA_CAFET";
-
+    // public static final String EXTERNAL_INTENT_LYDIA_CAFET = "fr.bde_eseomega.eseomega.LYDIA_CAFET"; // Android VIEW now
 
 }
