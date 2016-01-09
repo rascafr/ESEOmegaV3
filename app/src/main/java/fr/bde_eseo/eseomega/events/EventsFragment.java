@@ -65,14 +65,6 @@ public class EventsFragment extends Fragment {
 
     // Constants
     private final static String JSON_KEY_ARRAY = "events";
-    private final static String JSON_KEY_ITEM_NAME = "titre";
-    private final static String JSON_KEY_ITEM_DETAIL = "detail";
-    private final static String JSON_KEY_ITEM_DATE = "date";
-    private final static String JSON_KEY_ITEM_CLUB = "club";
-    private final static String JSON_KEY_ITEM_URL = "url";
-    private final static String JSON_KEY_ITEM_LIEU = "lieu";
-    private final static String JSON_KEY_ITEM_DATEFIN = "dateFin";
-    private final static String JSON_KEY_ARRAY_COLOR = "color";
     private final static int LATENCY_REFRESH = 8; // 8 sec min between 2 refreshs
 
     private String cachePath;
@@ -264,32 +256,8 @@ public class EventsFragment extends Fragment {
                     int scrollTo = -1, counter = 0;
 
                     for (int i = 0; i < array.length(); i++) {
-                        JSONObject obj = array.getJSONObject(i);
-                        ArrayList<String> colors = new ArrayList<>();
 
-                        EventItem ei = new EventItem(
-                                obj.getString(JSON_KEY_ITEM_NAME),
-                                obj.getString(JSON_KEY_ITEM_DETAIL),
-                                obj.getString(JSON_KEY_ITEM_DATE),
-                                obj.getString(JSON_KEY_ITEM_DATEFIN));
-                        ei.setAdditionnal(
-                                obj.getString(JSON_KEY_ITEM_CLUB),
-                                obj.getString(JSON_KEY_ITEM_URL),
-                                obj.getString(JSON_KEY_ITEM_LIEU));
-                        ei.performShortedDetails();
-
-                        JSONArray colorsJSON = obj.getJSONArray(JSON_KEY_ARRAY_COLOR);
-                        for (int a = 0; a < colorsJSON.length(); a++) {
-                            if (ei.getDate().before(new Date())) {
-                                colors.add("127"); // Gray
-                                ei.setIsPassed(true);
-                            } else {
-                                colors.add(colorsJSON.getInt(a)+""); // TODO pass integer directly without using string
-                                ei.setIsPassed(false);
-                            }
-                        }
-
-                        ei.setColors(colors);
+                        EventItem ei = new EventItem(array.getJSONObject(i));
 
                         if (ei.getDate().after(new Date()) && scrollTo == -1) {
                             scrollTo = counter;

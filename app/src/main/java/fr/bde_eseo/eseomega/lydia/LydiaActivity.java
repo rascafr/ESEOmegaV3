@@ -46,9 +46,6 @@ import fr.bde_eseo.eseomega.utils.Utilities;
  */
 public class LydiaActivity extends AppCompatActivity {
 
-    // TODO
-    private static final String CAT_ORDER = "CAFET";
-
     // Android lifecycle objects
     private Context context;
 
@@ -70,6 +67,7 @@ public class LydiaActivity extends AppCompatActivity {
 
     // Intent-from
     private double orderPrice = 0.0;
+    private String orderType = "";
     private int orderID = -1;
 
     // Types de requêtes qui ont lieu lors du onCreate (première ouverture de l'app)
@@ -109,9 +107,12 @@ public class LydiaActivity extends AppCompatActivity {
 
                     // Order ID
                     String sOrderID = qUri.getQueryParameter("id");
+
                     if (sOrderID != null) {
                         orderID = Integer.parseInt(sOrderID);
                     }
+
+                    orderType = qUri.getQueryParameter("cat");
                 }
 
             } else if (extras != null) {
@@ -119,6 +120,7 @@ public class LydiaActivity extends AppCompatActivity {
                 // Intent interne
                 intent_request = INTENT_REQUEST.FROM_APP;
                 orderID = extras.getInt(Constants.KEY_LYDIA_ORDER_ID);
+                orderType = extras.getString(Constants.KEY_LYDIA_ORDER_TYPE);
                 orderPrice = extras.getDouble(Constants.KEY_LYDIA_ORDER_PRICE);
             }
         }
@@ -317,7 +319,8 @@ public class LydiaActivity extends AppCompatActivity {
                 pairs.put("password", userProfile.getPassword());
                 pairs.put("phone", b64phone);
                 pairs.put("idcmd", strOrder);
-                pairs.put("hash", EncryptUtils.sha256(userProfile.getId() + userProfile.getPassword() + b64phone + strOrder + "Paiement effectué !"));
+                pairs.put("cat_order", orderType);
+                pairs.put("hash", EncryptUtils.sha256(userProfile.getId() + userProfile.getPassword() + b64phone + strOrder + orderType + "Paiement effectué !"));
                 resp = ConnexionUtils.postServerData(Constants.URL_API_LYDIA_ASK, pairs, context);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -372,7 +375,7 @@ public class LydiaActivity extends AppCompatActivity {
                         boolean closeAfter = false;
 
                         // Package Lydia exists ?
-                        if (Utilities.isPackageExisted(context, "com.lydia")) {
+                        if (Utilities.isPackageExisted(context, Constants.LYDIA_APP_ID)) {
                             intentUri = "lydiahomologation://pendinglist?request_id=" + requestID;
                         } else {
                             intentUri = mobileUrl; // Package doesn't exists : open URL
@@ -414,7 +417,7 @@ public class LydiaActivity extends AppCompatActivity {
      * It means that the payment has failed / was cancelled
      * We have to show a Dialog which checks order status from server and then show status to user
      * OR : → just show it failed
-     * NO : → check from server TODO
+     * NO : → check from server TODO → Ok working on it
      */
     @Override
     public void onResume() {
@@ -450,8 +453,8 @@ public class LydiaActivity extends AppCompatActivity {
             pairs.put("username", userProfile.getId());
             pairs.put("password", userProfile.getPassword());
             pairs.put("idcmd", strOrder);
-            pairs.put("cat_order", CAT_ORDER);
-            pairs.put("hash", EncryptUtils.sha256(userProfile.getId() + userProfile.getPassword() + strOrder + CAT_ORDER + "Paiement refusé par votre banque"));
+            pairs.put("cat_order", orderType);
+            pairs.put("hash", EncryptUtils.sha256(userProfile.getId() + userProfile.getPassword() + strOrder + orderType + "Paiement refusé par votre banque"));
             return ConnexionUtils.postServerData(Constants.URL_API_LYDIA_CHECK, pairs, context);
         }
 

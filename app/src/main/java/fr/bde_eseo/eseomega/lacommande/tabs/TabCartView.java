@@ -148,8 +148,8 @@ public class TabCartView extends Fragment {
 
                                     new MaterialDialog.Builder(getActivity())
                                             .title("Valider la commande ?")
-                                            .content("En validant, vous vous engagez à venir payer et récupérer votre repas au comptoir de la cafet aujourd'hui entre 12h et 13h.\n\n" +
-                                                    "Si ce n'est pas le cas, il vous sera impossible de passer une nouvelle commande dès demain.")
+                                            .content("En validant, vous vous engagez à payer et récupérer votre repas au comptoir de la cafet aujourd'hui aux horaires d'ouverture." +
+                                                    "\n\nSi ce n'est pas le cas, il vous sera impossible de passer une nouvelle commande dès demain.")
                                             .positiveText("Je confirme, j'ai faim !")
                                             .negativeText("Annuler")
                                             .callback(new MaterialDialog.ButtonCallback() {
@@ -301,6 +301,7 @@ public class TabCartView extends Fragment {
 
                                             Intent i = new Intent(getActivity(), LydiaActivity.class);
                                             i.putExtra(Constants.KEY_LYDIA_ORDER_ID, idstr);
+                                            i.putExtra(Constants.KEY_LYDIA_ORDER_TYPE, Constants.TYPE_LYDIA_CAFET);
                                             i.putExtra(Constants.KEY_LYDIA_ORDER_PRICE, price);
                                             getActivity().startActivity(i);
 

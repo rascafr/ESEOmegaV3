@@ -90,7 +90,8 @@ public class Constants {
     // Data from Naudet-Sonasi
     public static final String URL_SERVERBIS = "http://79.170.44.147/eseonews.fr/";
     public static final String URL_JSON_SPONSORS = URL_SERVERBIS + "jsondata/sponsors_data/sponsors.json";
-    public static final String URL_JSON_EVENTS = URL_SERVERBIS + "jsondata/events_data/events.json";
+    //public static final String URL_JSON_EVENTS = URL_SERVERBIS + "jsondata/events_data/events.json";
+    public static final String URL_JSON_EVENTS = URL_SERVER + "lacommande/events/events.json"; // temp from my server
     public static final String URL_JSON_CLUBS = URL_SERVERBIS + "jsondata/clubs_data/clubs.json";
     public static final String URL_NEWS_ANDROID = URL_SERVERBIS + "getData.php?smtype=ANDROID&";
     public static final String URL_JSON_INGENEWS = URL_SERVERBIS + "jsondata/ingenews_data/ingenews.php";
@@ -160,8 +161,10 @@ public class Constants {
     public static final String KEY_GANTIER_INTENT = "gp.intent.start";
 
     // LYDIA
+    public static final String LYDIA_APP_ID = "com.lydia";
     public static final String KEY_LYDIA_ORDER_ID = "lydia.order_id";
     public static final String KEY_LYDIA_ORDER_PRICE = "lydia.order_price";
+    public static final String KEY_LYDIA_ORDER_TYPE = "lydia.order_type";
     public static final String TYPE_LYDIA_CAFET = "CAFET";
     public static final String TYPE_LYDIA_EVENT = "EVENT";
 

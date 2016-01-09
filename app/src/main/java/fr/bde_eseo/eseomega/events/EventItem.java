@@ -4,6 +4,10 @@ import android.content.Intent;
 import android.provider.CalendarContract;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,6 +21,15 @@ import java.util.Locale;
  */
 public class EventItem {
 
+    private final static String JSON_KEY_ITEM_NAME = "titre";
+    private final static String JSON_KEY_ITEM_DETAIL = "detail";
+    private final static String JSON_KEY_ITEM_DATE = "date";
+    private final static String JSON_KEY_ITEM_CLUB = "club";
+    private final static String JSON_KEY_ITEM_URL = "url";
+    private final static String JSON_KEY_ITEM_LIEU = "lieu";
+    private final static String JSON_KEY_ITEM_DATEFIN = "dateFin";
+    private final static String JSON_KEY_ARRAY_COLOR = "color";
+
     private static final String HOUR_PASS_ALLDAY = "00:02";
     private static final int MAX_CHAR_DESC = 36;
     private String name, details, club, url, lieu;
@@ -26,7 +39,31 @@ public class EventItem {
     private String shorted;
     private Calendar cal, calFin;
     private boolean isPassed;
+    private double price;
 
+    public EventItem(JSONObject obj) throws JSONException {
+        this(obj.getString(JSON_KEY_ITEM_NAME), obj.getString(JSON_KEY_ITEM_DETAIL), obj.getString(JSON_KEY_ITEM_DATE), obj.getString(JSON_KEY_ITEM_DATEFIN));
+        this.setAdditionnal(
+                obj.getString(JSON_KEY_ITEM_CLUB),
+                obj.getString(JSON_KEY_ITEM_URL),
+                obj.getString(JSON_KEY_ITEM_LIEU));
+        this.performShortedDetails();
+
+        JSONArray colorsJSON = obj.getJSONArray(JSON_KEY_ARRAY_COLOR);
+        ArrayList<String> colors = new ArrayList<>();
+
+        for (int a = 0; a < colorsJSON.length(); a++) {
+            if (this.getDate().before(new Date())) {
+                colors.add("127"); // Gray
+                this.setIsPassed(true);
+            } else {
+                colors.add(colorsJSON.getInt(a)+""); // TODO pass integer directly without using string
+                this.setIsPassed(false);
+            }
+        }
+
+        this.setColors(colors);
+    }
 
     public EventItem(String name, String details, boolean isHeader, Date date, int color) {
         this.name = name;
