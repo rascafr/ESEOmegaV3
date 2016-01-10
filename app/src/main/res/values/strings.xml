@@ -110,6 +110,10 @@ Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. N
     <string name="dialog_contact">Contact</string>
     <string name="dialog_close">Fermer</string>
 
+    <!-- Update -->
+    <string name="update_title">Mise à jour disponible</string>
+    <string name="update_content">Voulez-vous être redirigé vers le Play Store ?\n\nNote : Vous pouvez désactiver la vérification des mises à jour depuis l\'onglet Réglages".</string>
+
     <!-- About -->
     <string name="about_title">A propos</string>
     <string name="about_content">Cette application est l\'application officielle ESEOmega pour Android.\n\nDéveloppeur :\nFrançois Leparoux\n\nSupport technique :\ndevelopers.eseomega@gmail.com\n\n© 2015 ESEOmega</string>

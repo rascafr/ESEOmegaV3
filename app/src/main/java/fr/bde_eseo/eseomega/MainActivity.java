@@ -57,6 +57,7 @@ import fr.bde_eseo.eseomega.profile.UserProfile;
 import fr.bde_eseo.eseomega.profile.ViewProfileFragment;
 import fr.bde_eseo.eseomega.utils.ImageUtils;
 import fr.bde_eseo.eseomega.utils.Utilities;
+import fr.bde_eseo.eseomega.version.AsyncCheckVersion;
 
 /**
  * Main Activity for ESEOmega app
@@ -331,6 +332,12 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
                         })
                         .show();
             }
+        }
+
+        // If users asks for update check
+        if (prefsUser.getBoolean(Constants.PREFS_GENERAL_UPDATE, false)) {
+            AsyncCheckVersion asyncCheckVersion = new AsyncCheckVersion(MainActivity.this);
+            asyncCheckVersion.execute();
         }
     }
 

@@ -1,0 +1,81 @@
+package fr.bde_eseo.eseomega.version;
+
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.widget.Toast;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+
+import fr.bde_eseo.eseomega.BuildConfig;
+import fr.bde_eseo.eseomega.Constants;
+import fr.bde_eseo.eseomega.R;
+import fr.bde_eseo.eseomega.utils.ConnexionUtils;
+import fr.bde_eseo.eseomega.utils.Utilities;
+
+/**
+ * Created by Rascafr on 10/01/2016.
+ * Permet de vérifier en tâche asynchrone si l'application dispose bien de la dernière version disponible.
+ */
+public class AsyncCheckVersion extends AsyncTask<String, String, String> {
+
+    private Context context;
+
+    public AsyncCheckVersion(Context context) {
+        this.context = context;
+    }
+
+    @Override
+    protected String doInBackground(String... params) {
+        HashMap<String,String> postParam = new HashMap<>();
+        postParam.put(context.getResources().getString(R.string.os), Constants.APP_ID);
+        return ConnexionUtils.postServerData(Constants.URL_API_INFO_VERSION, postParam, context);
+    }
+
+    @Override
+    protected void onPostExecute(String data) {
+
+        if (Utilities.isNetworkDataValid(data)) {
+            try {
+                JSONObject obj = new JSONObject(data);
+                int status = obj.getInt("status");
+
+                if (status == 1) {
+                    JSONObject jsonData = obj.getJSONObject("data");
+                    String servVersion = jsonData.getString("version");
+
+                    if (!servVersion.equals(BuildConfig.VERSION_NAME)) {
+                        new MaterialDialog.Builder(context)
+                                .title(R.string.update_title)
+                                .content(R.string.update_content)
+                                .positiveText(R.string.dialog_yes)
+                                .negativeText(R.string.dialog_no)
+                                .callback(new MaterialDialog.ButtonCallback() {
+                                    @Override
+                                    public void onPositive(MaterialDialog dialog) {
+                                        super.onPositive(dialog);
+
+                                        try {
+                                            Intent storeIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + BuildConfig.APPLICATION_ID));
+                                            context.startActivity(storeIntent);
+                                        } catch (android.content.ActivityNotFoundException anfe) {
+                                            Toast.makeText(context, "Erreur d'accès Play Store", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                })
+                                .show();
+                    }
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}

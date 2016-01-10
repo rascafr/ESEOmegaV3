@@ -32,6 +32,7 @@ public class Constants {
 
     // SharedPref class
     public static final String PREFS_GENERAL_HOMESCREEN = "settings.general.homescreen";
+    public static final String PREFS_GENERAL_UPDATE = "settings.general.autoupdate";
     public static final String PREFS_LYDIA_PHONE = "settings.lydia.phone";
 
     // Notifications
@@ -82,6 +83,7 @@ public class Constants {
 
     // General & Specific Informations
     public static final String URL_API_INFO_SERVICE = URL_API_BASE + "info/service.php";
+    public static final String URL_API_INFO_VERSION = URL_API_BASE + "info/version.php";
 
     // Lydia
     public static final String URL_API_LYDIA_ASK = URL_API_BASE + "lydia/ask.php";
