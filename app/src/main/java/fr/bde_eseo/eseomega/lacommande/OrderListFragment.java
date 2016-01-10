@@ -68,7 +68,7 @@ public class OrderListFragment extends Fragment {
     private UserProfile userProfile;
     private String userLogin, userPass;
     private static Handler mHandler;
-    private static final int RUN_UPDATE = 15000;
+    private static final int RUN_UPDATE = 8000;
     private static final int RUN_START = 100;
     private static boolean run, backgrounded = false;
     private static boolean firstDisplay = true;
@@ -596,6 +596,7 @@ public class OrderListFragment extends Fragment {
                     String service = jsData.getString("service");
 
                     if (service.length() > 0) {
+                        service = service.replace("\\n", "\n");
                         tvServiceInfo.setText(service);
                         tvServiceInfo.setVisibility(View.VISIBLE);
                     } else {
