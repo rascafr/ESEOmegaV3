@@ -273,6 +273,7 @@ public class TabCartView extends Fragment {
                         JSONObject objData = obj.getJSONObject("data");
                         final int idstr = objData.getInt("idcmd");
                         final double price = objData.getDouble("price");
+                        final boolean lydia_enabled = objData.getBoolean("lydia_enabled");
 
                         int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Create Calendar-Object and get hour
 
@@ -281,7 +282,7 @@ public class TabCartView extends Fragment {
                                 .content("Celle-ci " + (hour < 12 ? "va être traitée après 12h" : "est en cours de préparation") + " et sera disponible après avoir payé.\n\nBon appétit !")
                                 .positiveText("Payer immédiatement avec Lydia")
                                 .positiveColor(
-                                        (DataManager.getInstance().getCartPrice() >= 0.5) ?
+                                        (DataManager.getInstance().getCartPrice() >= 0.5 && lydia_enabled) ?
                                                 getActivity().getResources().getColor(R.color.md_blue_700):
                                                 getActivity().getResources().getColor(R.color.md_grey_500)
                                 )
@@ -294,8 +295,8 @@ public class TabCartView extends Fragment {
                                     public void onPositive(MaterialDialog dialog) {
                                         super.onPositive(dialog);
 
-                                        // Paiement uniquement si somme > 50c€
-                                        if (DataManager.getInstance().getCartPrice() >= 0.5) {
+                                        // Paiement uniquement si somme > 50c€ et si lydia actif
+                                        if (DataManager.getInstance().getCartPrice() >= 0.5 && lydia_enabled) {
 
                                             dialog.hide();
 
@@ -306,6 +307,8 @@ public class TabCartView extends Fragment {
                                             getActivity().startActivity(i);
 
                                             getFragmentManager().popBackStackImmediate();
+                                        } else if (!lydia_enabled) {
+                                            Toast.makeText(getActivity(), "Le paiement par Lydia n'est actuellement pas disponible", Toast.LENGTH_SHORT).show();
                                         } else {
                                             Toast.makeText(getActivity(), "Le paiement par Lydia ne peut se faire qu'avec une somme d'au moins de 0,50€", Toast.LENGTH_SHORT).show();
                                         }
