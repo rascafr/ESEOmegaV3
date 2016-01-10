@@ -2,18 +2,18 @@
 
 <!-- Big picture -->
 <android.support.v7.widget.CardView
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/card_food_list"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="173dp"
-    card_view:cardCornerRadius="4dp"
-    android:layout_marginTop="14dp"
+    android:layout_marginBottom="8dp"
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp"
-    android:layout_marginBottom="4dp"
+    android:layout_marginTop="14dp"
     android:clickable="true"
-    android:foreground="?android:attr/selectableItemBackground">
+    android:foreground="?android:attr/selectableItemBackground"
+    card_view:cardCornerRadius="4dp">
 
 
     <RelativeLayout
@@ -25,55 +25,56 @@
             android:id="@+id/foodPicture"
             android:layout_width="match_parent"
             android:layout_height="135dp"
-            android:layout_marginTop="-7.5dp"
+            android:layout_below="@+id/relativeLayout"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="-7.5dp"
             android:adjustViewBounds="false"
-            android:scaleType="centerCrop"
-            android:layout_below="@+id/relativeLayout" />
+            android:scaleType="centerCrop"/>
 
         <RelativeLayout
+            android:id="@+id/relativeLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#00fafafa"
-            android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:id="@+id/relativeLayout">
+            android:layout_alignParentTop="true" >
 
             <RelativeLayout
-                android:background="@drawable/container_dropshadow_darker"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/container_dropshadow_darker"
                 android:orientation="vertical">
 
-                <TextView android:id="@+id/foodTitle"
+                <TextView
+                    android:id="@+id/foodTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="19sp"
-                    android:textColor="@android:color/black"
-                    android:text="Menus"
-                    android:layout_marginLeft="11dp"
-                          android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_centerVertical="false"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                          android:layout_toLeftOf="@+id/foodMore"
-                          android:layout_toStartOf="@+id/foodMore"/>
+                    android:layout_centerVertical="false"
+                    android:layout_marginBottom="7dp"
+                    android:layout_marginLeft="11dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_toLeftOf="@+id/foodMore"
+                    android:layout_toStartOf="@+id/foodMore"
+                    android:text="Menus"
+                    android:textColor="@android:color/white"
+                    android:textSize="19sp"/>
 
-                <TextView android:id="@+id/foodMore"
+                <TextView
+                    android:id="@+id/foodMore"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_header_size_small"
-                    android:textStyle="bold"
-                    android:textColor="@color/circle_ready"
-                    android:text="A partir de 3.00€"
-                    android:layout_marginRight="11dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_centerVertical="false"
+                    android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true" />
+                    android:layout_centerVertical="false"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginRight="11dp"
+                    android:layout_marginTop="11dp"
+                    android:text="A partir de 3.00€"
+                    android:textColor="@color/md_grey_200"
+                    android:textSize="@dimen/text_header_size_small"
+                    android:textStyle="bold"/>
 
             </RelativeLayout>
 
@@ -82,28 +83,28 @@
         <RelativeLayout
             android:layout_width="100dp"
             android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
+            android:layout_alignBottom="@+id/foodPicture"
             android:layout_alignParentEnd="true"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
             android:layout_alignParentStart="true"
             android:layout_alignTop="@+id/foodPicture"
-            android:layout_alignBottom="@+id/foodPicture"
             android:background="@drawable/bigdegrade">
 
             <TextView
+                android:id="@+id/foodSmall"
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
-                android:textColor="#b0ffffff"
-                android:text="hi hello super long texte"
-                android:gravity="right|bottom"
-                android:id="@+id/foodSmall"
-                android:visibility="visible"
-                android:layout_centerVertical="true"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginRight="16dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
                 android:layout_marginBottom="16dp"
-                android:layout_marginTop="16dp" />
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:gravity="right|bottom"
+                android:text="hi hello super long texte"
+                android:textColor="#b0ffffff"
+                android:visibility="visible"/>
         </RelativeLayout>
 
     </RelativeLayout>

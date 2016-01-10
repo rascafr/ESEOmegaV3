@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">ESEOmega</string>
     <string name="app_name_inge">Éditions Ingénews</string>
+    <string name="app_name_order">Votre commande</string>
     <string name="app_version_name">2.1.1</string>
     <string name="app_version_code">20</string>
 
@@ -16,6 +17,7 @@
     <string name="action_ingenews">Édition Ingénews</string>
     <string name="action_info">Info</string>
     <string name="action_share">Partager</string>
+    <string name="action_lydia">Payer avec Lydia</string>
     <string name="action_browser">Ouvrir dans le navigateur</string>
     <string name="text_example">I\'m an example text inside an example fragment !</string>
     <string name="action_settings">Settings</string>

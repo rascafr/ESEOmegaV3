@@ -20,7 +20,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,7 +47,7 @@ import fr.bde_eseo.eseomega.ingenews.IngeListActivity;
 import fr.bde_eseo.eseomega.interfaces.OnItemAddToCart;
 import fr.bde_eseo.eseomega.interfaces.OnUserProfileChange;
 import fr.bde_eseo.eseomega.lacommande.DataManager;
-import fr.bde_eseo.eseomega.lacommande.OrderListFragment;
+import fr.bde_eseo.eseomega.lacommande.OrderHistoryFragment;
 import fr.bde_eseo.eseomega.lacommande.OrderTabsFragment;
 import fr.bde_eseo.eseomega.slidingmenu.NavDrawerItem;
 import fr.bde_eseo.eseomega.news.NewsListFragment;
@@ -449,7 +448,7 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
                 fragment = new CommunityFragment();
                 break;
             case 4: // Commande Cafet
-                fragment = new OrderListFragment();
+                fragment = new OrderHistoryFragment();
                 break;
             case 5: // Bons plans
                 fragment = new TipsFragment();

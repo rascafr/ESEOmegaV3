@@ -148,6 +148,7 @@ public class Constants {
 
     // Bundled intents & data
     public static final String KEY_ELEMENT_ID = "lacommande.key.element.id";
+    public static final String KEY_ORDER_ID = "lacommande.order_id";
     public static final String KEY_MENU_ID = "lacommande.key.menu.id";
     public static final String KEY_ELEMENT_POSITION = "lacommande.key.element.position";
     public static final String KEY_NEWS_JSON_DATA = "news.json.data";

@@ -1,16 +1,21 @@
 package fr.bde_eseo.eseomega.lacommande;
 
-import android.animation.ObjectAnimator;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.view.LayoutInflater;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -18,40 +23,46 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
-import fr.bde_eseo.eseomega.R;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 
 import fr.bde_eseo.eseomega.Constants;
+import fr.bde_eseo.eseomega.R;
 import fr.bde_eseo.eseomega.lacommande.model.HistoryItem;
+import fr.bde_eseo.eseomega.news.NewsItem;
 import fr.bde_eseo.eseomega.profile.UserProfile;
+import fr.bde_eseo.eseomega.utils.Blur;
 import fr.bde_eseo.eseomega.utils.ConnexionUtils;
 import fr.bde_eseo.eseomega.utils.EncryptUtils;
 import fr.bde_eseo.eseomega.utils.Utilities;
 
 /**
- * Created by Rascafr on 28/07/2015.
- * Affiche les détails de la commande sélectionnée (numéro de commande, prix, etc)
+ * Created by Rascafr on 10/01/2016.
+ * Affiche les détails d'une commande / permet de payer. Style clear material design.
  */
-public class OrderDetailsFragment extends Fragment {
+public class OrderDetailsActivity extends AppCompatActivity {
 
-    private float oldScreenBrightness;
+    // UI elements
+    private Toolbar toolbar;
     private TextView tvOrderDetails, tvOrderPrice, tvOrderDate, tvOrderNumero, tvDesc, tvInstruction, tvInstrHeader;
     private ImageView imgCategory;
     private ProgressBar progressBar;
     private RelativeLayout rl1, rl2;
+
+    // Android
+    private Context context;
+    
+    // Others
+    private float oldScreenBrightness;
     private int idcmd;
     private static Handler mHandler;
     private static final int RUN_UPDATE = 8000;
@@ -59,27 +70,50 @@ public class OrderDetailsFragment extends Fragment {
     private static boolean run;
     private String oldData = "";
     private UserProfile profile;
-
+    
     // Couleurs des commandes
     private int circle_preparing, blue_light, circle_done, gray_light, circle_ready, green_light, circle_error, orange_light;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
 
-        View rootView = inflater.inflate(R.layout.fragment_order_details, container, false);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_order_detail);
+        toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        toolbar.setPadding(0, Utilities.getStatusBarHeight(this), 0, 0);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // UI
-        tvOrderDate = (TextView) rootView.findViewById(R.id.tvCommandDate);
-        tvOrderPrice = (TextView) rootView.findViewById(R.id.tvCommandPrice);
-        tvOrderDetails = (TextView) rootView.findViewById(R.id.tvOrderDetail);
-        tvOrderNumero = (TextView) rootView.findViewById(R.id.tvCommandNumero);
-        tvInstruction = (TextView) rootView.findViewById(R.id.tvOrderInstructions);
-        tvInstrHeader = (TextView) rootView.findViewById(R.id.tvHeaderInstructions);
-        progressBar = (ProgressBar) rootView.findViewById(R.id.progressDetails);
-        tvDesc = (TextView) rootView.findViewById(R.id.textView3);
-        imgCategory = (ImageView) rootView.findViewById(R.id.imgOrder);
-        rl1 = (RelativeLayout) rootView.findViewById(R.id.relativeLayout3);
-        rl2 = (RelativeLayout) rootView.findViewById(R.id.relativeLayout5);
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00263238")));
+        getSupportActionBar().setStackedBackgroundDrawable(new ColorDrawable(Color.parseColor("#550000ff")));
+
+        // Android setup
+        context = OrderDetailsActivity.this;
+
+        // Intent recuperation
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                Toast.makeText(context, "Erreur de l'application (c'est pas normal)", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                idcmd = extras.getInt(Constants.KEY_ORDER_ID);
+            }
+        }
+
+        // Layout
+        tvOrderDate = (TextView) findViewById(R.id.tvCommandDate);
+        tvOrderPrice = (TextView) findViewById(R.id.tvCommandPrice);
+        tvOrderDetails = (TextView) findViewById(R.id.tvOrderDetail);
+        tvOrderNumero = (TextView) findViewById(R.id.tvCommandNumero);
+        tvInstruction = (TextView) findViewById(R.id.tvOrderInstructions);
+        tvInstrHeader = (TextView) findViewById(R.id.tvHeaderInstructions);
+        progressBar = (ProgressBar) findViewById(R.id.progressDetails);
+        tvDesc = (TextView) findViewById(R.id.textView3);
+        imgCategory = (ImageView) findViewById(R.id.imgOrder);
+        rl1 = (RelativeLayout) findViewById(R.id.relativeLayout3);
+        rl2 = (RelativeLayout) findViewById(R.id.relativeLayout5);
 
         progressBar.setVisibility(View.VISIBLE);
         tvOrderDate.setVisibility(View.INVISIBLE);
@@ -93,31 +127,47 @@ public class OrderDetailsFragment extends Fragment {
 
         // profile
         profile = new UserProfile();
-        profile.readProfilePromPrefs(getActivity());
+        profile.readProfilePromPrefs(context);
 
         // Save old brightness level and set it now to 100%
-        WindowManager.LayoutParams layout = getActivity().getWindow().getAttributes();
+        WindowManager.LayoutParams layout = getWindow().getAttributes();
         oldScreenBrightness = layout.screenBrightness;
         layout.screenBrightness = 1F;
-        getActivity().getWindow().setAttributes(layout);
+        getWindow().setAttributes(layout);
 
         // Couleurs
-        circle_preparing = getActivity().getResources().getColor(R.color.circle_preparing);
-        blue_light = getActivity().getResources().getColor(R.color.blue_light);
-        circle_done = getActivity().getResources().getColor(R.color.circle_done);
-        gray_light = getActivity().getResources().getColor(R.color.gray_light);
-        circle_ready = getActivity().getResources().getColor(R.color.circle_ready);
-        green_light = getActivity().getResources().getColor(R.color.green_light);
-        circle_error = getActivity().getResources().getColor(R.color.circle_error);
-        orange_light = getActivity().getResources().getColor(R.color.orange_light);
-
-        //idcmd = -1; // in case of
-
-        return rootView;
+        circle_preparing = context.getResources().getColor(R.color.circle_preparing);
+        blue_light = context.getResources().getColor(R.color.blue_light);
+        circle_done = context.getResources().getColor(R.color.circle_done);
+        gray_light = context.getResources().getColor(R.color.gray_light);
+        circle_ready = context.getResources().getColor(R.color.circle_ready);
+        green_light = context.getResources().getColor(R.color.green_light);
+        circle_error = context.getResources().getColor(R.color.circle_error);
+        orange_light = context.getResources().getColor(R.color.orange_light);
     }
 
-    public void setIdcmd(int idcmd) {
-        this.idcmd = idcmd;
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.order_details, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        // Handle action bar actions click
+        switch (item.getItemId()) {
+            case R.id.action_pay_lydia:
+
+                return true;
+
+            case android.R.id.home:
+                this.onBackPressed();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -163,7 +213,6 @@ public class OrderDetailsFragment extends Fragment {
         }
     };
 
-
     /**
      * Async task to download order details
      */
@@ -178,15 +227,15 @@ public class OrderDetailsFragment extends Fragment {
         @Override
         protected String doInBackground(String... params) {
 
-            if (getActivity() != null) {
+            if (context != null) {
 
                 HashMap<String, String> pairs = new HashMap<>();
-                pairs.put(getActivity().getResources().getString(R.string.idcmd), String.valueOf(idcmd));
-                pairs.put(getActivity().getResources().getString(R.string.username), profile.getId());
-                pairs.put(getActivity().getResources().getString(R.string.password), profile.getPassword());
-                pairs.put(getActivity().getResources().getString(R.string.hash), EncryptUtils.sha256(getActivity().getResources().getString(R.string.MACRO_SYNC_SINGLE) + String.valueOf(idcmd) + profile.getId() + profile.getPassword()));
+                pairs.put(context.getResources().getString(R.string.idcmd), String.valueOf(idcmd));
+                pairs.put(context.getResources().getString(R.string.username), profile.getId());
+                pairs.put(context.getResources().getString(R.string.password), profile.getPassword());
+                pairs.put(context.getResources().getString(R.string.hash), EncryptUtils.sha256(context.getResources().getString(R.string.MACRO_SYNC_SINGLE) + String.valueOf(idcmd) + profile.getId() + profile.getPassword()));
 
-                return ConnexionUtils.postServerData(Constants.URL_API_ORDER_RESUME, pairs, getActivity());
+                return ConnexionUtils.postServerData(Constants.URL_API_ORDER_RESUME, pairs, context);
             } else {
                 return null;
             }
@@ -206,7 +255,7 @@ public class OrderDetailsFragment extends Fragment {
                         if (obj.getInt("status") == 1) {
 
                             JSONObject jsonSync = obj.getJSONObject("data");
-                            tvOrderDate.setText("Votre commande du\n" + getFrenchDate(jsonSync.getString("datetime")));
+                            tvOrderDate.setText(getFrenchDate(jsonSync.getString("datetime")));
                             tvOrderNumero.setText(jsonSync.getString("strcmd") + " " + new DecimalFormat("000").format(jsonSync.getInt("modcmd")));
 
                             String txtInstr = jsonSync.getString("instructions");
@@ -223,7 +272,15 @@ public class OrderDetailsFragment extends Fragment {
                             txtDesc = " - " + txtDesc.replaceAll("<br>", "\n - ");
                             tvOrderDetails.setText(txtDesc);
                             tvOrderPrice.setText(new DecimalFormat("0.00").format(jsonSync.getDouble("price")) + "€");
-                            ImageLoader.getInstance().displayImage(Constants.URL_ASSETS + jsonSync.getString("imgurl"), imgCategory);
+
+                            // Load image, decode it to Bitmap and return Bitmap to callback
+                            ImageLoader.getInstance().loadImage(Constants.URL_ASSETS + jsonSync.getString("imgurl"), new SimpleImageLoadingListener() {
+                                @Override
+                                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                                    imgCategory.setImageBitmap(Blur.fastblur(context, loadedImage, 12)); // seems ok
+                                }
+                            });
+
                             int color = 0;
                             switch (jsonSync.getInt("status")) {
                                 case HistoryItem.STATUS_PREPARING:
@@ -256,7 +313,6 @@ public class OrderDetailsFragment extends Fragment {
 
                             // Assignation des couleurs
                             rl1.setBackgroundColor(color);
-                            tvOrderPrice.setTextColor(color);
                             tvDesc.setTextColor(color);
 
                         } else {
@@ -276,14 +332,14 @@ public class OrderDetailsFragment extends Fragment {
                     }
                 }
             } else {
-                if (getActivity() != null) {
+                if (context != null) {
 
-                    Toast.makeText(getActivity(), "Connexion serveur impossible", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Connexion serveur impossible", Toast.LENGTH_SHORT).show();
                     new Handler().postDelayed(new Runnable() {
 
                         @Override
                         public void run() {
-                            getActivity().onBackPressed();
+                            onBackPressed();
                         }
                     }, 500);
                 }
@@ -300,9 +356,9 @@ public class OrderDetailsFragment extends Fragment {
         run = false;
         mHandler.removeCallbacks(updateTimerThread);
 
-        WindowManager.LayoutParams layout = getActivity().getWindow().getAttributes();
+        WindowManager.LayoutParams layout = getWindow().getAttributes();
         layout.screenBrightness = oldScreenBrightness;
-        getActivity().getWindow().setAttributes(layout);
+        getWindow().setAttributes(layout);
     }
 
     public Date getParsedDate(String strDate) {

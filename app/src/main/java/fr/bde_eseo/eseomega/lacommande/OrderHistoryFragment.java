@@ -1,6 +1,7 @@
 package fr.bde_eseo.eseomega.lacommande;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -51,13 +52,13 @@ import fr.bde_eseo.eseomega.utils.Utilities;
  * Si en ligne -> refresh des données depuis le serveur et enregistrement du JSON
  * Si hors ligne -> chargement des données depuis le JSON enregistré
  */
-public class OrderListFragment extends Fragment {
+public class OrderHistoryFragment extends Fragment {
 
     // Timezoone : CET ou GMT+01:00
     // ID Timezone : Europe/Paris
     public static final String TZ_ID_PARIS = "Europe/Paris";
 
-    public OrderListFragment() {}
+    public OrderHistoryFragment() {}
 
     private RecyclerView recList;
     private ProgressBar progressBar, progressBarToken;
@@ -231,15 +232,9 @@ public class OrderListFragment extends Fragment {
             new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {
-
-                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    OrderDetailsFragment fragment = new OrderDetailsFragment();
-                    fragment.setIdcmd(historyList.get(position).getCommandNumber());
-                    fragmentManager.beginTransaction()
-                            .setCustomAnimations(R.anim.slide_in, R.anim.slide_out, R.anim.slide_in, R.anim.slide_out)
-                            .replace(R.id.frame_container, fragment, "FRAG_ORDER_DETAILS")
-                            .addToBackStack("BACK")
-                            .commit();
+                    Intent i = new Intent(getActivity(), OrderDetailsActivity.class);
+                    i.putExtra(Constants.KEY_ORDER_ID, historyList.get(position).getCommandNumber());
+                    getActivity().startActivity(i);
                 }
             }
         ));
