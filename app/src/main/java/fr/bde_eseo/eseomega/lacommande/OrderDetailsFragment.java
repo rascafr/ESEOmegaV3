@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+
 import fr.bde_eseo.eseomega.R;
 
 import org.json.JSONArray;
@@ -115,7 +116,7 @@ public class OrderDetailsFragment extends Fragment {
         return rootView;
     }
 
-    public void setIdcmd (int idcmd) {
+    public void setIdcmd(int idcmd) {
         this.idcmd = idcmd;
     }
 
@@ -137,7 +138,7 @@ public class OrderDetailsFragment extends Fragment {
 
     @Override
     public void onPause() {
-        if( mHandler != null) {
+        if (mHandler != null) {
             mHandler.removeCallbacks(updateTimerThread);
         }
         run = false;
@@ -163,11 +164,10 @@ public class OrderDetailsFragment extends Fragment {
     };
 
 
-
     /**
      * Async task to download order details
      */
-    private class AsyncDetails extends AsyncTask <String, String, String> {
+    private class AsyncDetails extends AsyncTask<String, String, String> {
 
         @Override
         protected void onPreExecute() {
@@ -205,73 +205,70 @@ public class OrderDetailsFragment extends Fragment {
 
                         if (obj.getInt("status") == 1) {
 
-                            JSONArray array = new JSONArray(obj.getString("data"));
-                            if (array.length() > 0) {
-                                JSONObject jsonSync = array.getJSONObject(0);
-                                tvOrderDate.setText("Votre commande du\n" + getFrenchDate(jsonSync.getString("datetime")));
-                                tvOrderNumero.setText(jsonSync.getString("strcmd") + " " + new DecimalFormat("000").format(jsonSync.getInt("modcmd")));
+                            JSONObject jsonSync = obj.getJSONObject("data");
+                            tvOrderDate.setText("Votre commande du\n" + getFrenchDate(jsonSync.getString("datetime")));
+                            tvOrderNumero.setText(jsonSync.getString("strcmd") + " " + new DecimalFormat("000").format(jsonSync.getInt("modcmd")));
 
-                                String txtInstr = jsonSync.getString("instructions");
-                                if (txtInstr.length() > 0) {
-                                    tvInstruction.setText(txtInstr);
-                                    tvInstrHeader.setVisibility(View.VISIBLE);
-                                    tvInstruction.setVisibility(View.VISIBLE);
-                                } else {
-                                    tvInstrHeader.setVisibility(View.GONE);
-                                    tvInstruction.setVisibility(View.GONE);
-                                }
-
-                                String txtDesc = jsonSync.getString("resume");
-                                txtDesc = " - " + txtDesc.replaceAll("<br>", "\n - ");
-                                tvOrderDetails.setText(txtDesc);
-                                tvOrderPrice.setText(new DecimalFormat("0.00").format(jsonSync.getDouble("price")) + "€");
-                                ImageLoader.getInstance().displayImage(Constants.URL_ASSETS + jsonSync.getString("imgurl"), imgCategory);
-                                int color = 0;
-                                switch (jsonSync.getInt("status")) {
-                                    case HistoryItem.STATUS_PREPARING:
-                                        color = circle_preparing;
-                                        rl2.setBackgroundColor(blue_light);
-                                        break;
-                                    case HistoryItem.STATUS_DONE:
-                                        color = circle_done;
-                                        rl2.setBackgroundColor(gray_light);
-                                        break;
-                                    case HistoryItem.STATUS_READY:
-                                        color = circle_ready;
-                                        rl2.setBackgroundColor(green_light);
-                                        break;
-                                    case HistoryItem.STATUS_NOPAID:
-                                        color = circle_error;
-                                        rl2.setBackgroundColor(orange_light);
-                                        break;
-                                }
-
-                                tvOrderDate.setVisibility(View.VISIBLE);
-                                tvOrderPrice.setVisibility(View.VISIBLE);
-                                tvOrderDetails.setVisibility(View.VISIBLE);
-                                tvOrderNumero.setVisibility(View.VISIBLE);
-                                tvDesc.setVisibility(View.VISIBLE);
-                                imgCategory.setVisibility(View.VISIBLE);
-                                rl1.setVisibility(View.VISIBLE);
-                                rl2.setVisibility(View.VISIBLE);
-                                progressBar.setVisibility(View.INVISIBLE);
-
-                                // Assignation des couleurs
-                                rl1.setBackgroundColor(color);
-                                tvOrderPrice.setTextColor(color);
-                                tvDesc.setTextColor(color);
-
+                            String txtInstr = jsonSync.getString("instructions");
+                            if (txtInstr.length() > 0) {
+                                tvInstruction.setText(txtInstr);
+                                tvInstrHeader.setVisibility(View.VISIBLE);
+                                tvInstruction.setVisibility(View.VISIBLE);
                             } else {
-                                progressBar.setVisibility(View.INVISIBLE);
-                                tvOrderDate.setVisibility(View.INVISIBLE);
-                                tvOrderPrice.setVisibility(View.INVISIBLE);
-                                tvOrderDetails.setVisibility(View.INVISIBLE);
-                                tvOrderNumero.setVisibility(View.INVISIBLE);
-                                tvDesc.setVisibility(View.INVISIBLE);
-                                imgCategory.setVisibility(View.INVISIBLE);
-                                rl1.setVisibility(View.INVISIBLE);
-                                rl2.setVisibility(View.INVISIBLE);
+                                tvInstrHeader.setVisibility(View.GONE);
+                                tvInstruction.setVisibility(View.GONE);
                             }
+
+                            String txtDesc = jsonSync.getString("resume");
+                            txtDesc = " - " + txtDesc.replaceAll("<br>", "\n - ");
+                            tvOrderDetails.setText(txtDesc);
+                            tvOrderPrice.setText(new DecimalFormat("0.00").format(jsonSync.getDouble("price")) + "€");
+                            ImageLoader.getInstance().displayImage(Constants.URL_ASSETS + jsonSync.getString("imgurl"), imgCategory);
+                            int color = 0;
+                            switch (jsonSync.getInt("status")) {
+                                case HistoryItem.STATUS_PREPARING:
+                                    color = circle_preparing;
+                                    rl2.setBackgroundColor(blue_light);
+                                    break;
+                                case HistoryItem.STATUS_DONE:
+                                    color = circle_done;
+                                    rl2.setBackgroundColor(gray_light);
+                                    break;
+                                case HistoryItem.STATUS_READY:
+                                    color = circle_ready;
+                                    rl2.setBackgroundColor(green_light);
+                                    break;
+                                case HistoryItem.STATUS_NOPAID:
+                                    color = circle_error;
+                                    rl2.setBackgroundColor(orange_light);
+                                    break;
+                            }
+
+                            tvOrderDate.setVisibility(View.VISIBLE);
+                            tvOrderPrice.setVisibility(View.VISIBLE);
+                            tvOrderDetails.setVisibility(View.VISIBLE);
+                            tvOrderNumero.setVisibility(View.VISIBLE);
+                            tvDesc.setVisibility(View.VISIBLE);
+                            imgCategory.setVisibility(View.VISIBLE);
+                            rl1.setVisibility(View.VISIBLE);
+                            rl2.setVisibility(View.VISIBLE);
+                            progressBar.setVisibility(View.INVISIBLE);
+
+                            // Assignation des couleurs
+                            rl1.setBackgroundColor(color);
+                            tvOrderPrice.setTextColor(color);
+                            tvDesc.setTextColor(color);
+
+                        } else {
+                            progressBar.setVisibility(View.INVISIBLE);
+                            tvOrderDate.setVisibility(View.INVISIBLE);
+                            tvOrderPrice.setVisibility(View.INVISIBLE);
+                            tvOrderDetails.setVisibility(View.INVISIBLE);
+                            tvOrderNumero.setVisibility(View.INVISIBLE);
+                            tvDesc.setVisibility(View.INVISIBLE);
+                            imgCategory.setVisibility(View.INVISIBLE);
+                            rl1.setVisibility(View.INVISIBLE);
+                            rl2.setVisibility(View.INVISIBLE);
                         }
 
                     } catch (JSONException e) {
@@ -308,7 +305,7 @@ public class OrderDetailsFragment extends Fragment {
         getActivity().getWindow().setAttributes(layout);
     }
 
-    public Date getParsedDate (String strDate) {
+    public Date getParsedDate(String strDate) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.FRANCE);
         Date date = null;
         try {
@@ -319,7 +316,7 @@ public class OrderDetailsFragment extends Fragment {
         return date;
     }
 
-    public String getFrenchDate (String strDate) {
+    public String getFrenchDate(String strDate) {
         Date d = getParsedDate(strDate);
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd MMMM yyyy", Locale.FRANCE);
         return sdf.format(d);
