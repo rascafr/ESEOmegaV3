@@ -97,8 +97,7 @@ public class LydiaActivity extends AppCompatActivity {
             Bundle extras = intent.getExtras();
             String action = intent.getAction();
 
-            // TODO VERIFIER INTENT PROVENANT DE CHROME ! SCHEME URL CORRECTE !
-            if (extras == null && action != null) {
+            if (action != null) {
 
                 // Check if intent's action is correct (obviously yes, but prevents Manifest modifications)
                 if (action.equals(Intent.ACTION_VIEW)) {

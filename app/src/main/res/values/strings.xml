@@ -106,7 +106,7 @@ Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. N
     <string name="dialog_yes">Oui</string>
     <string name="dialog_no">Non</string>
     <string name="dialog_cancel">Annuler</string>
-    <string name="dialog_ok">Ok</string>
+    <string name="dialog_ok">OK</string>
     <string name="dialog_contact">Contact</string>
     <string name="dialog_close">Fermer</string>
 
