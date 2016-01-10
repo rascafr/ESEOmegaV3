@@ -78,6 +78,7 @@
         <!-- Activity to see / pay an order (or anything else ... Bluemoon ?) -->
         <!-- Intent scheme : eseomega_pay:// -->
         <activity
+            android:label=""
             android:name=".lydia.LydiaActivity"
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden"

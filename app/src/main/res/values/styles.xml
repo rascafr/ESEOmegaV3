@@ -39,11 +39,12 @@
     <!-- Lydia Activity - Dialog like theme -->
     <style name="AppThemeLydia" parent="Theme.AppCompat.Light.Dialog">
         <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@color/backgournd_lydia_dial</item>
+        <item name="android:windowBackground">@null</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
     </style>
 
 </resources>

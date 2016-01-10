@@ -202,7 +202,7 @@ public class DataManager {
 
     // Get number of items in cart
     public int getNbCartItems () {
-        return cartArray.size();
+        return cartArray == null ? 0 : cartArray.size();
     }
 
     // Increments number of items
