@@ -80,7 +80,6 @@ public class MyHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
 
             hvh.vName.setText(hi.getCommandName());
-            //hvh.vDate.setText(hi.getCommandDate());
             hvh.vDate.setText(hi.getCommandDate());
             hvh.vPrice.setText(hi.getCommandPriceAsString());
             hvh.vNumero.setText(hi.getCommandNumberAsString());

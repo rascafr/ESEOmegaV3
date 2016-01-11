@@ -476,7 +476,7 @@ public class OrderHistoryFragment extends Fragment {
                         String parsed = obj.getString("resume");
                         parsed = parsed.replaceAll("<br>", ", ");
                         HistoryItem hi = new HistoryItem(parsed, obj.getInt("status"),
-                                obj.getDouble("price"), sDate, obj.getInt("idcmd"), obj.getInt("modcmd"), obj.getString("strcmd"));
+                                obj.getDouble("price"), sDate, obj.getInt("idcmd"), obj.getInt("modcmd"), obj.getString("strcmd"), false);
 
                         switch (obj.getInt("status")) {
                             case HistoryItem.STATUS_NOPAID:

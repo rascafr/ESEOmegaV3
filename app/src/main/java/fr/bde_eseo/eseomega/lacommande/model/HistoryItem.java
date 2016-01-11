@@ -25,22 +25,12 @@ public class HistoryItem {
     private boolean isHeader, isFooter;
     private int commandNumber, commandModulo;
 
-    public HistoryItem (String commandName, int commandStatus, double commandPrice, String commandDate, int commandNumber) {
+    public HistoryItem (String commandName, int commandStatus, double commandPrice, String commandDate, int commandNumber, int commandModulo, String commandStr, boolean simpleDate) {
         this.commandName = commandName;
         this.commandStatus = commandStatus;
         this.commandPrice = commandPrice;
         this.commandDate = commandDate;
-        this.commandDate = getFrenchDate();
-        this.commandNumber = commandNumber;
-        this.isHeader = false;
-    }
-
-    public HistoryItem (String commandName, int commandStatus, double commandPrice, String commandDate, int commandNumber, int commandModulo, String commandStr) {
-        this.commandName = commandName;
-        this.commandStatus = commandStatus;
-        this.commandPrice = commandPrice;
-        this.commandDate = commandDate;
-        this.commandDate = getFrenchDate();
+        this.commandDate = getFrenchDate(simpleDate);
         this.commandNumber = commandNumber;
         this.isHeader = false;
         this.commandModulo = commandModulo;
@@ -163,9 +153,13 @@ public class HistoryItem {
         return date;
     }
 
-    public String getFrenchDate () {
+    public String getFrenchDate (boolean simpleDate) {
         Date d = getParsedDate();
-        SimpleDateFormat sdf = new SimpleDateFormat("E dd MMMM yyyy, 'à' HH:mm", Locale.FRANCE);
+        SimpleDateFormat sdf;
+        if (simpleDate)
+            sdf = new SimpleDateFormat("EEEE dd MMMM yyyy", Locale.FRANCE);
+        else
+            sdf = new SimpleDateFormat("E dd MMMM yyyy, 'à' HH:mm", Locale.FRANCE);
         return sdf.format(d);
     }
 }

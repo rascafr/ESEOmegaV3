@@ -37,6 +37,7 @@ import java.util.Locale;
 
 import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.R;
+import fr.bde_eseo.eseomega.lacommande.model.DetailedItem;
 import fr.bde_eseo.eseomega.lacommande.model.HistoryItem;
 import fr.bde_eseo.eseomega.news.NewsItem;
 import fr.bde_eseo.eseomega.profile.UserProfile;
@@ -70,6 +71,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
     private static boolean run;
     private String oldData = "";
     private UserProfile profile;
+    DetailedItem detailedItem = null;
     
     // Couleurs des commandes
     private int circle_preparing, blue_light, circle_done, gray_light, circle_ready, green_light, circle_error, orange_light;
@@ -254,13 +256,12 @@ public class OrderDetailsActivity extends AppCompatActivity {
 
                         if (obj.getInt("status") == 1) {
 
-                            JSONObject jsonSync = obj.getJSONObject("data");
-                            tvOrderDate.setText(getFrenchDate(jsonSync.getString("datetime")));
-                            tvOrderNumero.setText(jsonSync.getString("strcmd") + " " + new DecimalFormat("000").format(jsonSync.getInt("modcmd")));
+                            detailedItem = new DetailedItem(obj.getJSONObject("data"), idcmd);
 
-                            String txtInstr = jsonSync.getString("instructions");
-                            if (txtInstr.length() > 0) {
-                                tvInstruction.setText(txtInstr);
+                            tvOrderDate.setText(detailedItem.getCommandDate());
+                            tvOrderNumero.setText(detailedItem.getCommandNumberAsString());
+                            if (detailedItem.getInstructions().length() > 0) {
+                                tvInstruction.setText(detailedItem.getInstructions());
                                 tvInstrHeader.setVisibility(View.VISIBLE);
                                 tvInstruction.setVisibility(View.VISIBLE);
                             } else {
@@ -268,13 +269,13 @@ public class OrderDetailsActivity extends AppCompatActivity {
                                 tvInstruction.setVisibility(View.GONE);
                             }
 
-                            String txtDesc = jsonSync.getString("resume");
+                            String txtDesc = detailedItem.getCommandName();
                             txtDesc = " - " + txtDesc.replaceAll("<br>", "\n - ");
                             tvOrderDetails.setText(txtDesc);
-                            tvOrderPrice.setText(new DecimalFormat("0.00").format(jsonSync.getDouble("price")) + "€");
+                            tvOrderPrice.setText(detailedItem.getCommandPriceAsString());
 
                             // Load image, decode it to Bitmap and return Bitmap to callback
-                            ImageLoader.getInstance().loadImage(Constants.URL_ASSETS + jsonSync.getString("imgurl"), new SimpleImageLoadingListener() {
+                            ImageLoader.getInstance().loadImage(detailedItem.getImgUrl(), new SimpleImageLoadingListener() {
                                 @Override
                                 public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                                     imgCategory.setImageBitmap(Blur.fastblur(context, loadedImage, 12)); // seems ok
@@ -282,7 +283,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
                             });
 
                             int color = 0;
-                            switch (jsonSync.getInt("status")) {
+                            switch (detailedItem.getCommandStatus()) {
                                 case HistoryItem.STATUS_PREPARING:
                                     color = circle_preparing;
                                     rl2.setBackgroundColor(blue_light);
