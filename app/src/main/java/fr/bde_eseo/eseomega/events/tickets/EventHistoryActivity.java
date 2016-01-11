@@ -464,7 +464,7 @@ public class EventHistoryActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String data) {
 
-            String err = "";
+            String err = "Impossible de se connecter au réseau";
             int retCode = 0;
             String jsonToken = "";
 
@@ -487,9 +487,8 @@ public class EventHistoryActivity extends AppCompatActivity {
             if (retCode == 1) {
                 // Success !
                 run = false;
-                //DataManager.getInstance().reset(); // reset data before writing in it
-                //DataManager.getInstance().setToken(jsonToken); // Sets the Token
-                Toast.makeText(context, jsonToken, Toast.LENGTH_SHORT).show();
+                TicketStore.getInstance().resetOrder(); // reset data before writing in it
+                TicketStore.getInstance().setToken(jsonToken); // Sets the Token
             } else {
                 progressToken.setVisibility(View.INVISIBLE);
                 fab.setVisibility(View.VISIBLE);

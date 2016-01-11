@@ -41,6 +41,26 @@ public class TicketStore {
         eventTicketItems.clear();
     }
 
+    /**
+     * Token
+     */
+    private String token;
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    /**
+     * Second reset function
+     */
+    public void resetOrder () {
+        token = null;
+    }
+
     public ArrayList<EventTicketItem> getEventTicketItems() {
         return eventTicketItems;
     }
