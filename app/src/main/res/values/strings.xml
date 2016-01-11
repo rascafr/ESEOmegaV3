@@ -79,6 +79,7 @@ Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. N
 
     <!-- Security -->
     <string name="MESSAGE_GET_TOKEN">Mauvais Login / Mot de passe</string> <!-- V2.1 -->
+    <string name="MESSAGE_GET_TOKEN_EVENT">(c) Team Sheep Dev</string> <!-- V2.1 -->
     <string name="MEMORY_SYNC_USER">selfRetain_$_0x128D4_objc</string> <!-- V2.1 -->
     <string name="MESSAGE_PASS_USER">Oups, erreur de connexion</string> <!-- V2.1 -->
     <string name="MESSAGE_HISTORY_USER">Connexion au serveur ...</string> <!-- V2.1 -->

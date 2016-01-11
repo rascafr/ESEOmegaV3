@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import fr.bde_eseo.eseomega.R;
 import fr.bde_eseo.eseomega.events.tickets.model.EventTicketItem;
+import fr.bde_eseo.eseomega.lacommande.model.HistoryItem;
 
 /**
  * Created by Rascafr on 11/01/2016.
@@ -21,6 +22,9 @@ public class MyEventTicketAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     private ArrayList<EventTicketItem> eventTicketItems;
     private Context context;
+
+    public static final int TYPE_TICKET_ITEM = 0;
+    public static final int TYPE_TICKET_HEADER = 1;
 
     public MyEventTicketAdapter(Context context) {
         this.eventTicketItems = new ArrayList<>();
@@ -36,17 +40,41 @@ public class MyEventTicketAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new TicketViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_tickets, parent, false));
+        if (viewType == TYPE_TICKET_ITEM)
+            return new TicketViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_tickets, parent, false));
+        else
+            return new TicketHeaderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_events_header, parent, false));
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return eventTicketItems.get(position).isHeader() ? TYPE_TICKET_HEADER : TYPE_TICKET_ITEM;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         EventTicketItem eti = eventTicketItems.get(position);
-        TicketViewHolder tvh = (TicketViewHolder) holder;
-        tvh.vName.setText(eti.getName());
-        tvh.vNumero.setText(String.valueOf(eti.getTicketNumberAsString()));
-        tvh.vPrice.setText(String.valueOf(eti.getPrice()));
-        tvh.vDate.setText(eti.getDatetime());
+
+        if (eti.isHeader()) {
+            TicketHeaderViewHolder thvh = (TicketHeaderViewHolder) holder;
+            thvh.vName.setText(eti.getName());
+        } else {
+            TicketViewHolder tvh = (TicketViewHolder) holder;
+            tvh.vName.setText(eti.getLinkedName());
+            tvh.vNumero.setText(String.valueOf(eti.getTicketNumberAsString()));
+            tvh.vPrice.setText(String.valueOf(eti.getTicketPriceAsString()));
+            tvh.vDate.setText(eti.getFrenchDate());
+
+            if (eti.isPassed()) {
+                tvh.vImg.setImageResource(R.drawable.ic_date_passed);
+                tvh.vCircle.setBackgroundResource(R.drawable.circle_done);
+                tvh.vPrice.setTextColor(context.getResources().getColor(R.color.circle_done));
+            } else {
+                tvh.vImg.setImageResource(R.drawable.ic_date_current);
+                tvh.vCircle.setBackgroundResource(R.drawable.circle_next);
+                tvh.vPrice.setTextColor(context.getResources().getColor(R.color.md_red_500));
+            }
+        }
     }
 
     @Override
@@ -61,6 +89,8 @@ public class MyEventTicketAdapter extends RecyclerView.Adapter<RecyclerView.View
         protected TextView vNumero;
         protected TextView vPrice;
         protected TextView vDate;
+        protected ImageView vImg;
+        protected View vCircle;
 
         public TicketViewHolder(View v) {
             super(v);
@@ -68,6 +98,19 @@ public class MyEventTicketAdapter extends RecyclerView.Adapter<RecyclerView.View
             vNumero = (TextView)  v.findViewById(R.id.ticketNumber);
             vPrice = (TextView) v.findViewById(R.id.ticketPrice);
             vDate = (TextView) v.findViewById(R.id.ticketDate);
+            vImg = (ImageView) v.findViewById(R.id.imgDone);
+            vCircle = v.findViewById(R.id.circleView);
+        }
+    }
+
+    // Classic View Holder for Ticket Header
+    public static class TicketHeaderViewHolder extends RecyclerView.ViewHolder {
+
+        protected TextView vName;
+
+        public TicketHeaderViewHolder(View v) {
+            super(v);
+            vName =  (TextView) v.findViewById(R.id.eventsHeader);
         }
     }
 }

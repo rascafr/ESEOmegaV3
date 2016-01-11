@@ -54,10 +54,6 @@ import fr.bde_eseo.eseomega.utils.Utilities;
  */
 public class OrderHistoryFragment extends Fragment {
 
-    // Timezoone : CET ou GMT+01:00
-    // ID Timezone : Europe/Paris
-    public static final String TZ_ID_PARIS = "Europe/Paris";
-
     public OrderHistoryFragment() {}
 
     private RecyclerView recList;
@@ -199,7 +195,7 @@ public class OrderHistoryFragment extends Fragment {
                             .negativeText("D'accord")
                             .cancelable(false)
                             .show();
-                } else if (!tzStr.equalsIgnoreCase(TZ_ID_PARIS)) {
+                } else if (!tzStr.equalsIgnoreCase(Constants.TZ_ID_PARIS)) {
                     new MaterialDialog.Builder(getActivity())
                             .title("Erreur")
                             .content("L'accès à la Cafet ne peut se faire depuis un autre pays que la France.\nEnvoyez nous une carte postale !")

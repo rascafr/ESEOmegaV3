@@ -2,9 +2,7 @@ package fr.bde_eseo.eseomega.ingenews;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,13 +13,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
 
 import fr.bde_eseo.eseomega.R;
-import fr.bde_eseo.eseomega.events.EventItem;
 
 /**
  * Created by Rascafr on 11/08/2015.

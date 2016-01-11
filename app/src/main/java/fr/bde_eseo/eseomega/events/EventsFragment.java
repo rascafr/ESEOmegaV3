@@ -6,23 +6,20 @@ import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.CalendarContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.Theme;
+
 import fr.bde_eseo.eseomega.R;
 
 import org.json.JSONArray;
@@ -30,17 +27,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import fr.bde_eseo.eseomega.Constants;
+import fr.bde_eseo.eseomega.events.tickets.EventItem;
 import fr.bde_eseo.eseomega.events.tickets.model.TicketStore;
-import fr.bde_eseo.eseomega.hintsntips.DividerItemDecoration;
-import fr.bde_eseo.eseomega.hintsntips.MyTipsAdapter;
-import fr.bde_eseo.eseomega.hintsntips.SponsorItem;
 import fr.bde_eseo.eseomega.listeners.RecyclerItemClickListener;
 import fr.bde_eseo.eseomega.utils.JSONUtils;
 import fr.bde_eseo.eseomega.utils.Utilities;

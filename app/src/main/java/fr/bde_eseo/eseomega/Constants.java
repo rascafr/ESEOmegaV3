@@ -13,6 +13,10 @@ public class Constants {
     // Store app verification
     public final static String SIGNATURE = "mM6h5mqKyeuhXgBF8SLnMBKc7BE=";
 
+    // Timezoone : CET ou GMT+01:00
+    // ID Timezone : Europe/Paris
+    public static final String TZ_ID_PARIS = "Europe/Paris";
+
     // Preferences
     public static final String PREFS_NEWS_KEY = "fragment.NewsFragment.KEY";
     public static final String PREFS_APP_WELCOME = "mainactivity.welcome";
@@ -91,6 +95,7 @@ public class Constants {
 
     // Events
     public static final String URL_API_EVENT_LIST = URL_API_BASE + "event/list.php";
+    public static final String URL_API_EVENT_PREPARE = URL_API_BASE + "event/prepare.php";
 
 
     // Data from Naudet-Sonasi

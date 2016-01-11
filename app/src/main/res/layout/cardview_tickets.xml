@@ -17,6 +17,38 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
+        <RelativeLayout
+            android:id="@+id/rl1"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center_vertical"
+            android:layout_gravity="center_vertical"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp" >
+
+
+            <View
+                android:id="@+id/circleView"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/circle_done"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true" />
+
+
+            <ImageView
+                android:id="@+id/imgDone"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/ic_date_passed"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true" />
+
+        </RelativeLayout>
+
         <LinearLayout
             android:id="@+id/rl2"
             android:layout_width="wrap_content"
@@ -24,10 +56,8 @@
             android:orientation="vertical"
             android:gravity="center_vertical"
             android:layout_gravity="center_vertical"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginLeft="10dp"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/rl1"
             android:layout_toLeftOf="@+id/rl3"
             android:layout_toStartOf="@+id/rl3">
 

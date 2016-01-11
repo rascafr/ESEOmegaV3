@@ -2,7 +2,6 @@ package fr.bde_eseo.eseomega.events;
 
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.LayerDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +11,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import fr.bde_eseo.eseomega.R;
+import fr.bde_eseo.eseomega.events.tickets.EventItem;
 
 /**
  * Created by Rascafr on 11/08/2015.

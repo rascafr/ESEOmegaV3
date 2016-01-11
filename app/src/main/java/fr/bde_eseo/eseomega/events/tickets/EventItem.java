@@ -1,4 +1,4 @@
-package fr.bde_eseo.eseomega.events;
+package fr.bde_eseo.eseomega.events.tickets;
 
 import android.content.Intent;
 import android.provider.CalendarContract;
@@ -16,6 +16,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import fr.bde_eseo.eseomega.events.tickets.model.SubEventItem;
+
 /**
  * Created by Rascafr on 14/08/2015.
  */
@@ -28,9 +30,8 @@ public class EventItem {
     private final static String JSON_KEY_ITEM_URL = "url";
     private final static String JSON_KEY_ITEM_LIEU = "lieu";
     private final static String JSON_KEY_ITEM_DATEFIN = "dateFin";
-    private final static String JSON_KEY_ITEM_PRICE = "prix";
-    private final static String JSON_KEY_ITEM_ID = "id";
     private final static String JSON_KEY_ARRAY_COLOR = "color";
+    private final static String JSON_KEY_ARRAY_TICKETS = "tickets";
 
     private static final String HOUR_PASS_ALLDAY = "00:02";
     private static final int MAX_CHAR_DESC = 36;
@@ -41,17 +42,14 @@ public class EventItem {
     private String shorted;
     private Calendar cal, calFin;
     private boolean isPassed;
-    private double price;
-    private String idevent;
+    private ArrayList<SubEventItem> subEventItems;
 
     public EventItem(JSONObject obj) throws JSONException {
         this(obj.getString(JSON_KEY_ITEM_NAME), obj.getString(JSON_KEY_ITEM_DETAIL), obj.getString(JSON_KEY_ITEM_DATE), obj.getString(JSON_KEY_ITEM_DATEFIN));
         this.setAdditionnal(
                 obj.getString(JSON_KEY_ITEM_CLUB),
                 obj.getString(JSON_KEY_ITEM_URL),
-                obj.getString(JSON_KEY_ITEM_LIEU),
-                obj.getDouble(JSON_KEY_ITEM_PRICE),
-                obj.getString(JSON_KEY_ITEM_ID)
+                obj.getString(JSON_KEY_ITEM_LIEU)
         );
         this.performShortedDetails();
 
@@ -69,6 +67,16 @@ public class EventItem {
         }
 
         this.setColors(colors);
+
+        subEventItems = new ArrayList<>();
+        JSONArray tickets = obj.getJSONArray(JSON_KEY_ARRAY_TICKETS);
+        for (int i=0;i<tickets.length();i++) {
+            subEventItems.add(new SubEventItem(tickets.getJSONObject(i)));
+        }
+    }
+
+    public ArrayList<SubEventItem> getSubEventItems() {
+        return subEventItems;
     }
 
     public EventItem(String name, String details, boolean isHeader, Date date, int color) {
@@ -94,12 +102,10 @@ public class EventItem {
         calFin.setTime(datefin);
     }
 
-    public void setAdditionnal (String club, String url, String lieu, double price, String idevent) {
+    public void setAdditionnal (String club, String url, String lieu) {
         this.club = club;
         this.url = url;
         this.lieu = lieu;
-        this.price = price;
-        this.idevent = idevent;
     }
 
     public void setColors (ArrayList<String> colors) {
@@ -256,15 +262,7 @@ public class EventItem {
         return isPassed;
     }
 
-    public double getPrice() {
-        return price;
-    }
-
-    public boolean couldPay () {
-        return price > 0;
-    }
-
-    public String getIdevent() {
-        return idevent;
+    public Date getDatefin() {
+        return datefin;
     }
 }

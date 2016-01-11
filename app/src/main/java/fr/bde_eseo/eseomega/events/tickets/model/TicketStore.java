@@ -4,7 +4,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-import fr.bde_eseo.eseomega.events.EventItem;
+import fr.bde_eseo.eseomega.events.tickets.EventItem;
 
 /**
  * Created by Rascafr on 11/01/2016.
@@ -49,25 +49,37 @@ public class TicketStore {
         return eventItems;
     }
 
-    public void describe() {
-
-        for (int i=0;i<eventItems.size();i++) {
-            Log.d("DSC", "Event : " + eventItems.get(i).getName() + "#" + eventItems.get(i).getIdevent());
-        }
-        for (int i=0;i<eventTicketItems.size();i++) {
-            Log.d("DSC", "Ticket : " + eventTicketItems.get(i).getTicketNumberAsString() + "#" + eventTicketItems.get(i).getIdevent());
-        }
-
-    }
-
     /**
      * Assigne aux ID tickets un nom
      */
     public void autoTicketAttributes () {
+
+        // For each ticket
         for (int et=0;et<eventTicketItems.size();et++) {
+
+            Log.d("DBG", "Ticket : " + eventTicketItems.get(et).getTicketNumberAsString());
+
+            // For each event
             for (int ei=0;ei<eventItems.size();ei++) {
-                if (eventItems.get(ei).getIdevent() != null && eventItems.get(ei).getIdevent().equals(eventTicketItems.get(et).getIdevent())) {
-                    eventTicketItems.get(et).setName(eventItems.get(ei).getName());
+
+                Log.d("DBG", "Event : " + eventItems.get(ei).getName());
+
+                // If event is not a header / content not null
+                if (!eventItems.get(ei).isHeader() && eventItems.get(ei).getSubEventItems() != null) {
+
+                    Log.d("DBG", "Event : not header / content not null");
+
+                    // For each sub-event item
+                    for (int si = 0; si < eventItems.get(ei).getSubEventItems().size(); si++) {
+
+                        Log.d("DBG", "Sub-item : " + eventItems.get(ei).getSubEventItems().get(si).getTitre());
+
+                        // If event if not header / non null content
+                        if (eventItems.get(ei).getSubEventItems().get(si).getId().equals(eventTicketItems.get(et).getIdevent())) {
+                            eventTicketItems.get(et).setLinkedEvent(eventItems.get(ei));
+                            Log.d("DBG", "Linked : " + eventTicketItems.get(et).getTicketNumberAsString() + " ↔ " + eventItems.get(ei).getName());
+                        }
+                    }
                 }
             }
         }
