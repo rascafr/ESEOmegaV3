@@ -69,7 +69,6 @@ public class LydiaActivity extends AppCompatActivity {
     private SharedPreferences prefsUser;
 
     // Intent-from
-    private double orderPrice = 0.0;
     private String orderType = "";
     private int orderID = -1;
 
@@ -124,7 +123,11 @@ public class LydiaActivity extends AppCompatActivity {
                 intent_request = INTENT_REQUEST.FROM_APP;
                 orderID = extras.getInt(Constants.KEY_LYDIA_ORDER_ID);
                 orderType = extras.getString(Constants.KEY_LYDIA_ORDER_TYPE);
-                orderPrice = extras.getDouble(Constants.KEY_LYDIA_ORDER_PRICE);
+
+                // Demande de check ? → donc ask déjà effectué
+                if (extras.getBoolean(Constants.KEY_LYDIA_ORDER_ASKED)) {
+                    intent_request = INTENT_REQUEST.FROM_LYDIA;
+                }
             }
         }
 

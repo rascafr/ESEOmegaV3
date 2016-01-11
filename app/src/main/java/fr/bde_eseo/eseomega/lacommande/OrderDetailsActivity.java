@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,7 +27,6 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -39,7 +37,7 @@ import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.R;
 import fr.bde_eseo.eseomega.lacommande.model.DetailedItem;
 import fr.bde_eseo.eseomega.lacommande.model.HistoryItem;
-import fr.bde_eseo.eseomega.news.NewsItem;
+import fr.bde_eseo.eseomega.lydia.LydiaActivity;
 import fr.bde_eseo.eseomega.profile.UserProfile;
 import fr.bde_eseo.eseomega.utils.Blur;
 import fr.bde_eseo.eseomega.utils.ConnexionUtils;
@@ -61,7 +59,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
 
     // Android
     private Context context;
-    
+
     // Others
     private float oldScreenBrightness;
     private int idcmd;
@@ -71,8 +69,8 @@ public class OrderDetailsActivity extends AppCompatActivity {
     private static boolean run;
     private String oldData = "";
     private UserProfile profile;
-    DetailedItem detailedItem = null;
-    
+    private DetailedItem detailedItem = null;
+
     // Couleurs des commandes
     private int circle_preparing, blue_light, circle_done, gray_light, circle_ready, green_light, circle_error, orange_light;
 
@@ -96,7 +94,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
         // Intent recuperation
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
-            if(extras == null) {
+            if (extras == null) {
                 Toast.makeText(context, "Erreur de l'application (c'est pas normal)", Toast.LENGTH_SHORT).show();
                 finish();
             } else {
@@ -160,6 +158,30 @@ public class OrderDetailsActivity extends AppCompatActivity {
         // Handle action bar actions click
         switch (item.getItemId()) {
             case R.id.action_pay_lydia:
+
+                /**
+                 * Le mec peut payer :
+                 * - commande en préparation
+                 * - commande prête
+                 * - commande impayée
+                 *
+                 * Si :
+                 * - idlyida = -1 : pas de requête de fait, on demande le paiement (ask) → si Lydiaenabled
+                 * - idlydia != -1 : requete effectuée, on vérifie le paiement (check) → si Lydiaenabled
+                 * - status = 2 : La commande est terminée, impossible de payer, on affiche un Toast. Idem si paidbefore = 1
+                 */
+
+                if (detailedItem != null) {
+                    if (detailedItem.getCommandStatus() == 2 || detailedItem.isPaidbefore()) {
+                        Toast.makeText(context, "Cette commande est déjà payée !", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Intent iPay = new Intent(OrderDetailsActivity.this, LydiaActivity.class);
+                        iPay.putExtra(Constants.KEY_LYDIA_ORDER_ID, idcmd);
+                        iPay.putExtra(Constants.KEY_LYDIA_ORDER_TYPE, Constants.TYPE_LYDIA_CAFET);
+                        iPay.putExtra(Constants.KEY_LYDIA_ORDER_ASKED, detailedItem.getIdlydia() != -1);
+                        startActivity(iPay);
+                    }
+                }
 
                 return true;
 

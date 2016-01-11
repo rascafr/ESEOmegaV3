@@ -19,6 +19,8 @@ import fr.bde_eseo.eseomega.Constants;
 public class DetailedItem extends HistoryItem {
 
     private String instructions, imgUrl;
+    private int idlydia;
+    private boolean paidbefore, lydiaEnabled;
 
     public DetailedItem(JSONObject obj, int idcmd) throws JSONException {
 
@@ -35,6 +37,9 @@ public class DetailedItem extends HistoryItem {
 
         instructions = obj.getString("instructions");
         imgUrl = obj.getString("imgurl");
+        idlydia = obj.getInt("idlydia");
+        paidbefore = obj.getInt("paidbefore") == 1;
+        lydiaEnabled = obj.getBoolean("lydia_enabled");
 
     }
 
@@ -44,5 +49,17 @@ public class DetailedItem extends HistoryItem {
 
     public String getImgUrl() {
         return Constants.URL_ASSETS + imgUrl;
+    }
+
+    public int getIdlydia() {
+        return idlydia;
+    }
+
+    public boolean isPaidbefore() {
+        return paidbefore;
+    }
+
+    public boolean isLydiaEnabled() {
+        return lydiaEnabled;
     }
 }

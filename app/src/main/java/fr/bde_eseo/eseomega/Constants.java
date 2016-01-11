@@ -167,10 +167,9 @@ public class Constants {
     public static final String KEY_GANTIER_INTENT = "gp.intent.start";
 
     // LYDIA
-    public static final String LYDIA_APP_ID = "com.lydia";
     public static final String KEY_LYDIA_ORDER_ID = "lydia.order_id";
-    public static final String KEY_LYDIA_ORDER_PRICE = "lydia.order_price";
     public static final String KEY_LYDIA_ORDER_TYPE = "lydia.order_type";
+    public static final String KEY_LYDIA_ORDER_ASKED = "lydia.order_status";
     public static final String TYPE_LYDIA_CAFET = "CAFET";
     public static final String TYPE_LYDIA_EVENT = "EVENT";
 

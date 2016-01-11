@@ -303,7 +303,7 @@ public class TabCartView extends Fragment {
                                             Intent i = new Intent(getActivity(), LydiaActivity.class);
                                             i.putExtra(Constants.KEY_LYDIA_ORDER_ID, idstr);
                                             i.putExtra(Constants.KEY_LYDIA_ORDER_TYPE, Constants.TYPE_LYDIA_CAFET);
-                                            i.putExtra(Constants.KEY_LYDIA_ORDER_PRICE, price);
+                                            i.putExtra(Constants.KEY_LYDIA_ORDER_ASKED, false);
                                             getActivity().startActivity(i);
 
                                             getFragmentManager().popBackStackImmediate();
