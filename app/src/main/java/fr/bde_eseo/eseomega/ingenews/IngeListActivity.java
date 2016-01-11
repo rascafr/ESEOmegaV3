@@ -1,8 +1,6 @@
 package fr.bde_eseo.eseomega.ingenews;
 
-import android.content.Intent;
 import android.graphics.PorterDuff;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -16,7 +14,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -80,7 +77,7 @@ public class IngeListActivity extends AppCompatActivity {
 
         // I/O cache data
         cachePath = getCacheDir() + "/";
-        cacheFileEseo = new File(cachePath + "ingenews.json");
+        cacheFileEseo = new File(cachePath + "menu_empty.json");
 
         // Model / objects
         ingenewsItems = new ArrayList<>();
@@ -126,7 +123,7 @@ public class IngeListActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.ingenews, menu);
+        getMenuInflater().inflate(R.menu.menu_empty, menu);
         return true;
     }
 

@@ -5,24 +5,11 @@
                 android:layout_height="match_parent"
                 android:background="@color/md_blue_grey_100">
 
-    <TextView
-        android:id="@+id/tvServiceInfo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
-        android:gravity="center"
-        android:textColor="@color/text_light_header"
-        android:visibility="invisible"/>
-
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/cardHistory"
+        android:id="@+id/cardTickets"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@id/tvServiceInfo"/>
+        android:layout_alignParentBottom="true"/>
 
     <com.melnykov.fab.FloatingActionButton
         android:id="@+id/fab"
@@ -35,9 +22,9 @@
         android:layout_margin="16dp"
         android:layout_marginBottom="16dp"
         android:src="@drawable/ic_add_white"
-        fab:fab_colorNormal="@color/md_blue_600"
-        fab:fab_colorPressed="@color/md_blue_800"
-        fab:fab_colorRipple="@color/md_blue_300"/>
+        fab:fab_colorNormal="@color/md_red_600"
+        fab:fab_colorPressed="@color/md_red_800"
+        fab:fab_colorRipple="@color/md_red_300"/>
 
     <!-- Pas a faire : utiliser les vraies tailles en dp !!! -->
     <!-- OK -->
@@ -51,7 +38,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:layout_marginBottom="16dp"
-        android:background="@drawable/circle_back"
+        android:background="@drawable/circle_back_red"
         android:visibility="invisible"/>
 
     <ProgressBar
@@ -70,7 +57,7 @@
         android:visibility="visible"/>
 
     <ProgressBar
-        android:id="@+id/progressHistoryList"
+        android:id="@+id/progressTicketList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -91,7 +78,7 @@
             android:layout_height="85dp"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="14dp"
-            android:src="@drawable/ic_nocommand"/>
+            android:src="@drawable/ic_no_ticket"/>
 
         <TextView
             android:id="@+id/tvListNothing"
@@ -100,7 +87,7 @@
             android:layout_below="@id/imgNoCommand"
             android:layout_marginBottom="14dp"
             android:gravity="center"
-            android:text="@string/empty_header_history"
+            android:text="@string/empty_header_order"
             android:textSize="18dp"
             android:textStyle="bold"/>
 
@@ -110,7 +97,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/tvListNothing"
             android:gravity="center"
-            android:text="@string/empty_desc_history"
+            android:text="@string/empty_desc_order"
             android:textColor="@color/text_light_header"/>
 
     </RelativeLayout>

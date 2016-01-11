@@ -89,6 +89,9 @@ public class Constants {
     public static final String URL_API_LYDIA_ASK = URL_API_BASE + "lydia/ask.php";
     public static final String URL_API_LYDIA_CHECK = URL_API_BASE + "lydia/check.php";
 
+    // Events
+    public static final String URL_API_EVENT_LIST = URL_API_BASE + "event/list.php";
+
 
     // Data from Naudet-Sonasi
     public static final String URL_SERVERBIS = "http://79.170.44.147/eseonews.fr/";
@@ -96,7 +99,7 @@ public class Constants {
     public static final String URL_JSON_EVENTS = URL_SERVERBIS + "jsondata/events_data/events.json";
     public static final String URL_JSON_CLUBS = URL_SERVERBIS + "jsondata/clubs_data/clubs.json";
     public static final String URL_NEWS_ANDROID = URL_SERVERBIS + "getData.php?smtype=ANDROID&";
-    public static final String URL_JSON_INGENEWS = URL_SERVERBIS + "jsondata/ingenews_data/ingenews.php";
+    public static final String URL_JSON_INGENEWS = URL_SERVERBIS + "jsondata/ingenews_data/menu_empty.php";
 
     // JSON TAG
     public static final String JSON_TAG_CAT = "categories";

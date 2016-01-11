@@ -20,6 +20,14 @@
         <item name="colorAccent">@color/color_primary</item>
     </style>
 
+    <!-- single red activity theme (tickets) -->
+    <style name="AppThemeRedSingle" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/md_red_800</item>
+        <item name="colorPrimaryDark">@color/md_red_900</item>
+        <item name="colorAccent">@color/md_prim_light_red</item>
+    </style>
+
     <!-- Splash activity theme. -->
     <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->

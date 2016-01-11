@@ -37,6 +37,7 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import java.io.File;
 import java.util.ArrayList;
 
+import fr.bde_eseo.eseomega.events.tickets.EventListActivity;
 import fr.bde_eseo.eseomega.settings.SettingsFragment;
 import fr.bde_eseo.eseomega.slidingmenu.NavDrawerListAdapter;
 import fr.bde_eseo.eseomega.community.CommunityFragment;
@@ -389,13 +390,14 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
 
             // Ingénews : news du club du même nom, m'voyez
             case R.id.action_ingenews:
-                Intent i = new Intent(MainActivity.this, IngeListActivity.class);
-                startActivity(i);
+                Intent intentIngenews = new Intent(MainActivity.this, IngeListActivity.class);
+                startActivity(intentIngenews);
                 return true;
 
             // Event : on passe à la vue de l'historique d'achat des place events
             case R.id.action_ticketevent:
-
+                Intent intentEvent = new Intent(MainActivity.this, EventListActivity.class);
+                startActivity(intentEvent);
                 return true;
 
             // Action par défaut, aucune

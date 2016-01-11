@@ -2,6 +2,7 @@
     <string name="app_name">ESEOmega</string>
     <string name="app_name_inge">Éditions Ingénews</string>
     <string name="app_name_order">Votre commande</string>
+    <string name="app_name_tickets">Vos réservations</string>
     <string name="app_version_name">2.1.1</string>
     <string name="app_version_code">20</string>
 
@@ -81,6 +82,7 @@ Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. N
     <string name="MEMORY_SYNC_USER">selfRetain_$_0x128D4_objc</string> <!-- V2.1 -->
     <string name="MESSAGE_PASS_USER">Oups, erreur de connexion</string> <!-- V2.1 -->
     <string name="MESSAGE_HISTORY_USER">Connexion au serveur ...</string> <!-- V2.1 -->
+    <string name="MESSAGE_TICKETS_USER">Connexion en cours</string>
     <string name="HEADER_SYNC_SCORES">**** SCORES ****</string>
     <string name="MACRO_SYNC_SINGLE">base64(json_encode(#MACRO))</string> <!-- V2.1 -->
     <string name="MESSAGE_SYNC_PUSH">Erreur mémoire cache</string> <!-- V2.1 -->
@@ -140,6 +142,12 @@ Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. N
 
     <string name="empty_header_history">Vous n\'avez encore rien commandé</string>
     <string name="empty_desc_history">Tapez sur le bouton + pour commander, vos commandes s\'afficheront ici.</string>
+
+    <string name="empty_header_order">Vous n\'avez pas acheté de places</string>
+    <string name="empty_desc_order">Tapez sur le bouton + pour commander, vos places s\'afficheront içi</string>
+
+    <string name="empty_header_noorder">Vous n\'êtes pas connecté</string>
+    <string name="empty_desc_noorder">La commande d\'une place ne peut se faire anonymement.</string>
 
     <string name="empty_header_noconnect">Vous n\'êtes pas connecté</string>
     <string name="empty_desc_noconnect">La commande a la cafétéria ne peut se faire anonymement.</string>
