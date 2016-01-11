@@ -353,7 +353,8 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (fragPosition == 1) getMenuInflater().inflate(R.menu.main, menu); // with Ingenews option
+        if (fragPosition == 1) getMenuInflater().inflate(R.menu.menu_ingenews, menu); // with Ingenews option
+        else if (fragPosition == 2) getMenuInflater().inflate(R.menu.menu_event, menu); // with Event buy option
         else getMenuInflater().inflate(R.menu.main_less, menu); // without Ingenews
         return true;
     }
@@ -390,6 +391,11 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
             case R.id.action_ingenews:
                 Intent i = new Intent(MainActivity.this, IngeListActivity.class);
                 startActivity(i);
+                return true;
+
+            // Event : on passe à la vue de l'historique d'achat des place events
+            case R.id.action_ticketevent:
+
                 return true;
 
             // Action par défaut, aucune
