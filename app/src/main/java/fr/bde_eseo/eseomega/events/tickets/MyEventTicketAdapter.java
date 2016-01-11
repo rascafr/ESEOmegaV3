@@ -44,7 +44,7 @@ public class MyEventTicketAdapter extends RecyclerView.Adapter<RecyclerView.View
         EventTicketItem eti = eventTicketItems.get(position);
         TicketViewHolder tvh = (TicketViewHolder) holder;
         tvh.vName.setText(eti.getName());
-        tvh.vNumero.setText(String.valueOf(eti.getIdcmd()));
+        tvh.vNumero.setText(String.valueOf(eti.getTicketNumberAsString()));
         tvh.vPrice.setText(String.valueOf(eti.getPrice()));
         tvh.vDate.setText(eti.getDatetime());
     }

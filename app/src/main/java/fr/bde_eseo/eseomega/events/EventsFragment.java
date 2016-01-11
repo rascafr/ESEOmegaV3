@@ -37,6 +37,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import fr.bde_eseo.eseomega.Constants;
+import fr.bde_eseo.eseomega.events.tickets.model.TicketStore;
 import fr.bde_eseo.eseomega.hintsntips.DividerItemDecoration;
 import fr.bde_eseo.eseomega.hintsntips.MyTipsAdapter;
 import fr.bde_eseo.eseomega.hintsntips.SponsorItem;
@@ -94,8 +95,11 @@ public class EventsFragment extends Fragment {
         cachePath = getActivity().getCacheDir() + "/";
         cacheFileEseo = new File(cachePath + "events.json");
 
+        // Init static model
+        TicketStore.getInstance().reset();
+
         // Model / objects
-        eventItems = new ArrayList<>();
+        eventItems = TicketStore.getInstance().getEventItems();
         mAdapter = new MyEventsAdapter(getActivity(), eventItems);
         recList = (RecyclerView) rootView.findViewById(R.id.recyList);
         recList.setAdapter(mAdapter);

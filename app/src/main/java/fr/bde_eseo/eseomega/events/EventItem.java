@@ -29,6 +29,7 @@ public class EventItem {
     private final static String JSON_KEY_ITEM_LIEU = "lieu";
     private final static String JSON_KEY_ITEM_DATEFIN = "dateFin";
     private final static String JSON_KEY_ITEM_PRICE = "prix";
+    private final static String JSON_KEY_ITEM_ID = "id";
     private final static String JSON_KEY_ARRAY_COLOR = "color";
 
     private static final String HOUR_PASS_ALLDAY = "00:02";
@@ -41,6 +42,7 @@ public class EventItem {
     private Calendar cal, calFin;
     private boolean isPassed;
     private double price;
+    private String idevent;
 
     public EventItem(JSONObject obj) throws JSONException {
         this(obj.getString(JSON_KEY_ITEM_NAME), obj.getString(JSON_KEY_ITEM_DETAIL), obj.getString(JSON_KEY_ITEM_DATE), obj.getString(JSON_KEY_ITEM_DATEFIN));
@@ -48,7 +50,8 @@ public class EventItem {
                 obj.getString(JSON_KEY_ITEM_CLUB),
                 obj.getString(JSON_KEY_ITEM_URL),
                 obj.getString(JSON_KEY_ITEM_LIEU),
-                obj.getDouble(JSON_KEY_ITEM_PRICE)
+                obj.getDouble(JSON_KEY_ITEM_PRICE),
+                obj.getString(JSON_KEY_ITEM_ID)
         );
         this.performShortedDetails();
 
@@ -91,11 +94,12 @@ public class EventItem {
         calFin.setTime(datefin);
     }
 
-    public void setAdditionnal (String club, String url, String lieu, double price) {
+    public void setAdditionnal (String club, String url, String lieu, double price, String idevent) {
         this.club = club;
         this.url = url;
         this.lieu = lieu;
         this.price = price;
+        this.idevent = idevent;
     }
 
     public void setColors (ArrayList<String> colors) {
@@ -258,5 +262,9 @@ public class EventItem {
 
     public boolean couldPay () {
         return price > 0;
+    }
+
+    public String getIdevent() {
+        return idevent;
     }
 }
