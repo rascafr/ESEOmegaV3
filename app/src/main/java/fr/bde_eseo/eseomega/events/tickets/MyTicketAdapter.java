@@ -18,7 +18,7 @@ import fr.bde_eseo.eseomega.lacommande.model.HistoryItem;
  * Created by Rascafr on 11/01/2016.
  * Adapter pour l'historique des commandes évènements
  */
-public class MyEventTicketAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class MyTicketAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<EventTicketItem> eventTicketItems;
     private Context context;
@@ -26,7 +26,7 @@ public class MyEventTicketAdapter extends RecyclerView.Adapter<RecyclerView.View
     public static final int TYPE_TICKET_ITEM = 0;
     public static final int TYPE_TICKET_HEADER = 1;
 
-    public MyEventTicketAdapter(Context context) {
+    public MyTicketAdapter(Context context) {
         this.eventTicketItems = new ArrayList<>();
         this.context = context;
     }

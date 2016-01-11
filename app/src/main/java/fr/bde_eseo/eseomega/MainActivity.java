@@ -37,7 +37,7 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import java.io.File;
 import java.util.ArrayList;
 
-import fr.bde_eseo.eseomega.events.tickets.EventHistoryActivity;
+import fr.bde_eseo.eseomega.events.tickets.TicketHistoryActivity;
 import fr.bde_eseo.eseomega.settings.SettingsFragment;
 import fr.bde_eseo.eseomega.slidingmenu.NavDrawerListAdapter;
 import fr.bde_eseo.eseomega.community.CommunityFragment;
@@ -396,7 +396,7 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
 
             // Event : on passe à la vue de l'historique d'achat des place events
             case R.id.action_ticketevent:
-                Intent intentEvent = new Intent(MainActivity.this, EventHistoryActivity.class);
+                Intent intentEvent = new Intent(MainActivity.this, TicketHistoryActivity.class);
                 startActivity(intentEvent);
                 return true;
 

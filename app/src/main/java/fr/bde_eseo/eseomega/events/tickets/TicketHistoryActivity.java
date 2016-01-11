@@ -5,18 +5,15 @@ import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.melnykov.fab.FloatingActionButton;
@@ -37,9 +34,6 @@ import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.R;
 import fr.bde_eseo.eseomega.events.tickets.model.EventTicketItem;
 import fr.bde_eseo.eseomega.events.tickets.model.TicketStore;
-import fr.bde_eseo.eseomega.lacommande.DataManager;
-import fr.bde_eseo.eseomega.lacommande.OrderTabsFragment;
-import fr.bde_eseo.eseomega.lacommande.model.HistoryItem;
 import fr.bde_eseo.eseomega.profile.UserProfile;
 import fr.bde_eseo.eseomega.utils.ConnexionUtils;
 import fr.bde_eseo.eseomega.utils.EncryptUtils;
@@ -48,7 +42,7 @@ import fr.bde_eseo.eseomega.utils.Utilities;
 /**
  * Created by Rascafr on 11/01/2016.
  */
-public class EventHistoryActivity extends AppCompatActivity {
+public class TicketHistoryActivity extends AppCompatActivity {
 
     // Android objects
     private Context context;
@@ -60,7 +54,7 @@ public class EventHistoryActivity extends AppCompatActivity {
     private UserProfile userProfile;
 
     // Adapter / recycler
-    private MyEventTicketAdapter mAdapter;
+    private MyTicketAdapter mAdapter;
     private RecyclerView recList;
 
     // Layout
@@ -118,7 +112,7 @@ public class EventHistoryActivity extends AppCompatActivity {
         eventTicketItems = TicketStore.getInstance().getEventTicketItems();
 
         // Init adapter / recycler view
-        mAdapter = new MyEventTicketAdapter(context);
+        mAdapter = new MyTicketAdapter(context);
         recList = (RecyclerView) findViewById(R.id.cardTickets);
         recList.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(context);
