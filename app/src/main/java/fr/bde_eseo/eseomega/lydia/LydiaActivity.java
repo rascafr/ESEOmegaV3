@@ -307,6 +307,9 @@ public class LydiaActivity extends AppCompatActivity {
      * Closes the dialog / activity
      */
     void close() {
+        getIntent().putExtra(Constants.RESULT_LYDIA_VALUE, 2);
+        setResult(RESULT_OK, getIntent());
+        Log.d("DBG", "Closing ... " + getIntent());
         LydiaActivity.this.finish();
     }
 
@@ -515,6 +518,9 @@ public class LydiaActivity extends AppCompatActivity {
 
                                 // Ok ?
                                 updateTextStatus(info, status, false);
+
+                                // Save result
+
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();

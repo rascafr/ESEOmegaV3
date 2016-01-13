@@ -175,6 +175,10 @@ public class Constants {
     public static final String KEY_GANTIER_INTENT = "gp.intent.start";
     public static final String KEY_EVENT_TICKET_SELECTED = "event.ticket.selected";
 
+    // Returns
+    public static final int RESULT_LYDIA_KEY = 422;
+    public static final String RESULT_LYDIA_VALUE = "lydia_return.value";
+
     // LYDIA
     public static final String KEY_LYDIA_ORDER_ID = "lydia.order_id";
     public static final String KEY_LYDIA_ORDER_TYPE = "lydia.order_type";

@@ -100,6 +100,8 @@ Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. N
     <string name="tstp">tstp</string>
     <string name="os">os</string>
     <string name="token">token</string>
+    <string name="idevent">idevent</string>
+    <string name="nav">nav</string>
     <string name="idcmd">idcmd</string>
     <string name="data">data</string>
     <string name="instructions">instructions</string>
@@ -112,6 +114,8 @@ Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. N
 
     <!-- Dialog -->
     <string name="dialog_yes">Oui</string>
+    <string name="dialog_pay">Payer</string>
+    <string name="dialog_choose">Choisir</string>
     <string name="dialog_no">Non</string>
     <string name="dialog_cancel">Annuler</string>
     <string name="dialog_ok">OK</string>
