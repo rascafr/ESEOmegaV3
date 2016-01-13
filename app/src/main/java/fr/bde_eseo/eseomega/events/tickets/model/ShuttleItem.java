@@ -3,6 +3,11 @@ package fr.bde_eseo.eseomega.events.tickets.model;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  * Created by Rascafr on 13/01/2016.
  * Décris une navette
@@ -10,7 +15,7 @@ import org.json.JSONObject;
 public class ShuttleItem {
 
     private int idshuttle, remainingSeats, totalSeats;
-    private String departure, arrival, idevent, departPlace;
+    private String departure, arrival, departureStr, arrivalStr, idevent, departPlace;
 
     public ShuttleItem(JSONObject obj) throws JSONException {
         idshuttle = obj.getInt("idshuttle");
@@ -20,6 +25,8 @@ public class ShuttleItem {
         arrival = obj.getString("arrival");
         idevent = obj.getString("idevent");
         departPlace = obj.getString("departplace");
+
+        departureStr = getFrenchDate(departure);
     }
 
     public boolean correspondsToID(String id) {
@@ -52,5 +59,26 @@ public class ShuttleItem {
 
     public String getDepartPlace() {
         return departPlace;
+    }
+
+    public String getDepartureStr() {
+        return departureStr;
+    }
+
+    public Date getParsedDate (String datetime) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.FRANCE);
+        Date date = null;
+        try {
+            date = format.parse(datetime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+
+    public String getFrenchDate (String datetime) {
+        Date d = getParsedDate(datetime);
+        SimpleDateFormat sdf = new SimpleDateFormat("E dd MMMM HH:mm", Locale.FRANCE);
+        return sdf.format(d);
     }
 }

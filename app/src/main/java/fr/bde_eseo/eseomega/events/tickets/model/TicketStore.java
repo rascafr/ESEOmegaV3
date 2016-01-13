@@ -62,6 +62,7 @@ public class TicketStore {
         if (shuttleItems == null)
             shuttleItems = new ArrayList<>();
         shuttleItems.clear();
+        selectedShuttle = null;
     }
 
     public ArrayList<EventTicketItem> getEventTicketItems() {
@@ -128,5 +129,14 @@ public class TicketStore {
 
     public SubEventItem getSelectedTicket() {
         return selectedTicket;
+    }
+
+    /**
+     * Current shuttle
+     */
+    private ShuttleItem selectedShuttle;
+
+    public void setSelectedShuttle(ShuttleItem selectedShuttle) {
+        this.selectedShuttle = selectedShuttle;
     }
 }

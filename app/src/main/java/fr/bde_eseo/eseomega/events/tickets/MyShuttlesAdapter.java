@@ -55,7 +55,7 @@ public class MyShuttlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         final CheckShuttleItem csi = checkShuttleItems.get(position);
         final ShuttleViewHolder svh = (ShuttleViewHolder) holder;
         svh.vPlace.setText(csi.getShuttleItem().getDepartPlace());
-        svh.vDeparture.setText(csi.getShuttleItem().getDeparture());
+        svh.vDeparture.setText(csi.getShuttleItem().getDepartureStr());
         svh.vSeats.setText(csi.getShuttleItem().getRemainingSeats() + "/" + csi.getShuttleItem().getTotalSeats() + " places disponibles");
         svh.checkShuttle.setChecked(csi.isCheck());
         svh.checkShuttle.setOnClickListener(new View.OnClickListener() {
