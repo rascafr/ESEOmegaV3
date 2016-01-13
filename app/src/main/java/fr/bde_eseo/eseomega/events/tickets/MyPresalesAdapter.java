@@ -53,6 +53,7 @@ public class MyPresalesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         PresalesViewHolder pvh = (PresalesViewHolder) holder;
         pvh.vTitle.setText(tpi.getTitle());
         pvh.vDesc.setText(tpi.getDescription());
+        pvh.vPrice.setText("À partir de " + tpi.getLowPrice());
 
         ImageLoader.getInstance().displayImage(tpi.getImgUrl(), pvh.vImg);
     }
@@ -67,12 +68,14 @@ public class MyPresalesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         protected TextView vTitle;
         protected TextView vDesc;
+        protected TextView vPrice;
         protected ImageView vImg;
 
         public PresalesViewHolder(View v) {
             super(v);
             vTitle =  (TextView) v.findViewById(R.id.tvTitleTicket);
             vDesc = (TextView)  v.findViewById(R.id.tvDescTicket);
+            vPrice = (TextView)  v.findViewById(R.id.tvPriceTicket);
             vImg = (ImageView) v.findViewById(R.id.imgTicket);
         }
     }

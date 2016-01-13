@@ -48,11 +48,11 @@ public class SubEventItem {
     }
 
     public void searchShuttles (ArrayList<ShuttleItem> allShuttles) {
+        shuttleItems.clear();
         for (int i=0;i<allShuttles.size();i++) {
             ShuttleItem si = allShuttles.get(i);
             if (si.correspondsToID(id)) {
                 shuttleItems.add(si);
-                Log.d("DBG", "Shuttle added : " + si.getIdshuttle());
             }
         }
     }

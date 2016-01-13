@@ -39,21 +39,36 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_centerInParent="true"
+            android:paddingBottom="24dp"
             android:text="Blue Moon 2016"
             android:textColor="@color/md_white_1000"
             android:textSize="26sp"/>
 
-        <TextView
-            android:id="@+id/tvDescTicket"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
+            android:orientation="vertical"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:paddingBottom="8dp"
-            android:text="Blue Moon 2016"
-            android:textColor="#b0ffffff"/>
+            android:paddingBottom="8dp">
 
+            <TextView
+                android:id="@+id/tvDescTicket"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Texte texte ici"
+                android:textColor="#b0ffffff"/>
+
+            <TextView
+                android:id="@+id/tvPriceTicket"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="A partir de 22€"
+                android:textColor="#b0ffffff"/>
+
+        </LinearLayout>
 
     </RelativeLayout>
 

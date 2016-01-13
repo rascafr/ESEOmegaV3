@@ -26,7 +26,7 @@ public class ShuttleItem {
         idevent = obj.getString("idevent");
         departPlace = obj.getString("departplace");
 
-        departureStr = getFrenchDate(departure);
+        departureStr = "Départ : " + getFrenchDate(departure);
     }
 
     public boolean correspondsToID(String id) {
@@ -78,7 +78,7 @@ public class ShuttleItem {
 
     public String getFrenchDate (String datetime) {
         Date d = getParsedDate(datetime);
-        SimpleDateFormat sdf = new SimpleDateFormat("E dd MMMM HH:mm", Locale.FRANCE);
+        SimpleDateFormat sdf = new SimpleDateFormat("E dd MMM 'à' HH'h'mm", Locale.FRANCE);
         return sdf.format(d);
     }
 }

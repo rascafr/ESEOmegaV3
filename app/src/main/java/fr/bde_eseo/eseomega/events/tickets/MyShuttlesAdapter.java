@@ -25,6 +25,9 @@ import fr.bde_eseo.eseomega.events.tickets.model.TicketPictItem;
  */
 public class MyShuttlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    public static final int TYPE_TICKET_ITEM = 0;
+    public static final int TYPE_TICKET_HEADER = 1;
+
     private ArrayList<CheckShuttleItem> checkShuttleItems;
     private Context context;
 
@@ -42,40 +45,49 @@ public class MyShuttlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ShuttleViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_shuttle, parent, false));
+        if (viewType == TYPE_TICKET_ITEM)
+            return new ShuttleViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_shuttle, parent, false));
+        else
+            return new ShuttleHeaderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_shuttle_header, parent, false));
     }
 
     @Override
     public int getItemViewType(int position) {
-        return 0;
+        return checkShuttleItems.get(position).isHeader() ? TYPE_TICKET_HEADER : TYPE_TICKET_ITEM;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final CheckShuttleItem csi = checkShuttleItems.get(position);
-        final ShuttleViewHolder svh = (ShuttleViewHolder) holder;
-        svh.vPlace.setText(csi.getShuttleItem().getDepartPlace());
-        svh.vDeparture.setText(csi.getShuttleItem().getDepartureStr());
-        svh.vSeats.setText(csi.getShuttleItem().getRemainingSeats() + "/" + csi.getShuttleItem().getTotalSeats() + " places disponibles");
-        svh.checkShuttle.setChecked(csi.isCheck());
-        svh.checkShuttle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                uncheckAll();
-                csi.setIsCheck(svh.checkShuttle.isChecked());
-                notifyDataSetChanged();
-            }
-        });
 
-        svh.cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                uncheckAll();
-                svh.checkShuttle.setChecked(!svh.checkShuttle.isChecked());
-                csi.setIsCheck(svh.checkShuttle.isChecked());
-                notifyDataSetChanged();
-            }
-        });
+        if (!csi.isHeader()) {
+            final ShuttleViewHolder svh = (ShuttleViewHolder) holder;
+            //svh.vPlace.setText(csi.getShuttleItem().getDepartPlace());
+            svh.vDeparture.setText(csi.getShuttleItem().getDepartureStr());
+            svh.vSeats.setText(csi.getShuttleItem().getRemainingSeats() + "/" + csi.getShuttleItem().getTotalSeats() + " places disponibles");
+            svh.checkShuttle.setChecked(csi.isCheck());
+            svh.checkShuttle.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    uncheckAll();
+                    csi.setIsCheck(svh.checkShuttle.isChecked());
+                    notifyDataSetChanged();
+                }
+            });
+
+            svh.cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    uncheckAll();
+                    svh.checkShuttle.setChecked(!svh.checkShuttle.isChecked());
+                    csi.setIsCheck(svh.checkShuttle.isChecked());
+                    notifyDataSetChanged();
+                }
+            });
+        } else {
+            ShuttleHeaderViewHolder shvh = (ShuttleHeaderViewHolder) holder;
+            shvh.vName.setText(csi.getName());
+        }
     }
 
     @Override
@@ -83,7 +95,7 @@ public class MyShuttlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return checkShuttleItems == null ? 0 : checkShuttleItems.size();
     }
 
-    // Classic View Holder for Ticket
+    // Classic View Holder for Shuttle
     public static class ShuttleViewHolder extends RecyclerView.ViewHolder {
 
         protected TextView vPlace, vDeparture, vSeats;
@@ -97,6 +109,17 @@ public class MyShuttlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             vSeats = (TextView) v.findViewById(R.id.shuttleSeats);
             checkShuttle = (CheckBox) v.findViewById(R.id.checkShuttle);
             cardView = (CardView) v.findViewById(R.id.card_view);
+        }
+    }
+
+    // Classic View Holder for Ticket Header
+    public static class ShuttleHeaderViewHolder extends RecyclerView.ViewHolder {
+
+        protected TextView vName;
+
+        public ShuttleHeaderViewHolder(View v) {
+            super(v);
+            vName =  (TextView) v.findViewById(R.id.shuttleHeader);
         }
     }
 

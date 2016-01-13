@@ -1,5 +1,6 @@
 package fr.bde_eseo.eseomega.events.tickets.model;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import fr.bde_eseo.eseomega.events.tickets.EventItem;
@@ -9,14 +10,24 @@ import fr.bde_eseo.eseomega.events.tickets.EventItem;
  */
 public class TicketPictItem {
 
-    private String imgUrl, title, description;
+    private String imgUrl, title, description, lowPrice;
     private EventItem externalEventItem;
+    private double bestPrice;
 
     public TicketPictItem(EventItem eventItem) {
         externalEventItem = eventItem;
         title = eventItem.getName();
         description = eventItem.getDetails();
         imgUrl = eventItem.getImgUrl();
+
+        bestPrice = 0;
+        for (int i=0;i<externalEventItem.getSubEventItems().size();i++) {
+            double p = externalEventItem.getSubEventItems().get(i).getPrice();
+            if (bestPrice == 0 || p < bestPrice)
+                bestPrice = p;
+        }
+
+        lowPrice = new DecimalFormat("0.00").format(bestPrice) + "€";
     }
 
     public String getImgUrl() {
@@ -33,5 +44,9 @@ public class TicketPictItem {
 
     public EventItem getExternalEventItem() {
         return externalEventItem;
+    }
+
+    public String getLowPrice() {
+        return lowPrice;
     }
 }

@@ -73,11 +73,8 @@ public class EventItem {
         subEventItems = new ArrayList<>();
         JSONArray tickets = obj.getJSONArray(JSON_KEY_ARRAY_TICKETS);
         for (int i=0;i<tickets.length();i++) {
-            Log.d("DBG", "Got ev : " + tickets.get(i).toString());
             subEventItems.add(new SubEventItem(tickets.getJSONObject(i)));
         }
-
-        Log.d("DBG", "Sub nb = " + subEventItems.size());
     }
 
     public ArrayList<SubEventItem> getSubEventItems() {

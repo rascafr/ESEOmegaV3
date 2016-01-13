@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +37,7 @@ import fr.bde_eseo.eseomega.R;
 import fr.bde_eseo.eseomega.events.tickets.model.EventTicketItem;
 import fr.bde_eseo.eseomega.events.tickets.model.ShuttleItem;
 import fr.bde_eseo.eseomega.events.tickets.model.TicketStore;
+import fr.bde_eseo.eseomega.listeners.RecyclerItemClickListener;
 import fr.bde_eseo.eseomega.profile.UserProfile;
 import fr.bde_eseo.eseomega.utils.ConnexionUtils;
 import fr.bde_eseo.eseomega.utils.EncryptUtils;
@@ -159,6 +161,36 @@ public class TicketHistoryActivity extends AppCompatActivity {
             }
         });
 
+        // Recycler listener
+        recList.addOnItemTouchListener(new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+
+                final int idcmd = eventTicketItems.get(position).getIdcmd();
+
+                new MaterialDialog.Builder(context)
+                        .title("Renvoyer l'email")
+                        .content("Vous avez perdu votre place, vous ne retouvez plus le mail associé ?\nPas de soucis, vous avez la possibilité de recevoir de nouveau votre place ...")
+                        .cancelable(false)
+                        .negativeText(R.string.dialog_cancel)
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+                                Utilities.hideKeyboardFromActivity(TicketHistoryActivity.this); // Doesn't works ...
+                                super.onNegative(dialog);
+                            }
+                        })
+                        .inputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS)
+                        .input("sterling@archer.fr", "", new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(MaterialDialog dialog, CharSequence input) {
+                                AsyncEventEmail asyncEmail = new AsyncEventEmail(context, "" + input, null, userProfile, idcmd); // convert charSequence into String object
+                                asyncEmail.execute();
+                            }
+                        }).show();
+            }
+        }));
+
         // Change message
         if (userProfile.isCreated()) {
             tvNothing.setText(getResources().getString(R.string.empty_header_order));
@@ -237,7 +269,7 @@ public class TicketHistoryActivity extends AppCompatActivity {
 
     @Override
     public void onPause() {
-        if( mHandler != null) {
+        if (mHandler != null) {
             mHandler.removeCallbacks(updateTimerThread);
         }
         run = false;
@@ -379,12 +411,12 @@ public class TicketHistoryActivity extends AppCompatActivity {
 
                     // Add tickets to view
                     if (tempNextArray.size() > 0) {
-                        eventTicketItems.add(new EventTicketItem("Événements à venir"));
+                        eventTicketItems.add(new EventTicketItem("ÉVÉNEMENTS À VENIR"));
                     }
                     eventTicketItems.addAll(tempNextArray);
 
                     if (tempDoneArray.size() > 0) {
-                        eventTicketItems.add(new EventTicketItem("Événements passés"));
+                        eventTicketItems.add(new EventTicketItem("ÉVÉNEMENTS PASSÉS"));
                     }
                     eventTicketItems.addAll(tempDoneArray);
 
@@ -457,7 +489,7 @@ public class TicketHistoryActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... sUrl) {
 
-            HashMap<String,String> params = new HashMap<>();
+            HashMap<String, String> params = new HashMap<>();
             params.put(context.getResources().getString(R.string.client), userProfile.getId());
             params.put(context.getResources().getString(R.string.password), userProfile.getPassword());
             params.put(context.getResources().getString(R.string.os), Constants.APP_ID);
@@ -495,22 +527,26 @@ public class TicketHistoryActivity extends AppCompatActivity {
                         jsonToken = obj.getJSONObject("data").getString("token");
 
                         // Parse items
-                        for (int i=0;i<arrayItems.length();i++) {
+                        for (int i = 0; i < arrayItems.length(); i++) {
 
                             JSONObject objItem = arrayItems.getJSONObject(i);
                             if (objItem.has(JSON_KEY_SHUTTLES)) {
                                 JSONArray arrayShuttles = objItem.getJSONArray(JSON_KEY_SHUTTLES);
 
                                 // Get shuttles
-                                for (int s=0;s<arrayShuttles.length();s++) {
+                                for (int s = 0; s < arrayShuttles.length(); s++) {
                                     TicketStore.getInstance().getShuttleItems().add(new ShuttleItem(arrayShuttles.getJSONObject(s)));
                                 }
 
                                 // Assign shuttles to events
-                                for (int e=0;e<TicketStore.getInstance().getEventItems().size();e++) {
+                                for (int e = 0; e < TicketStore.getInstance().getEventItems().size(); e++) {
                                     EventItem ei = TicketStore.getInstance().getEventItems().get(e);
                                     if (!ei.isHeader() && !ei.isPassed()) {
-                                        for (int ee=0;ee<ei.getSubEventItems().size();ee++) {
+                                        for (int ee = 0; ee < ei.getSubEventItems().size(); ee++) {
+
+                                            // Remove old shuttles from events, before
+                                            // Then search
+                                            // Ok, done in method
                                             ei.getSubEventItems().get(ee).searchShuttles(TicketStore.getInstance().getShuttleItems());
                                         }
                                     }

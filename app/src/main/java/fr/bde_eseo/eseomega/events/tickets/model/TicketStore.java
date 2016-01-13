@@ -90,27 +90,18 @@ public class TicketStore {
         // For each ticket
         for (int et=0;et<eventTicketItems.size();et++) {
 
-            Log.d("DBG", "Ticket : " + eventTicketItems.get(et).getTicketNumberAsString());
-
             // For each event
             for (int ei=0;ei<eventItems.size();ei++) {
-
-                Log.d("DBG", "Event : " + eventItems.get(ei).getName());
 
                 // If event is not a header / content not null
                 if (!eventItems.get(ei).isHeader() && eventItems.get(ei).getSubEventItems() != null) {
 
-                    Log.d("DBG", "Event : not header / content not null");
-
                     // For each sub-event item
                     for (int si = 0; si < eventItems.get(ei).getSubEventItems().size(); si++) {
-
-                        Log.d("DBG", "Sub-item : " + eventItems.get(ei).getSubEventItems().get(si).getTitre());
 
                         // If event if not header / non null content
                         if (eventItems.get(ei).getSubEventItems().get(si).getId().equals(eventTicketItems.get(et).getIdevent())) {
                             eventTicketItems.get(et).setLinkedEvent(eventItems.get(ei));
-                            Log.d("DBG", "Linked : " + eventTicketItems.get(et).getTicketNumberAsString() + " ↔ " + eventItems.get(ei).getName());
                         }
                     }
                 }

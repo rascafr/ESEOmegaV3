@@ -1,6 +1,7 @@
 package fr.bde_eseo.eseomega.lydia;
 
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -72,11 +73,19 @@ public class LydiaActivity extends AppCompatActivity {
     private String orderType = "";
     private int orderID = -1;
 
+    // Returns
+    private static int LAST_STATUS = 0;
+
     // Types de requêtes qui ont lieu lors du onCreate (première ouverture de l'app)
     private enum INTENT_REQUEST {
         FROM_LYDIA, // Via URL Scheme
         FROM_APP,   // Via Intent interne
         ERROR       // Aucun des deux précédents
+    }
+
+    // Getteur
+    public static int LAST_STATUS() {
+        return LAST_STATUS;
     }
 
     @Override
@@ -307,9 +316,13 @@ public class LydiaActivity extends AppCompatActivity {
      * Closes the dialog / activity
      */
     void close() {
-        getIntent().putExtra(Constants.RESULT_LYDIA_VALUE, 2);
-        setResult(RESULT_OK, getIntent());
-        Log.d("DBG", "Closing ... " + getIntent());
+        Intent data = new Intent();
+        data.putExtra(Constants.RESULT_LYDIA_VALUE, 2);
+        if (getParent() == null) {
+            setResult(Activity.RESULT_OK, data);
+        } else {
+            getParent().setResult(Activity.RESULT_OK, data);
+        }
         LydiaActivity.this.finish();
     }
 
@@ -360,8 +373,6 @@ public class LydiaActivity extends AppCompatActivity {
             md.hide();
             int result = 0;
             String msg = "Erreur réseau / serveur";
-
-            Log.d("DBG", "Got : " + data);
 
             // Check data
             if (Utilities.isNetworkDataValid(data)) {
@@ -486,8 +497,6 @@ public class LydiaActivity extends AppCompatActivity {
         protected void onPostExecute(final String data) {
             super.onPostExecute(data);
 
-            Log.d("DBG", "Got : " + data);
-
             new Handler().postDelayed(new Runnable() {
 
                 @Override
@@ -520,6 +529,7 @@ public class LydiaActivity extends AppCompatActivity {
                                 updateTextStatus(info, status, false);
 
                                 // Save result
+                                LAST_STATUS = status;
 
                             }
                         } catch (JSONException e) {

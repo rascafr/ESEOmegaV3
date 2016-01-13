@@ -6,10 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     card_view:cardCornerRadius="4dp"
-    android:layout_marginTop="14dp"
+    android:layout_marginTop="10dp"
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp"
-    android:layout_marginBottom="8dp"
+    android:layout_marginBottom="4dp"
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground">
 
@@ -70,6 +70,7 @@
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="8dp"
+                android:visibility="gone"
                 android:maxLines="1"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -80,9 +81,11 @@
                 android:layout_height="wrap_content"
                 android:text="11/01 10:00"
                 android:textColor="@color/text_black_clear"
+                android:layout_marginTop="8dp"
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="8dp"
-                android:maxLines="1" />
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/shuttleSeats"

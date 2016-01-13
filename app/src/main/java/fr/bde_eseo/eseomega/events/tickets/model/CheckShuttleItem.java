@@ -9,12 +9,19 @@ import org.json.JSONObject;
  */
 public class CheckShuttleItem {
 
-    private boolean isCheck;
+    private boolean isCheck, isHeader;
+    private String name;
     private ShuttleItem shuttleItem;
 
     public CheckShuttleItem(ShuttleItem shuttleItem) {
         this.shuttleItem = shuttleItem;
+        isHeader = false;
         isCheck = false;
+    }
+
+    public CheckShuttleItem(String name) {
+        this.name = name;
+        isHeader = true;
     }
 
     public boolean isCheck() {
@@ -27,6 +34,14 @@ public class CheckShuttleItem {
 
     public ShuttleItem getShuttleItem() {
         return shuttleItem;
+    }
+
+    public boolean isHeader() {
+        return isHeader;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void setShuttleItem(ShuttleItem shuttleItem) {

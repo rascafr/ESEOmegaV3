@@ -81,7 +81,8 @@ Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. N
 
     <!-- Security -->
     <string name="MESSAGE_GET_TOKEN">Mauvais Login / Mot de passe</string> <!-- V2.1 -->
-    <string name="MESSAGE_GET_TOKEN_EVENT">(c) Team Sheep Dev</string> <!-- V2.1 -->
+    <string name="MESSAGE_GET_TOKEN_EVENT">(c) Team Sheep Dev</string>
+    <string name="MESSAGE_SEND_EMAIL_EVENT">Email invalide</string>
     <string name="MEMORY_SYNC_USER">selfRetain_$_0x128D4_objc</string> <!-- V2.1 -->
     <string name="MESSAGE_PASS_USER">Oups, erreur de connexion</string> <!-- V2.1 -->
     <string name="MESSAGE_HISTORY_USER">Connexion au serveur ...</string> <!-- V2.1 -->
@@ -103,6 +104,7 @@ Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. N
     <string name="idevent">idevent</string>
     <string name="nav">nav</string>
     <string name="idcmd">idcmd</string>
+    <string name="email">email</string>
     <string name="data">data</string>
     <string name="instructions">instructions</string>
     <string name="version">version</string>
@@ -121,6 +123,7 @@ Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. N
     <string name="dialog_ok">OK</string>
     <string name="dialog_contact">Contact</string>
     <string name="dialog_close">Fermer</string>
+    <string name="dialog_retry">Réessayer</string>
 
     <!-- Update -->
     <string name="update_title">Mise à jour disponible</string>

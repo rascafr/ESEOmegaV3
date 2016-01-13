@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,6 +16,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.R;
@@ -55,8 +58,6 @@ public class ShuttleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shuttles);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setIcon(android.R.drawable.ic_delete);
         context = this;
 
         // Get layout
@@ -109,7 +110,7 @@ public class ShuttleActivity extends AppCompatActivity {
         // Init adapter / recycler view
         mAdapter = new MyShuttlesAdapter(context);
         recList = (RecyclerView) findViewById(R.id.recyList);
-        recList.setHasFixedSize(true);
+        recList.setHasFixedSize(false);
         LinearLayoutManager llm = new LinearLayoutManager(context);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recList.setLayoutManager(llm);
@@ -119,14 +120,23 @@ public class ShuttleActivity extends AppCompatActivity {
 
     /**
      * Permet d'ajouter les navettes en tant qu'objets checkables
+     * Définit aussi les headers
      */
     private void fillCheckables() {
         if (checkShuttleItems == null)
             checkShuttleItems = new ArrayList<>();
         checkShuttleItems.clear();
 
+        String lastHeader = "";
+
         for (int i=0;i<subEventItem.getShuttleItems().size();i++) {
-            checkShuttleItems.add(new CheckShuttleItem(subEventItem.getShuttleItems().get(i)));
+
+            ShuttleItem si = subEventItem.getShuttleItems().get(i);
+            if (!si.getDepartPlace().equalsIgnoreCase(lastHeader)) {
+                lastHeader = si.getDepartPlace();
+                checkShuttleItems.add(new CheckShuttleItem(lastHeader.toUpperCase(Locale.FRANCE)));
+            }
+            checkShuttleItems.add(new CheckShuttleItem(si));
         }
     }
 
@@ -141,5 +151,28 @@ public class ShuttleActivity extends AppCompatActivity {
             }
         }
         return si;
+    }
+
+    /**
+     * Menu : back button + arrow in toolbar
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_empty, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        // Handle action bar actions click
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.onBackPressed();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
