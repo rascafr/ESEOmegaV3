@@ -13,9 +13,16 @@ A venir :
 - Edition Ingénews ✓ Nouveau style "grille" (+ favoris ?)
 - News ESEOmega en webview ✓
 - Fermeture cafet depuis serveur uniquement ✓
-- Paiement Cafet depuis Lydia → en cours
-- Paiement Events depuis Lydia
-- Préférences de l'app : page de démarrage, mises à jour auto, etc ... ✓ (en partie)
+- Paiement Cafet depuis Lydia ✓
+- Paiement Events depuis Lydia → en cours
+- Préférences de l'app : page de démarrage, mises à jour auto, etc ... ✓
+
+Restant :
+- Dialogue mail event
+- Valeur de retour check Lydia
+- News images
+- Ingénews image pas d'aperçu
+- Gestion event ticket avec navettes (simple seulement pour le moment)
 
 En pause :
 - Nouveau design / Thème sombre (Autre branche)
