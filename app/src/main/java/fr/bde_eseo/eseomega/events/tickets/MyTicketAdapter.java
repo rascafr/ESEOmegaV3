@@ -60,7 +60,7 @@ public class MyTicketAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             thvh.vName.setText(eti.getName());
         } else {
             TicketViewHolder tvh = (TicketViewHolder) holder;
-            tvh.vName.setText(eti.getLinkedName());
+            tvh.vName.setText(eti.getName());
             tvh.vNumero.setText(String.valueOf(eti.getTicketNumberAsString()));
             tvh.vPrice.setText(String.valueOf(eti.getTicketPriceAsString()));
             tvh.vDate.setText(eti.getFrenchDate());

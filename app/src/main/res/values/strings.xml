@@ -3,6 +3,8 @@
     <string name="app_name_inge">Éditions Ingénews</string>
     <string name="app_name_order">Votre commande</string>
     <string name="app_name_tickets">Vos réservations</string>
+    <string name="app_name_sales">Faire une réservation</string>
+    <string name="app_name_shuttles">Choisir une navette</string>
     <string name="app_version_name">2.1.1</string>
     <string name="app_version_code">20</string>
 

@@ -1,6 +1,7 @@
 package fr.bde_eseo.eseomega.events.tickets;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -33,6 +34,7 @@ import fr.bde_eseo.eseomega.BuildConfig;
 import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.R;
 import fr.bde_eseo.eseomega.events.tickets.model.EventTicketItem;
+import fr.bde_eseo.eseomega.events.tickets.model.ShuttleItem;
 import fr.bde_eseo.eseomega.events.tickets.model.TicketStore;
 import fr.bde_eseo.eseomega.profile.UserProfile;
 import fr.bde_eseo.eseomega.utils.ConnexionUtils;
@@ -41,6 +43,7 @@ import fr.bde_eseo.eseomega.utils.Utilities;
 
 /**
  * Created by Rascafr on 11/01/2016.
+ * Donne l'historique des achats de l'utilisateur
  */
 public class TicketHistoryActivity extends AppCompatActivity {
 
@@ -73,6 +76,9 @@ public class TicketHistoryActivity extends AppCompatActivity {
 
     // Cache
     private File cacheTicketsJSON;
+
+    // Keys
+    private final static String JSON_KEY_SHUTTLES = "event-navettes";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,7 +141,7 @@ public class TicketHistoryActivity extends AppCompatActivity {
                 if (!userProfile.isCreated()) {
                     new MaterialDialog.Builder(context)
                             .title("Vous n'êtes pas connecté")
-                            .content("Nous avons besoin de savoir qui vous êtes avant de pouvoir vous laisser commander.")
+                            .content("Nous avons besoin de savoir qui vous êtes avant de pouvoir vous laisser effectuer une réservation.")
                             .negativeText("D'accord")
                             .cancelable(false)
                             .show();
@@ -359,12 +365,12 @@ public class TicketHistoryActivity extends AppCompatActivity {
                     for (int i = 0; i < eventTicketItems.size(); i++) {
                         EventTicketItem eti = eventTicketItems.get(i);
 
-                        if (eti.getLinkedDatefin().after(new Date())) {
-                            eti.setPassed(false);
-                            tempNextArray.add(eti);
-                        } else {
+                        if (eti.getLinkedDatefin() == null || eti.getLinkedDatefin().before(new Date())) {
                             eti.setPassed(true);
                             tempDoneArray.add(eti);
+                        } else {
+                            eti.setPassed(false);
+                            tempNextArray.add(eti);
                         }
                     }
 
@@ -433,6 +439,8 @@ public class TicketHistoryActivity extends AppCompatActivity {
      */
     class SyncToken extends AsyncTask<String, String, String> {
 
+        private String networkPrepare, networkItems;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -440,6 +448,10 @@ public class TicketHistoryActivity extends AppCompatActivity {
             progressToken.setVisibility(View.VISIBLE);
             fab.setVisibility(View.INVISIBLE);
             viewToken.setVisibility(View.VISIBLE);
+
+            // Init network response
+            networkItems = null;
+            networkPrepare = null;
         }
 
         @Override
@@ -452,25 +464,59 @@ public class TicketHistoryActivity extends AppCompatActivity {
             params.put(context.getResources().getString(R.string.version), BuildConfig.VERSION_NAME);
             params.put(context.getResources().getString(R.string.hash), EncryptUtils.sha256(context.getResources().getString(R.string.MESSAGE_GET_TOKEN_EVENT) + userProfile.getId() + userProfile.getPassword() + Constants.APP_ID));
 
-            return ConnexionUtils.postServerData(Constants.URL_API_EVENT_PREPARE, params, context);
+            networkPrepare = ConnexionUtils.postServerData(Constants.URL_API_EVENT_PREPARE, params, context); // token answer
+            networkItems = ConnexionUtils.postServerData(Constants.URL_API_EVENT_ITEMS, null, context); // items answer
+
+            return null; // no need to return anything here
         }
 
         @Override
-        protected void onPostExecute(String data) {
+        protected void onPostExecute(String noUsedData) {
 
             String err = "Impossible de se connecter au réseau";
             int retCode = 0;
             String jsonToken = "";
 
             /** Check if response is token, or an error **/
-            if (Utilities.isNetworkDataValid(data)) { // 64 : nb chars for a SHA256 value
+            if (Utilities.isNetworkDataValid(networkPrepare) && Utilities.isNetworkDataValid(networkItems)) { // 64 : nb chars for a SHA256 value
                 try {
-                    JSONObject obj = new JSONObject(data);
+                    JSONObject obj = new JSONObject(networkPrepare);
+                    JSONArray arrayItems = new JSONArray(networkItems);
+
                     retCode = obj.getInt("status");
                     err = obj.getString("cause");
 
                     if (retCode == 1) {
+
+                        // Reset data before writing in it
+                        TicketStore.getInstance().resetOrder();
+
+                        // Get token
                         jsonToken = obj.getJSONObject("data").getString("token");
+
+                        // Parse items
+                        for (int i=0;i<arrayItems.length();i++) {
+
+                            JSONObject objItem = arrayItems.getJSONObject(i);
+                            if (objItem.has(JSON_KEY_SHUTTLES)) {
+                                JSONArray arrayShuttles = objItem.getJSONArray(JSON_KEY_SHUTTLES);
+
+                                // Get shuttles
+                                for (int s=0;s<arrayShuttles.length();s++) {
+                                    TicketStore.getInstance().getShuttleItems().add(new ShuttleItem(arrayShuttles.getJSONObject(s)));
+                                }
+
+                                // Assign shuttles to events
+                                for (int e=0;e<TicketStore.getInstance().getEventItems().size();e++) {
+                                    EventItem ei = TicketStore.getInstance().getEventItems().get(e);
+                                    if (!ei.isHeader() && !ei.isPassed()) {
+                                        for (int ee=0;ee<ei.getSubEventItems().size();ee++) {
+                                            ei.getSubEventItems().get(ee).searchShuttles(TicketStore.getInstance().getShuttleItems());
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -481,8 +527,9 @@ public class TicketHistoryActivity extends AppCompatActivity {
             if (retCode == 1) {
                 // Success !
                 run = false;
-                TicketStore.getInstance().resetOrder(); // reset data before writing in it
                 TicketStore.getInstance().setToken(jsonToken); // Sets the Token
+                Intent i = new Intent(context, PresalesActivity.class);
+                startActivity(i); // Start the sale's activity
             } else {
                 progressToken.setVisibility(View.INVISIBLE);
                 fab.setVisibility(View.VISIBLE);

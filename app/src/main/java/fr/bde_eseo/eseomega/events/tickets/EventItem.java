@@ -30,12 +30,13 @@ public class EventItem {
     private final static String JSON_KEY_ITEM_URL = "url";
     private final static String JSON_KEY_ITEM_LIEU = "lieu";
     private final static String JSON_KEY_ITEM_DATEFIN = "dateFin";
+    private final static String JSON_KEY_ITEM_IMGURL = "imgUrl";
     private final static String JSON_KEY_ARRAY_COLOR = "color";
     private final static String JSON_KEY_ARRAY_TICKETS = "tickets";
 
     private static final String HOUR_PASS_ALLDAY = "00:02";
     private static final int MAX_CHAR_DESC = 36;
-    private String name, details, club, url, lieu;
+    private String name, details, club, url, lieu, imgUrl;
     private boolean isHeader;
     private Date date, datefin;
     private int color; // aarrggbb, set alpha to 0xFF
@@ -49,7 +50,8 @@ public class EventItem {
         this.setAdditionnal(
                 obj.getString(JSON_KEY_ITEM_CLUB),
                 obj.getString(JSON_KEY_ITEM_URL),
-                obj.getString(JSON_KEY_ITEM_LIEU)
+                obj.getString(JSON_KEY_ITEM_LIEU),
+                obj.getString(JSON_KEY_ITEM_IMGURL)
         );
         this.performShortedDetails();
 
@@ -71,12 +73,37 @@ public class EventItem {
         subEventItems = new ArrayList<>();
         JSONArray tickets = obj.getJSONArray(JSON_KEY_ARRAY_TICKETS);
         for (int i=0;i<tickets.length();i++) {
+            Log.d("DBG", "Got ev : " + tickets.get(i).toString());
             subEventItems.add(new SubEventItem(tickets.getJSONObject(i)));
         }
+
+        Log.d("DBG", "Sub nb = " + subEventItems.size());
     }
 
     public ArrayList<SubEventItem> getSubEventItems() {
         return subEventItems;
+    }
+
+    public boolean hasSubEventChildEnabled () {
+        boolean en = false;
+
+        for (int i=0;subEventItems != null && i<subEventItems.size() && !en;i++) {
+            if (subEventItems.get(i).isAvailable())
+                en = true;
+        }
+
+        return en;
+    }
+
+    public boolean hasSubEventChildPriced () {
+        boolean en = false;
+
+        for (int i=0;subEventItems != null && i<subEventItems.size() && !en;i++) {
+            if (subEventItems.get(i).getPrice() >= 0.5)
+                en = true;
+        }
+
+        return en;
     }
 
     public EventItem(String name, String details, boolean isHeader, Date date, int color) {
@@ -102,10 +129,11 @@ public class EventItem {
         calFin.setTime(datefin);
     }
 
-    public void setAdditionnal (String club, String url, String lieu) {
+    public void setAdditionnal (String club, String url, String lieu, String imgUrl) {
         this.club = club;
         this.url = url;
         this.lieu = lieu;
+        this.imgUrl = imgUrl;
     }
 
     public void setColors (ArrayList<String> colors) {
@@ -258,11 +286,15 @@ public class EventItem {
         this.isPassed = isPassed;
     }
 
-    public boolean setIsPassed () {
+    public boolean isPassed () {
         return isPassed;
     }
 
     public Date getDatefin() {
         return datefin;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
     }
 }

@@ -94,8 +94,11 @@ public class Constants {
     public static final String URL_API_LYDIA_CHECK = URL_API_BASE + "lydia/check.php";
 
     // Events
+    public static final String URL_API_EVENT_ITEMS = URL_API_BASE + "event/items.php";
     public static final String URL_API_EVENT_LIST = URL_API_BASE + "event/list.php";
     public static final String URL_API_EVENT_PREPARE = URL_API_BASE + "event/prepare.php";
+    public static final String URL_API_EVENT_SEND = URL_API_BASE + "event/send.php";
+    public static final String URL_API_EVENT_MAIL = URL_API_BASE + "event/mail.php";
 
 
     // Data from Naudet-Sonasi
@@ -170,6 +173,7 @@ public class Constants {
     public static final String KEY_MAIN_TITLE = "main.intent.title";
     public static final String KEY_MAIN_MESSAGE = "main.intent.message";
     public static final String KEY_GANTIER_INTENT = "gp.intent.start";
+    public static final String KEY_EVENT_TICKET_SELECTED = "event.ticket.selected";
 
     // LYDIA
     public static final String KEY_LYDIA_ORDER_ID = "lydia.order_id";

@@ -59,6 +59,9 @@ public class TicketStore {
      */
     public void resetOrder () {
         token = null;
+        if (shuttleItems == null)
+            shuttleItems = new ArrayList<>();
+        shuttleItems.clear();
     }
 
     public ArrayList<EventTicketItem> getEventTicketItems() {
@@ -67,6 +70,15 @@ public class TicketStore {
 
     public ArrayList<EventItem> getEventItems() {
         return eventItems;
+    }
+
+    /**
+     * Shuttles items
+     */
+    private ArrayList<ShuttleItem> shuttleItems;
+
+    public ArrayList<ShuttleItem> getShuttleItems() {
+        return shuttleItems;
     }
 
     /**
@@ -103,5 +115,18 @@ public class TicketStore {
                 }
             }
         }
+    }
+
+    /**
+     * Selected ticket
+     */
+    private SubEventItem selectedTicket;
+
+    public void setSelectedTicket(SubEventItem selectedTicket) {
+        this.selectedTicket = selectedTicket;
+    }
+
+    public SubEventItem getSelectedTicket() {
+        return selectedTicket;
     }
 }

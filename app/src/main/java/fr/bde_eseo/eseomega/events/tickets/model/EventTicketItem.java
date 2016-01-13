@@ -34,6 +34,7 @@ public class EventTicketItem {
         modcmd = obj.getInt("modcmd");
         strcmd = obj.getString("strcmd");
         price = obj.getDouble("price");
+        name = obj.getString("name");
         date = getParsedDate();
         frenchDate = getFrenchDate(false);
         isHeader = false;

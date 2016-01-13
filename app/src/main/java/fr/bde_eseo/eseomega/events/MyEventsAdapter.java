@@ -58,7 +58,7 @@ public class MyEventsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             EventItemViewHolder eivh = (EventItemViewHolder) holder;
             eivh.name.setText(ei.getName());
 
-            if (ei.setIsPassed()) {
+            if (ei.isPassed()) {
                 eivh.name.setTextColor(0xFF7F7F7F);
             } else {
                 eivh.name.setTextColor(0xFF454545);
