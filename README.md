@@ -19,7 +19,6 @@ A venir :
 
 Restant :
 - News images
-- Ingénews image pas d'aperçu
 - Plans ESEO
 
 En pause :
