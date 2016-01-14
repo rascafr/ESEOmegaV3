@@ -59,7 +59,10 @@ public class MyIngeNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         inivh.name.setText(ii.getName());
         inivh.details.setText(ii.getDetails());
 
-        imageLoader.displayImage(ii.getImgLink(), inivh.imgThumb);
+        if (ii.getImgLink() != null && ii.getImgLink().length() > 0)
+            imageLoader.displayImage(ii.getImgLink(), inivh.imgThumb);
+        else
+            inivh.imgThumb.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_file));
 
         // On click listener → open PDF file (intent)
         //Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(ingenewsItems.get(position).getFile()));
