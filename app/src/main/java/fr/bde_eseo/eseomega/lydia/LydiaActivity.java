@@ -23,6 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 
@@ -75,6 +76,9 @@ public class LydiaActivity extends AppCompatActivity {
 
     // Returns
     private static int LAST_STATUS = 0;
+    private String MOBILE_URL;
+    private String LYDIA_PACKAGE;
+    private String LYDIA_INTENT;
 
     // Types de requêtes qui ont lieu lors du onCreate (première ouverture de l'app)
     private enum INTENT_REQUEST {
@@ -279,7 +283,7 @@ public class LydiaActivity extends AppCompatActivity {
         mdb.customView(R.layout.dialog_lydia_check, false);
 
         // Customize
-        mdb.negativeText("Fermer");
+        mdb.negativeText(R.string.dialog_close);
         mdb.cancelable(false);
 
         // Events
@@ -287,7 +291,14 @@ public class LydiaActivity extends AppCompatActivity {
             @Override
             public void onNegative(MaterialDialog dialog) {
                 super.onNegative(dialog);
-                close();
+
+                if (LAST_STATUS == 1) {
+                    // Retry (cause payment is pending)
+                    intentToLydia();
+                } else {
+                    // Close only (success / fail)
+                    close();
+                }
             }
         });
 
@@ -390,40 +401,12 @@ public class LydiaActivity extends AppCompatActivity {
                         JSONObject sharedData = obj.getJSONObject("data");
 
                         // Get Lydia pay values
-                        String mobileUrl = sharedData.getString("lydia_url"); // IMPORTANT : Utiliser si app Lydia non installée !
-
-                        //@deprecated
-                        //String requestID = sharedData.getString("request_id");
-
-                        String lydiaPackage = sharedData.getString("lydia_package");
-                        String lydiaIntent = sharedData.getString("lydia_intent");
+                        MOBILE_URL = sharedData.getString("lydia_url"); // IMPORTANT : Utiliser si app Lydia non installée !
+                        LYDIA_PACKAGE = sharedData.getString("lydia_package");
+                        LYDIA_INTENT = sharedData.getString("lydia_intent");
 
                         // Configure and make Lydia Intent
-                        String intentUri;
-                        boolean closeAfter = false;
-
-                        // Package Lydia exists ?
-                        if (Utilities.isPackageExisted(context, lydiaPackage)) {
-                            intentUri = lydiaIntent;
-                        } else {
-                            intentUri = mobileUrl; // Package doesn't exists : open URL
-                            closeAfter = true; // @see comment below
-                            Toast.makeText(context, "Le navigateur va être ouvert.", Toast.LENGTH_SHORT).show();
-                        }
-
-                        Intent i = new Intent(Intent.ACTION_VIEW);
-                        i.setData(Uri.parse(intentUri));
-                        startActivity(i);
-                        if (closeAfter) {
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    md.dismiss();
-                                    close(); // prevent app-resume with null orderID
-                                    Toast.makeText(context, "Closing LydiaActivity ...", Toast.LENGTH_SHORT).show();
-                                }
-                            }, 1000);
-                        }
+                        intentToLydia();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -441,11 +424,42 @@ public class LydiaActivity extends AppCompatActivity {
     }
 
     /**
+     * Make an Intent to Lydia App / Web navigator if app is not found
+     */
+    void intentToLydia() {
+
+        // Configure and make Lydia Intent
+        String intentUri;
+        boolean closeAfter = false;
+
+        // Package Lydia exists ?
+        if (Utilities.isPackageExisted(context, LYDIA_PACKAGE)) {
+            intentUri = LYDIA_INTENT;
+        } else {
+            intentUri = MOBILE_URL; // Package doesn't exists : open URL
+            closeAfter = true; // @see comment below
+            Toast.makeText(context, "Le navigateur va être ouvert.", Toast.LENGTH_SHORT).show();
+        }
+
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(intentUri));
+        startActivity(i);
+        if (closeAfter) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    md.dismiss();
+                    close(); // prevent app-resume with null orderID
+                    Toast.makeText(context, "Closing LydiaActivity ...", Toast.LENGTH_SHORT).show();
+                }
+            }, 1000);
+        }
+    }
+
+    /**
      * If the user come back to the Activity without Intent :
      * It means that the payment has failed / was cancelled
      * We have to show a Dialog which checks order status from server and then show status to user
-     * OR : → just show it failed
-     * NO : → check from server TODO → Ok working on it
      */
     @Override
     public void onResume() {
@@ -470,7 +484,6 @@ public class LydiaActivity extends AppCompatActivity {
 
     /**
      * AsyncTask inside check sub dialog (Lydia callback intent)
-     * TODO update frequently
      */
     private class AsyncStatusLydia extends AsyncTask<String, String, String> {
 
@@ -530,6 +543,19 @@ public class LydiaActivity extends AppCompatActivity {
 
                                 // Save result
                                 LAST_STATUS = status;
+
+                                // If status is 1 (pending payment)
+                                if (status == 1) {
+
+                                    // Then set close button value : Fermer → Réessayer
+                                    md.setActionButton(DialogAction.NEGATIVE, R.string.dialog_retry);
+
+                                } else {
+
+                                    // Then set close button value : Fermer
+                                    md.setActionButton(DialogAction.NEGATIVE, R.string.dialog_close);
+
+                                }
 
                             }
                         } catch (JSONException e) {
