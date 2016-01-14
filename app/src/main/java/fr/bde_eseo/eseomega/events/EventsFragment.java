@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import fr.bde_eseo.eseomega.Constants;
-import fr.bde_eseo.eseomega.events.tickets.EventItem;
 import fr.bde_eseo.eseomega.events.tickets.model.TicketStore;
 import fr.bde_eseo.eseomega.listeners.RecyclerItemClickListener;
 import fr.bde_eseo.eseomega.utils.JSONUtils;

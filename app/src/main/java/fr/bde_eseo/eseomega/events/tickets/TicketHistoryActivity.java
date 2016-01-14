@@ -34,6 +34,8 @@ import java.util.TimeZone;
 import fr.bde_eseo.eseomega.BuildConfig;
 import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.R;
+import fr.bde_eseo.eseomega.events.EventItem;
+import fr.bde_eseo.eseomega.events.tickets.adapters.MyTicketAdapter;
 import fr.bde_eseo.eseomega.events.tickets.model.EventTicketItem;
 import fr.bde_eseo.eseomega.events.tickets.model.ShuttleItem;
 import fr.bde_eseo.eseomega.events.tickets.model.TicketStore;

@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import fr.bde_eseo.eseomega.R;
-import fr.bde_eseo.eseomega.events.tickets.EventItem;
 
 /**
  * Created by Rascafr on 11/08/2015.

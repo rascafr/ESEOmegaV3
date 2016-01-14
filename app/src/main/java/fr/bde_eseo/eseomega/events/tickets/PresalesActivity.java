@@ -9,7 +9,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.util.Base64;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +24,8 @@ import java.util.HashMap;
 
 import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.R;
+import fr.bde_eseo.eseomega.events.EventItem;
+import fr.bde_eseo.eseomega.events.tickets.adapters.MyPresalesAdapter;
 import fr.bde_eseo.eseomega.events.tickets.model.SubEventItem;
 import fr.bde_eseo.eseomega.events.tickets.model.TicketPictItem;
 import fr.bde_eseo.eseomega.events.tickets.model.TicketStore;

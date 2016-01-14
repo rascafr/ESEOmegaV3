@@ -1,4 +1,4 @@
-package fr.bde_eseo.eseomega.events.tickets;
+package fr.bde_eseo.eseomega.events.tickets.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

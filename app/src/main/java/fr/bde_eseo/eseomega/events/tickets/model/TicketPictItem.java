@@ -1,9 +1,8 @@
 package fr.bde_eseo.eseomega.events.tickets.model;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 
-import fr.bde_eseo.eseomega.events.tickets.EventItem;
+import fr.bde_eseo.eseomega.events.EventItem;
 
 /**
  * Created by Rascafr on 13/01/2016.

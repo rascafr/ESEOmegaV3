@@ -6,20 +6,18 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
-import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.R;
+import fr.bde_eseo.eseomega.events.tickets.adapters.MyShuttlesAdapter;
 import fr.bde_eseo.eseomega.events.tickets.model.CheckShuttleItem;
 import fr.bde_eseo.eseomega.events.tickets.model.ShuttleItem;
 import fr.bde_eseo.eseomega.events.tickets.model.SubEventItem;

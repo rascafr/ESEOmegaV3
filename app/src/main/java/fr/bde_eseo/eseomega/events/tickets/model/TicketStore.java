@@ -1,10 +1,8 @@
 package fr.bde_eseo.eseomega.events.tickets.model;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 
-import fr.bde_eseo.eseomega.events.tickets.EventItem;
+import fr.bde_eseo.eseomega.events.EventItem;
 
 /**
  * Created by Rascafr on 11/01/2016.

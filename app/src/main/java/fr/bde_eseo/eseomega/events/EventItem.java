@@ -1,4 +1,4 @@
-package fr.bde_eseo.eseomega.events.tickets;
+package fr.bde_eseo.eseomega.events;
 
 import android.content.Intent;
 import android.provider.CalendarContract;
