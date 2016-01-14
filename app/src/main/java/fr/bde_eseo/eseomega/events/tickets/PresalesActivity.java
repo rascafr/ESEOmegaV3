@@ -1,5 +1,6 @@
 package fr.bde_eseo.eseomega.events.tickets;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -9,9 +10,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -63,6 +66,7 @@ public class PresalesActivity extends AppCompatActivity {
 
     // Data
     private int idcmd = -1;
+    private String eventName, eventDate, eventID, ticketName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,15 +97,15 @@ public class PresalesActivity extends AppCompatActivity {
             @Override
             public void onItemClick(View view, int position) {
                 final ArrayList<SubEventItem> subTickets = ticketPictItems.get(position).getExternalEventItem().getSubEventItems();
-                final String eventName = ticketPictItems.get(position).getExternalEventItem().getName();
-                final String eventDate = ticketPictItems.get(position).getExternalEventItem().getDayAsString(ticketPictItems.get(position).getExternalEventItem().getDate());
+                eventName = ticketPictItems.get(position).getExternalEventItem().getName();
+                eventDate = ticketPictItems.get(position).getExternalEventItem().getDayAsString(ticketPictItems.get(position).getExternalEventItem().getDate());
 
                 CharSequence items[] = new CharSequence[subTickets.size()];
                 for (int i = 0; i < subTickets.size(); i++)
                     items[i] = subTickets.get(i).getTitre() + " • " + subTickets.get(i).getEventPriceAsString();
 
                 // Material dialog to show list of items
-                MaterialDialog md = new MaterialDialog.Builder(context)
+                new MaterialDialog.Builder(context)
                         .items(items)
                         .title("Tickets disponibles")
                         .cancelable(true) // faster for user
@@ -110,10 +114,10 @@ public class PresalesActivity extends AppCompatActivity {
                         .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
                             @Override
                             public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                                /**
-                                 * If you use alwaysCallSingleChoiceCallback(), which is discussed below,
-                                 * returning false here won't allow the newly selected radio button to actually be selected.
-                                 **/
+
+                                // Conservation des paramètres
+                                eventID = subTickets.get(which).getId();
+                                ticketName = "" + text;
 
                                 /**
                                  * Check si navette dispo pour ce ticket :
@@ -123,14 +127,12 @@ public class PresalesActivity extends AppCompatActivity {
                                 if (subTickets.get(which).hasShuttles()) {
                                     Intent i = new Intent(context, ShuttleActivity.class);
                                     TicketStore.getInstance().setSelectedTicket(subTickets.get(which));
-                                    startActivity(i);
+                                    startActivityForResult(i, Constants.RESULT_SHUTTLES_KEY);
                                 } else {
                                     // Payer directement
-                                    final String idevent = subTickets.get(which).getId();
-
                                     new MaterialDialog.Builder(context)
                                             .title("Confirmer l'achat")
-                                            .content(eventName + "\n" + text + "\n" + eventDate + "\n\n" +
+                                            .content(eventName + "\n" + ticketName + "\n" + eventDate + "\n\n" +
                                                     "Les places seront nominatives.\nVotre carte étudiante vous sera demandée à l'entrée.\nLes CGV s'appliquent.")
                                             .positiveText(R.string.dialog_pay)
                                             .negativeText(R.string.dialog_cancel)
@@ -139,7 +141,7 @@ public class PresalesActivity extends AppCompatActivity {
                                                 public void onPositive(MaterialDialog dialog) {
                                                     super.onPositive(dialog);
                                                     AsyncSendTicket asyncSendTicket = new AsyncSendTicket(context);
-                                                    asyncSendTicket.execute(idevent);
+                                                    asyncSendTicket.execute(eventID);
                                                 }
                                             })
                                             .show();
@@ -257,32 +259,66 @@ public class PresalesActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Called when called Activities (child) finished
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (LydiaActivity.LAST_STATUS() == 2) {
+
+        // From Lydia-Activity
+        if (requestCode == Constants.RESULT_LYDIA_KEY) {
+
+            if (LydiaActivity.LAST_STATUS() == 2) {
+                new MaterialDialog.Builder(context)
+                        .title("Félicitations !")
+                        .content("Votre réservation a été payée.\nEntrez ci-dessous votre email afin de recevoir votre place au format PDF.\n\nNote : vous pouvez également accéder à cette fenêtre depuis l'historique des réservations)")
+                        .cancelable(false)
+                        .inputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS)
+                        .input("sterling@archer.fr", "", new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(MaterialDialog dialog, CharSequence input) {
+                                AsyncEventEmail asyncEmail = new AsyncEventEmail(context, "" + input, PresalesActivity.this, userProfile, idcmd); // convert charSequence into String object
+                                asyncEmail.execute();
+                            }
+                        }).show();
+            } else {
+                new MaterialDialog.Builder(context)
+                        .title("Échec de la réservation")
+                        .content("Le paiement n'a pas abouti.\nImpossible de valider la transaction.\n\nRéessayez plus tard ou contactez un membre du BDE.")
+                        .cancelable(false)
+                        .negativeText(R.string.dialog_close)
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+                                super.onNegative(dialog);
+                                PresalesActivity.this.finish();
+                            }
+                        })
+                        .show();
+            }
+
+            // From Shuttle-Activity
+        } else if (requestCode == Constants.RESULT_SHUTTLES_KEY && resultCode == Activity.RESULT_OK) {
+
+            // Get shuttle ID
+            final String shuttleID = String.valueOf(data.getExtras().getInt(Constants.RESULT_SHUTTLES_VALUE));
+            final String shuttleName = data.getExtras().getString(Constants.RESULT_SHUTTLES_NAME);
+
+            // Ask for user confirmation
             new MaterialDialog.Builder(context)
-                    .title("Félicitations !")
-                    .content("Votre réservation a été payée.\nEntrez ci-dessous votre email afin de recevoir votre place au format PDF.\n\nNote : vous pouvez également accéder à cette fenêtre depuis l'historique des réservations)")
-                    .cancelable(false)
-                    .inputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS)
-                    .input("sterling@archer.fr", "", new MaterialDialog.InputCallback() {
-                        @Override
-                        public void onInput(MaterialDialog dialog, CharSequence input) {
-                            AsyncEventEmail asyncEmail = new AsyncEventEmail(context, "" + input, PresalesActivity.this, userProfile, idcmd); // convert charSequence into String object
-                            asyncEmail.execute();
-                        }
-                    }).show();
-        } else {
-            new MaterialDialog.Builder(context)
-                    .title("Échec de la réservation")
-                    .content("Le paiement n'a pas abouti.\nImpossible de valider la transaction.\n\nRéessayez plus tard ou contactez un membre du BDE.")
-                    .cancelable(false)
-                    .negativeText(R.string.dialog_close)
+                    .title("Confirmer l'achat")
+                    .content(eventName + "\n" + ticketName + "\n" + shuttleName + "\n\n" +
+                            "Les places seront nominatives.\nVotre carte étudiante vous sera demandée à l'entrée.\nLes CGV s'appliquent.")
+                    .positiveText(R.string.dialog_pay)
+                    .negativeText(R.string.dialog_cancel)
                     .callback(new MaterialDialog.ButtonCallback() {
                         @Override
-                        public void onNegative(MaterialDialog dialog) {
-                            super.onNegative(dialog);
-                            PresalesActivity.this.finish();
+                        public void onPositive(MaterialDialog dialog) {
+                            super.onPositive(dialog);
+
+                            // Send network request
+                            AsyncSendTicket asyncSendTicket = new AsyncSendTicket(context);
+                            asyncSendTicket.execute(eventID, shuttleID);
                         }
                     })
                     .show();

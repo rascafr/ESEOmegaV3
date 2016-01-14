@@ -177,7 +177,10 @@ public class Constants {
 
     // Returns
     public static final int RESULT_LYDIA_KEY = 422;
+    public static final int RESULT_SHUTTLES_KEY = 333;
     public static final String RESULT_LYDIA_VALUE = "lydia_return.value";
+    public static final String RESULT_SHUTTLES_VALUE = "shuttles_return.value";
+    public static final String RESULT_SHUTTLES_NAME = "shuttles_return.name";
 
     // LYDIA
     public static final String KEY_LYDIA_ORDER_ID = "lydia.order_id";

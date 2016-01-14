@@ -1,6 +1,8 @@
 package fr.bde_eseo.eseomega.events.tickets;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +18,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.R;
 import fr.bde_eseo.eseomega.events.tickets.adapters.MyShuttlesAdapter;
 import fr.bde_eseo.eseomega.events.tickets.model.CheckShuttleItem;
@@ -35,9 +38,6 @@ public class ShuttleActivity extends AppCompatActivity {
 
     // Android objects
     private Context context;
-
-    // User profile
-    private UserProfile userProfile;
 
     // Adapter / recycler
     private MyShuttlesAdapter mAdapter;
@@ -83,6 +83,12 @@ public class ShuttleActivity extends AppCompatActivity {
                     // Sauvegarde navette sélectionnée
                     // TicketStore ... setNavette
                     TicketStore.getInstance().setSelectedShuttle(selectShut);
+
+                    // Retour des données
+                    Intent returnIntent = new Intent();
+                    returnIntent.putExtra(Constants.RESULT_SHUTTLES_VALUE, selectShut.getIdshuttle());
+                    returnIntent.putExtra(Constants.RESULT_SHUTTLES_NAME, selectShut.getDepartPlace() + " (" + selectShut.getDepartureStr() + ")");
+                    setResult(Activity.RESULT_OK, returnIntent);
 
                     // Retour UI précédente
                     finish();
