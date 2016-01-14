@@ -14,15 +14,13 @@ A venir :
 - News ESEOmega en webview ✓
 - Fermeture cafet depuis serveur uniquement ✓
 - Paiement Cafet depuis Lydia ✓
-- Paiement Events depuis Lydia → en cours
+- Paiement Events depuis Lydia ✓ (Manquent : timeout 10 minutes et vérification event.php chargé)
 - Préférences de l'app : page de démarrage, mises à jour auto, etc ... ✓
 
 Restant :
-- Dialogue mail event
-- Valeur de retour check Lydia
 - News images
 - Ingénews image pas d'aperçu
-- Gestion event ticket avec navettes (simple seulement pour le moment)
+- Plans ESEO
 
 En pause :
 - Nouveau design / Thème sombre (Autre branche)
