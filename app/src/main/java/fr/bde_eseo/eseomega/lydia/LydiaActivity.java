@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -77,7 +78,7 @@ public class LydiaActivity extends AppCompatActivity {
     // Returns
     private static int LAST_STATUS = 0;
     private String MOBILE_URL;
-    private String LYDIA_PACKAGE;
+    //private String LYDIA_PACKAGE;
     private String LYDIA_INTENT;
 
     // Types de requêtes qui ont lieu lors du onCreate (première ouverture de l'app)
@@ -194,7 +195,7 @@ public class LydiaActivity extends AppCompatActivity {
      * Les boutons Annuler / Payer permettent de fermer l'activité et d'effectuer une demande de paiement auprès de Lydia
      * → passage direct à l'AsyncTask si téléphone déjà renseigné → ok done
      */
-    void dialogFromApp () {
+    void dialogFromApp() {
 
         // If phone number already present, skip renseignements
         if (userProfile.verifyPhoneNumber(userProfile.getPhoneNumber())) {
@@ -274,7 +275,7 @@ public class LydiaActivity extends AppCompatActivity {
     /**
      * Initialise un dialogue avec un texte affichant le statut de la commande
      */
-    void dialogFromLydia () {
+    void dialogFromLydia() {
 
         // Current title
         mdb.title("État du paiement Lydia");
@@ -354,6 +355,7 @@ public class LydiaActivity extends AppCompatActivity {
                 pairs.put("phone", b64phone);
                 pairs.put("idcmd", strOrder);
                 pairs.put("cat_order", orderType);
+                pairs.put("os", Constants.APP_ID); // Pour recevoir un Intent dédié à Android, sinon c'est iOS
                 pairs.put("hash", EncryptUtils.sha256(userProfile.getId() + userProfile.getPassword() + b64phone + strOrder + orderType + "Paiement effectué !"));
                 resp = ConnexionUtils.postServerData(Constants.URL_API_LYDIA_ASK, pairs, context);
             } catch (UnsupportedEncodingException e) {
@@ -402,7 +404,7 @@ public class LydiaActivity extends AppCompatActivity {
 
                         // Get Lydia pay values
                         MOBILE_URL = sharedData.getString("lydia_url"); // IMPORTANT : Utiliser si app Lydia non installée !
-                        LYDIA_PACKAGE = sharedData.getString("lydia_package");
+                        //LYDIA_PACKAGE = sharedData.getString("lydia_package");
                         LYDIA_INTENT = sharedData.getString("lydia_intent");
 
                         // Configure and make Lydia Intent
@@ -429,21 +431,34 @@ public class LydiaActivity extends AppCompatActivity {
     void intentToLydia() {
 
         // Configure and make Lydia Intent
-        String intentUri;
+        //String intentUri;
         boolean closeAfter = false;
 
         // Package Lydia exists ?
-        if (Utilities.isPackageExisted(context, LYDIA_PACKAGE)) {
+        //intentUri = LYDIA_INTENT; // suppose yes
+
+        /*if (Utilities.isPackageExisted(context, LYDIA_PACKAGE)) {
             intentUri = LYDIA_INTENT;
         } else {
             intentUri = MOBILE_URL; // Package doesn't exists : open URL
             closeAfter = true; // @see comment below
             Toast.makeText(context, "Le navigateur va être ouvert.", Toast.LENGTH_SHORT).show();
-        }
+        }*/
 
         Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setData(Uri.parse(intentUri));
-        startActivity(i);
+        i.setData(Uri.parse(LYDIA_INTENT));
+
+        PackageManager packageManager = context.getPackageManager();
+        if (i.resolveActivity(packageManager) != null) {
+            startActivity(i);
+        } else { // Package doesn't exists : open URL
+            Intent iweb = new Intent();
+            closeAfter = true; // @see comment below
+            Toast.makeText(context, "Le navigateur va être ouvert.", Toast.LENGTH_SHORT).show();
+            iweb.setData(Uri.parse(MOBILE_URL));
+            startActivity(iweb);
+        }
+
         if (closeAfter) {
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -557,6 +572,8 @@ public class LydiaActivity extends AppCompatActivity {
 
                                 }
 
+                            } else {
+                                LAST_STATUS = result;
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -574,7 +591,7 @@ public class LydiaActivity extends AppCompatActivity {
     /**
      * Set TextView status text and color
      */
-    void updateTextStatus (String text, int status, boolean isLoading) {
+    void updateTextStatus(String text, int status, boolean isLoading) {
 
         tvStatus.setText(text);
 
@@ -596,7 +613,7 @@ public class LydiaActivity extends AppCompatActivity {
     /**
      * Init the dialog for the current session
      */
-    void dialogInit () {
+    void dialogInit() {
         mdb = new MaterialDialog.Builder(context);
         mdb.theme(Theme.LIGHT);
         mdb.titleColor(getResources().getColor(R.color.md_blue_800));

@@ -173,7 +173,6 @@ public class TicketHistoryActivity extends AppCompatActivity {
                 new MaterialDialog.Builder(context)
                         .title("Renvoyer l'email")
                         .content("Vous avez perdu votre place, vous ne retouvez plus le mail associé ?\nPas de soucis, vous avez la possibilité de recevoir de nouveau votre place ...")
-                        .cancelable(false)
                         .negativeText(R.string.dialog_cancel)
                         .callback(new MaterialDialog.ButtonCallback() {
                             @Override

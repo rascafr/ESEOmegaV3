@@ -17,6 +17,8 @@
             android:layout_alignParentBottom="true"
             android:divider="@drawable/drawer_divider"
             android:dividerHeight="0.7dp"
+            android:scrollbars="vertical"
+            android:fadeScrollbars="true"
             android:drawSelectorOnTop="true"
             android:footerDividersEnabled="true"/>
 

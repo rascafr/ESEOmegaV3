@@ -103,7 +103,7 @@ public class ViewNewsActivityMaterial extends AppCompatActivity {
             webView = (WebView) findViewById(R.id.webview);
             webView.setBackgroundColor(Color.TRANSPARENT);
             webView.setHapticFeedbackEnabled(false);
-            webView.getSettings().setDefaultFontSize(13);
+            webView.getSettings().setDefaultFontSize(15);
             webView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {

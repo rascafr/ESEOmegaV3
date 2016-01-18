@@ -5,8 +5,9 @@
     <string name="app_name_tickets">Vos réservations</string>
     <string name="app_name_sales">Faire une réservation</string>
     <string name="app_name_shuttles">Choisir une navette</string>
-    <string name="app_version_name">2.1.1</string>
-    <string name="app_version_code">20</string>
+    <string name="app_version_name">3.0.0</string>
+    <string name="app_version_code">23</string>
+    <string name="app_copyright">François Leparoux - ESEOmega 2016</string>
 
     <string name="desc_list_item_icon">Item Icon</string>
 
@@ -18,8 +19,8 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_ingenews">Édition Ingénews</string>
-    <string name="action_info">Info</string>
-    <string name="action_ticketevent">Achat Places</string>
+    <string name="action_info">À propos</string>
+    <string name="action_ticketevent">Vos réservations</string>
     <string name="action_share">Partager</string>
     <string name="action_lydia">Payer avec Lydia</string>
     <string name="action_browser">Ouvrir dans le navigateur</string>
@@ -131,7 +132,7 @@ Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. N
 
     <!-- About -->
     <string name="about_title">A propos</string>
-    <string name="about_content">Cette application est l\'application officielle ESEOmega pour Android.\n\nDéveloppeur :\nFrançois Leparoux\n\nSupport technique :\ndevelopers.eseomega@gmail.com\n\n© 2015 ESEOmega</string>
+    <string name="about_content">Cette application est l\'application officielle ESEOmega pour Android.\n\nDéveloppeur :\nFrançois Leparoux\n\nSupport technique :\ndevelopers.eseomega@gmail.com\n\n© 2016 ESEOmega</string>
 
     <!-- Lydia -->
     <string name="lydia_phone">Votre numéro de téléphone portable est utilisé par Lydia afin de lier la commande à votre compte.\nIl n\'est pas stocké sur nos serveurs.</string>

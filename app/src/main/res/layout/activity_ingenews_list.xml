@@ -18,6 +18,8 @@
                 android:id="@+id/recyList"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:scrollbars="vertical"
+                android:fadeScrollbars="true"
                 android:layout_above="@+id/tvInfoIngenews"
                 android:divider="@drawable/drawer_divider"
                 android:dividerHeight="0.7dp"

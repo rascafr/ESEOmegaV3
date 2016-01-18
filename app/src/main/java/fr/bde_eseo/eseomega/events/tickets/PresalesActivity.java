@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -67,6 +68,7 @@ public class PresalesActivity extends AppCompatActivity {
     // Data
     private int idcmd = -1;
     private String eventName, eventDate, eventID, ticketName;
+    public static final long MAX_DELAY_ORDER = 582*1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,6 +159,30 @@ public class PresalesActivity extends AppCompatActivity {
 
         // Set data
         mAdapter.setPictItems(ticketPictItems);
+
+        // Timeout de 10 minutes max de commande (token périmé après)
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                if (context != null) {
+                    new MaterialDialog.Builder(context)
+                            .title("Votre réservation a expiré")
+                            .content("Pour des raisons de sécurité, il est impossible d'effectuer une réservation pendant plus de 10 minutes sans avoir confimé l'achat.\nMerci de bien vouloir recommencer ...")
+                            .cancelable(false)
+                            .negativeText(R.string.dialog_close)
+                            .callback(new MaterialDialog.ButtonCallback() {
+                                @Override
+                                public void onNegative(MaterialDialog dialog) {
+                                    super.onNegative(dialog);
+                                    finish();
+                                }
+                            })
+                            .show();
+                }
+
+            }
+        }, MAX_DELAY_ORDER);
 
     }
 

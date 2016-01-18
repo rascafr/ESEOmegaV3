@@ -2,63 +2,66 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/md_blue_grey_100">
 
     <TextView
         android:id="@+id/tvChooseShuttle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:visibility="gone"
-        android:text="Choisissez une navette"/>
+        android:text="Choisissez une navette"
+        android:visibility="gone"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyList"
-        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:fadeScrollbars="true"
         android:layout_width="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
+        android:layout_height="match_parent"
         android:layout_above="@+id/linearLayout2"
-        android:layout_below="@+id/tvChooseShuttle" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tvChooseShuttle"/>
 
     <RelativeLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="@dimen/abc_action_bar_default_height_material"
-        android:orientation="horizontal"
-        android:background="@color/md_red_700"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:id="@+id/linearLayout2">
+        android:background="@color/md_red_700"
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/tvValid"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:textSize="16sp"
-            android:textColor="@color/md_white_1000"
-            android:paddingLeft="32dp"
-            android:paddingRight="54dp"
-            android:background="@drawable/textview_back_button_red"
-            android:text="VALIDER"
             android:layout_alignParentTop="true"
             android:layout_toLeftOf="@+id/imageView"
-            android:layout_toStartOf="@+id/imageView" />
+            android:layout_toStartOf="@+id/imageView"
+            android:background="@drawable/textview_back_button_red"
+            android:gravity="center"
+            android:paddingLeft="32dp"
+            android:paddingRight="54dp"
+            android:text="VALIDER"
+            android:textColor="@color/md_white_1000"
+            android:textSize="16sp"/>
 
         <ImageView
+            android:id="@+id/imageView"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_right"
-            android:layout_marginLeft="-48dp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginRight="32dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:layout_marginEnd="32dp"
-            android:id="@+id/imageView" />
+            android:layout_marginLeft="-48dp"
+            android:layout_marginRight="32dp"
+            android:src="@drawable/ic_right"/>
 
     </RelativeLayout>
 
