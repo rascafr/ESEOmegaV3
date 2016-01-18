@@ -3,6 +3,7 @@ package fr.bde_eseo.eseomega;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -24,23 +25,20 @@ public class SplashActivity extends Activity {
     private int trick = 0;
     private UserProfile profile;
 
+    // Preferences
+    private SharedPreferences prefs_Read;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        ImageView vLogo = (ImageView) findViewById(R.id.imgLogo);
+        ImageView vLogo = (ImageView) findViewById(R.id.imgLogo); // Gantier's listener
         profile = new UserProfile();
         profile.readProfilePromPrefs(this);
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.idLoad);
 
-
-        // Special trick
-        vLogo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //trick++; // Goodbye guy
-            }
-        });
+        // Initialize preference objects
+        prefs_Read = getSharedPreferences(Constants.PREFS_APP_WELCOME, 0);
 
         new Handler().postDelayed(new Runnable() {
 
@@ -50,7 +48,6 @@ public class SplashActivity extends Activity {
                 animation.setDuration(1500); //in milliseconds
                 animation.setInterpolator(new AccelerateDecelerateInterpolator());
                 animation.start();
-
             }
         }, 400);
 
@@ -60,8 +57,8 @@ public class SplashActivity extends Activity {
             public void run() {
                 // This method will be executed once the timer is over
                 Intent i;
-                if (trick >= MIN_TRICK && profile.isCreated()) {
-                    i = new Intent(SplashActivity.this, GantierActivity.class);
+                if (prefs_Read.getBoolean(Constants.PREFS_APP_TUTORIAL, true)) {
+                    i = new Intent(SplashActivity.this, TutorialActivity.class);
                 } else {
                     i = new Intent(SplashActivity.this, MainActivity.class);
                 }

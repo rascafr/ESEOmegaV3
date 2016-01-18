@@ -73,7 +73,10 @@ public class EventItem {
         subEventItems = new ArrayList<>();
         JSONArray tickets = obj.getJSONArray(JSON_KEY_ARRAY_TICKETS);
         for (int i=0;i<tickets.length();i++) {
-            subEventItems.add(new SubEventItem(tickets.getJSONObject(i)));
+            SubEventItem sei = new SubEventItem(tickets.getJSONObject(i));
+            if (sei.isAvailable()) {
+                subEventItems.add(sei);
+            }
         }
     }
 

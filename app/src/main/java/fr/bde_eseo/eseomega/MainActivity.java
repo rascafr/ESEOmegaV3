@@ -121,17 +121,17 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
 
         if (!BuildConfig.DEBUG && (!installPlayStore || !installSigned)) {
             new MaterialDialog.Builder(this)
-                .title(R.string.bad_signature_title)
-                .content(R.string.bad_signature_content)
-                .negativeText(R.string.bad_signature_button)
-                .cancelable(false)
-                .callback(new MaterialDialog.ButtonCallback() {
-                    @Override
-                    public void onNegative(MaterialDialog dialog) {
-                        super.onNegative(dialog);
-                        MainActivity.this.finish();
-                    }
-                }).show();
+                    .title(R.string.bad_signature_title)
+                    .content(R.string.bad_signature_content)
+                    .negativeText(R.string.bad_signature_button)
+                    .cancelable(false)
+                    .callback(new MaterialDialog.ButtonCallback() {
+                        @Override
+                        public void onNegative(MaterialDialog dialog) {
+                            super.onNegative(dialog);
+                            MainActivity.this.finish();
+                        }
+                    }).show();
         }
 
         // GCM Receiver
@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         navDrawerItems.add(profile.getDrawerProfile());
 
         // adding nav drawer items to array
-        for (int it=1;it<navMenuTitles.length;it++)
+        for (int it = 1; it < navMenuTitles.length; it++)
             navDrawerItems.add(new NavDrawerItem(navMenuTitles[it], navMenuIcons.getResourceId(it, -1)));
 
         // add divider
@@ -284,58 +284,23 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         // END - UNIVERSAL IMAGE LOADER SETUP
 
         // If needed, show a welcome message
-        // For V2.1.1, prevent profile suppression
-        prefs_Write.putString(Constants.PREFS_APP_VERSION, BuildConfig.VERSION_NAME);
-        prefs_Write.apply();
+        // Why did I used to save version here ?...
+        //prefs_Write.putString(Constants.PREFS_APP_VERSION, BuildConfig.VERSION_NAME);
+        //prefs_Write.apply();
 
+        // 1st start ever : just show drawer for connection
         if (prefs_Read.getBoolean(Constants.PREFS_APP_WELCOME_DATA, true)) {
-            new MaterialDialog.Builder(this)
-                    .title("Bienvenue !")
-                    .content("Merci d'avoir téléchargé notre application !\n" +
-                            "Prenez le temps de la découvrir, et n'oubliez pas de vous y connecter à l'aide de votre profil ESEO !\n\nL'équipe ESEOmega Ω")
-                    .negativeText("Allons-y !")
-                    .cancelable(false)
-                    .callback(new MaterialDialog.ButtonCallback() {
-                        @Override
-                        public void onNegative(MaterialDialog dialog) {
-                            super.onNegative(dialog);
-                            mDrawerLayout.openDrawer(mDrawerList);
-                            prefs_Write.putBoolean(Constants.PREFS_APP_WELCOME_DATA, false);
-                            prefs_Write.putString(Constants.PREFS_APP_VERSION, BuildConfig.VERSION_NAME); // prevent next message
-                            prefs_Write.apply();
-                        }
-                    })
-                    .show();
-        } else {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mDrawerLayout.openDrawer(mDrawerList);
+                }
+            }, 800);
+            prefs_Write.putBoolean(Constants.PREFS_APP_WELCOME_DATA, false);
+            prefs_Write.apply();
 
-            // App already installed
-            // Check if app is updated
-            if ((!(prefs_Read.getString(Constants.PREFS_APP_VERSION, "").equals(BuildConfig.VERSION_NAME))) && profile.isCreated()) {
-                new MaterialDialog.Builder(this)
-                        .title("Re-bonjour !")
-                        .content("Merci d'avoir pris le temps de faire cette mise à jour ! " +
-                                "Elle apporte des correctifs de sécurité aux différentes fonctions de l'application, ainsi que la possibilité de recevoir les notifications liées à la caféteria et aux news.\n" +
-                                "Pour accéder à l'ensemble de ces services, nous vous demandons de bien vouloir vous reconnecter avec votre profil ESEO.\n\nL'équipe ESEOmega Ω")
-                        .negativeText("OK")
-                        .cancelable(false)
-                        .callback(new MaterialDialog.ButtonCallback() {
-                            @Override
-                            public void onNegative(MaterialDialog dialog) {
-                                super.onNegative(dialog);
-                                profile.removeProfileFromPrefs(MainActivity.this);
-                                profile.readProfilePromPrefs(MainActivity.this);
-                                OnUserProfileChange(profile);
-                                prefs_Write.putBoolean(Constants.PREFS_APP_WELCOME_DATA, false); // prevents from previous message
-                                prefs_Write.putString(Constants.PREFS_APP_VERSION, BuildConfig.VERSION_NAME);
-                                prefs_Write.apply();
-                            }
-                        })
-                        .show();
-            }
-        }
-
-        // If users asks for update check
-        if (prefsUser.getBoolean(Constants.PREFS_GENERAL_UPDATE, false)) {
+        } else if (prefsUser.getBoolean(Constants.PREFS_GENERAL_UPDATE, false)) {
+            // Else check update if the user asks for it
             AsyncCheckVersion asyncCheckVersion = new AsyncCheckVersion(MainActivity.this);
             asyncCheckVersion.execute();
         }
@@ -343,7 +308,7 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
 
     /**
      * Slide menu item click listener
-     * */
+     */
     private class SlideMenuClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -436,7 +401,7 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
 
     /**
      * Displaying fragment view for selected nav drawer list item
-     * */
+     */
     private void displayView(int position) {
         // update the main content by replacing fragments
         Fragment fragment = null;
@@ -486,7 +451,7 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
             if (position < navMenuTitles.length) {
                 setTitle(navMenuTitles[position]);
             } else {
-                setTitle(navMenuOptions[position-navMenuTitles.length-1]);
+                setTitle(navMenuOptions[position - navMenuTitles.length - 1]);
             }
 
             final Handler handler = new Handler();
@@ -512,7 +477,7 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
      * INTERFACE : Synchronises the new profile with the old one in drawer
      */
     @Override
-    public void OnUserProfileChange (UserProfile profile) {
+    public void OnUserProfileChange(UserProfile profile) {
         if (profile != null && navDrawerItems != null && navAdapter != null) {
             this.profile = profile;
             navDrawerItems.set(0, profile.getDrawerProfile());

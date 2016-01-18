@@ -13,7 +13,7 @@ public class Constants {
     // Store app verification
     public final static String SIGNATURE = "mM6h5mqKyeuhXgBF8SLnMBKc7BE=";
 
-    // Timezoone : CET ou GMT+01:00
+    // Timezone : CET ou GMT+01:00
     // ID Timezone : Europe/Paris
     public static final String TZ_ID_PARIS = "Europe/Paris";
 
@@ -23,6 +23,7 @@ public class Constants {
     public static final String PREFS_APP_VERSION = "mainactivity.appversion";
     public static final String PREFS_NEWS_LAST_DOWNLOAD_DATE = "fragment.NewsFragment.LAST_DOWNLOAD_DATE";
     public static final String PREFS_APP_WELCOME_DATA = "mainactivity.welcome.DATA";
+    public static final String PREFS_APP_TUTORIAL = "tutorialactivity.alreadyshown";
 
     public static final String PREFS_USER_PROFILE_KEY = "model.UserProfile.KEY";
     public static final String PREFS_USER_PROFILE_NAME = "model.UserProfile.NAME";
@@ -32,7 +33,7 @@ public class Constants {
     public static final String PREFS_USER_PROFILE_EXISTS = "model.UserProfile.EXISTS";
     public static final String PREFS_USER_PROFILE_PICTURE = "model.UserProfile.PICTURE";
     public static final String PREFS_USER_PROFILE_PUSH_TOKEN = "model.UserProfile.PUSHTOKEN";
-    public static final String PREFS_USER_PROFILE_PHONE = "model.UserProfile.PHONE";
+    //public static final String PREFS_USER_PROFILE_PHONE = "model.UserProfile.PHONE"; // On stocke pas !
 
     // SharedPref class
     public static final String PREFS_GENERAL_HOMESCREEN = "settings.general.homescreen";

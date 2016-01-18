@@ -57,6 +57,7 @@ public class PresalesActivity extends AppCompatActivity {
 
     // Android objects
     private Context context;
+    private boolean isVisible, messageNotShown;
 
     // User profile
     private UserProfile userProfile;
@@ -122,6 +123,10 @@ public class PresalesActivity extends AppCompatActivity {
                                 ticketName = "" + text;
 
                                 /**
+                                 * Si évenement activé, on propose les choix, sinon, message d'erreur
+                                 */
+
+                                /**
                                  * Check si navette dispo pour ce ticket :
                                  * - si navette : choix navette
                                  * - sinon : payer
@@ -165,22 +170,11 @@ public class PresalesActivity extends AppCompatActivity {
 
             @Override
             public void run() {
-                if (context != null) {
-                    new MaterialDialog.Builder(context)
-                            .title("Votre réservation a expiré")
-                            .content("Pour des raisons de sécurité, il est impossible d'effectuer une réservation pendant plus de 10 minutes sans avoir confimé l'achat.\nMerci de bien vouloir recommencer ...")
-                            .cancelable(false)
-                            .negativeText(R.string.dialog_close)
-                            .callback(new MaterialDialog.ButtonCallback() {
-                                @Override
-                                public void onNegative(MaterialDialog dialog) {
-                                    super.onNegative(dialog);
-                                    finish();
-                                }
-                            })
-                            .show();
+                if (context != null && isVisible) {
+                    showPeremptedToken();
+                } else {
+                    messageNotShown = true;
                 }
-
             }
         }, MAX_DELAY_ORDER);
 
@@ -372,5 +366,36 @@ public class PresalesActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isVisible = true;
+        if (messageNotShown) {
+            showPeremptedToken();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isVisible = false;
+    }
+
+    private void showPeremptedToken () {
+        new MaterialDialog.Builder(context)
+                .title("Votre réservation a expiré")
+                .content("Pour des raisons de sécurité, il est impossible d'effectuer une réservation pendant plus de 10 minutes sans avoir confimé l'achat.\nMerci de bien vouloir recommencer ...")
+                .cancelable(false)
+                .negativeText(R.string.dialog_close)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        super.onNegative(dialog);
+                        finish();
+                    }
+                })
+                .show();
     }
 }

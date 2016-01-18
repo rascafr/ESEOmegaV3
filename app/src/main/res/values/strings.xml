@@ -5,8 +5,8 @@
     <string name="app_name_tickets">Vos réservations</string>
     <string name="app_name_sales">Faire une réservation</string>
     <string name="app_name_shuttles">Choisir une navette</string>
-    <string name="app_version_name">3.0.0</string>
-    <string name="app_version_code">23</string>
+    <string name="app_version_name">3.0.1</string>
+    <string name="app_version_code">24</string>
     <string name="app_copyright">François Leparoux - ESEOmega 2016</string>
 
     <string name="desc_list_item_icon">Item Icon</string>
@@ -18,9 +18,10 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_ingenews">Édition Ingénews</string>
+    <string name="action_ingenews">Éditions Ingénews</string>
     <string name="action_info">À propos</string>
     <string name="action_ticketevent">Vos réservations</string>
+    <string name="action_read">Fermer</string>
     <string name="action_share">Partager</string>
     <string name="action_lydia">Payer avec Lydia</string>
     <string name="action_browser">Ouvrir dans le navigateur</string>
@@ -29,7 +30,7 @@
     <string name="draweritemTest">Pietra B</string>
     <string name="draweritemTest_2">pietrabiere@eseo.fr</string>
     <string name="drawer_profile_edit">Editer le profil</string>
-    <string name="text_edit_profile">Votre profil ESEO est nécessaire pour pouvoir accéder à certaines fonctionnalités, comme la commande à la caféteria.\nUne fois la connexion validée, uniquement votre identifiant, nom et prénom sont conservés jusqu\'à votre déconnexion, rien de plus.</string>
+    <string name="text_edit_profile">Votre profil ESEO est nécessaire pour pouvoir accéder à certaines fonctionnalités, comme la commande à la caféteria ou l\'accès aux réservations.\nUne fois la connexion validée, uniquement votre identifiant, nom et prénom sont conservés jusqu\'à votre déconnexion, rien de plus.</string>
     <string name="loading_text">Chargement des données ...</string>
     <string name="text_offline_mode">Lecture hors-ligne</string>
     <string name="text_warning_nopaid">La déconnexion de votre compte provoquera l\'arrêt des services proposés, tels que la commande à la cafétéria. Attention : dans tous les cas, si vous avez une commande en statut "non payée", vous déconnecter ne vous empêchera pas de devoir nous régler le repas en question.</string>
@@ -155,7 +156,7 @@ Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. N
     <string name="empty_desc_history">Tapez sur le bouton + pour commander, vos commandes s\'afficheront ici.</string>
 
     <string name="empty_header_order">Vous n\'avez pas acheté de places</string>
-    <string name="empty_desc_order">Tapez sur le bouton + pour commander, vos places s\'afficheront içi</string>
+    <string name="empty_desc_order">Tapez sur le bouton + pour commander, vos places s\'afficheront ici</string>
 
     <string name="empty_header_noorder">Vous n\'êtes pas connecté</string>
     <string name="empty_desc_noorder">La commande d\'une place ne peut se faire anonymement.</string>
