@@ -99,13 +99,20 @@ public class PresalesActivity extends AppCompatActivity {
         recList.addOnItemTouchListener(new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                final ArrayList<SubEventItem> subTickets = ticketPictItems.get(position).getExternalEventItem().getSubEventItems();
+                ArrayList<SubEventItem> subTickets = ticketPictItems.get(position).getExternalEventItem().getSubEventItems();
+                final ArrayList<SubEventItem> subTicketPrintable = new ArrayList<>();
+                for (int i=0;i<subTickets.size();i++) {
+                    SubEventItem sei = subTickets.get(i);
+                    if (sei.isAvailable()) {
+                        subTicketPrintable.add(sei);
+                    }
+                }
                 eventName = ticketPictItems.get(position).getExternalEventItem().getName();
                 eventDate = ticketPictItems.get(position).getExternalEventItem().getDayAsString(ticketPictItems.get(position).getExternalEventItem().getDate());
 
-                CharSequence items[] = new CharSequence[subTickets.size()];
-                for (int i = 0; i < subTickets.size(); i++)
-                    items[i] = subTickets.get(i).getTitre() + " • " + subTickets.get(i).getEventPriceAsString();
+                CharSequence items[] = new CharSequence[subTicketPrintable.size()];
+                for (int i = 0; i < subTicketPrintable.size(); i++)
+                    items[i] = subTicketPrintable.get(i).getTitre() + " • " + subTicketPrintable.get(i).getEventPriceAsString();
 
                 // Material dialog to show list of items
                 new MaterialDialog.Builder(context)
@@ -119,7 +126,7 @@ public class PresalesActivity extends AppCompatActivity {
                             public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
 
                                 // Conservation des paramètres
-                                eventID = subTickets.get(which).getId();
+                                eventID = subTicketPrintable.get(which).getId();
                                 ticketName = "" + text;
 
                                 /**
@@ -131,9 +138,9 @@ public class PresalesActivity extends AppCompatActivity {
                                  * - si navette : choix navette
                                  * - sinon : payer
                                  */
-                                if (subTickets.get(which).hasShuttles()) {
+                                if (subTicketPrintable.get(which).hasShuttles()) {
                                     Intent i = new Intent(context, ShuttleActivity.class);
-                                    TicketStore.getInstance().setSelectedTicket(subTickets.get(which));
+                                    TicketStore.getInstance().setSelectedTicket(subTicketPrintable.get(which));
                                     startActivityForResult(i, Constants.RESULT_SHUTTLES_KEY);
                                 } else {
                                     // Payer directement

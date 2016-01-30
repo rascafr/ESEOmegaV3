@@ -18,7 +18,7 @@ package fr.bde_eseo.eseomega.gcmpush;
 
 public class QuickstartPreferences {
 
-    public static final String SENT_TOKEN_TO_SERVER = "eseomega.sentTokenToServer";
-    public static final String REGISTRATION_COMPLETE = "eseomega.registrationComplete";
+    public static final String SENT_TOKEN_TO_SERVER = "eseomega.sentTokenToServer.v3";
+    public static final String REGISTRATION_COMPLETE = "eseomega.registrationComplete.v3";
 
 }

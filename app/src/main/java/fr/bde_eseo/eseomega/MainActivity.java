@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,11 +21,16 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
@@ -38,6 +44,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import fr.bde_eseo.eseomega.events.tickets.TicketHistoryActivity;
+import fr.bde_eseo.eseomega.gcmpush.RegistrationIntentService;
 import fr.bde_eseo.eseomega.settings.SettingsFragment;
 import fr.bde_eseo.eseomega.slidingmenu.NavDrawerListAdapter;
 import fr.bde_eseo.eseomega.community.CommunityFragment;
@@ -104,6 +111,11 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
     // Material Toolbar
     private Toolbar toolbar;
 
+    // Inside update
+    private LinearLayout llUpdate;
+    private TextView tvUpdate;
+    private ProgressBar progressUpdate;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,6 +126,11 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
         toolbar.setPadding(0, Utilities.getStatusBarHeight(this), 0, 0);
         setSupportActionBar(toolbar);
         mTitle = getTitle();
+        llUpdate = (LinearLayout) findViewById(R.id.llMainUpdate);
+        tvUpdate = (TextView) findViewById(R.id.tvMainUpdate);
+        progressUpdate = (ProgressBar) findViewById(R.id.progressMainUpdate);
+        progressUpdate.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.md_white_1000), PorterDuff.Mode.SRC_IN);
+        llUpdate.setVisibility(View.GONE);
 
         // Check app auth
         boolean installPlayStore = Utilities.verifyInstaller(this);
@@ -143,6 +160,19 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
                 ConnectProfileFragment mFragment = (ConnectProfileFragment) getSupportFragmentManager().findFragmentByTag("frag0");
                 if (mFragment != null) {
                     mFragment.setPushRegistration(sentToken);
+                } else {
+                    progressUpdate.setVisibility(View.GONE);
+                    if (sentToken) {
+                        tvUpdate.setText("Terminé !");
+                    } else {
+                        tvUpdate.setText("Échec : réseau indisponible");
+                    }
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            llUpdate.animate().translationY(llUpdate.getHeight());
+                        }
+                    }, 1500);
                 }
             }
         };
@@ -303,6 +333,30 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
             // Else check update if the user asks for it
             AsyncCheckVersion asyncCheckVersion = new AsyncCheckVersion(MainActivity.this);
             asyncCheckVersion.execute();
+        }
+
+        // Mise à jour automatique du push :
+        // - check user est enregistré
+        // - check pushToken pas bon / enregistré
+        // - check Services Google présents
+        // → alors on démarre la classe Registration
+        if (profile.isCreated() && !profile.isPushRegistered() && Utilities.checkPlayServices(this)) {
+
+            llUpdate.setVisibility(View.VISIBLE);
+            //llUpdate.animate().translationY(-llUpdate.getHeight());
+            progressUpdate.setVisibility(View.VISIBLE);
+            tvUpdate.setText("Préparation ...");
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    tvUpdate.setText("Mise à jour ...");
+
+                    // Start IntentService to register this application with GCM.
+                    Intent intent = new Intent(MainActivity.this, RegistrationIntentService.class);
+                    MainActivity.this.startService(intent);
+                }
+            }, 1500);
         }
     }
 

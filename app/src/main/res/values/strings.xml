@@ -115,6 +115,7 @@ Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. N
 
     <!-- Push -->
     <string name="play_api_push">409995288520</string>
+    <string name="google_app_id">409995288520</string>
 
     <!-- Dialog -->
     <string name="dialog_yes">Oui</string>

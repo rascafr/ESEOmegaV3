@@ -32,7 +32,8 @@ public class Constants {
     public static final String PREFS_USER_PROFILE_MAIL = "model.UserProfile.MAIL";
     public static final String PREFS_USER_PROFILE_EXISTS = "model.UserProfile.EXISTS";
     public static final String PREFS_USER_PROFILE_PICTURE = "model.UserProfile.PICTURE";
-    public static final String PREFS_USER_PROFILE_PUSH_TOKEN = "model.UserProfile.PUSHTOKEN";
+    //public static final String PREFS_USER_PROFILE_PUSH_TOKEN = "model.UserProfile.PUSHTOKEN";
+    public static final String PREFS_USER_PROFILE_PUSH_TOKEN = "model.UserProfile.PUSHTOKEN_V3";
     //public static final String PREFS_USER_PROFILE_PHONE = "model.UserProfile.PHONE"; // On stocke pas !
 
     // SharedPref class
@@ -53,7 +54,7 @@ public class Constants {
     public static final double NOTIF_VERSION = 1.0; // Notification is valid if V_Push_App >= V_Push_Server
     public static final String NOTIF_UPDATE_TITLE = "Impossible de recevoir les notifications";
     public static final String NOTIF_UPDATE_TEXT = "Merci de mettre l'application à jour depuis le Play Store.";
-    public static final int NOTIF_UPDATE_FORCE= 147; // local only
+    public static final int NOTIF_UPDATE_FORCE = 147; // local only
 
     // Fragments ID
     public static final String TAG_FRAGMENT_ORDER_TABS = "fragment.tabs.order";
@@ -121,11 +122,11 @@ public class Constants {
     // Errors
     public static final int ERROR_TIMESTAMP = 1;
     public static final String ERROR_TIMESTAMP_STR = "On dirait que votre smartphone n'est pas à l'heure.\n" +
-                                                    "Bien tenté, mais vous ne pouvez pas tricher pour commander à la cafet avant les autres.\n(Et puis de toute manière ça sert à rien)";
+            "Bien tenté, mais vous ne pouvez pas tricher pour commander à la cafet avant les autres.\n(Et puis de toute manière ça sert à rien)";
 
     public static final int ERROR_USERREGISTER = 2;
     public static final String ERROR_USERREGISTER_STR = "Votre mot de passe est incorrect.\n" +
-                                                    "Si vous l'avez changé depuis les services ESEO, merci de bien vouloir vous déconnecter puis reconnecter depuis l'onglet \"Mon profil\" de l'application";
+            "Si vous l'avez changé depuis les services ESEO, merci de bien vouloir vous déconnecter puis reconnecter depuis l'onglet \"Mon profil\" de l'application";
 
     public static final int ERROR_SERVICE_OUT = 3;
     public static final String ERROR_SERVICE_OUT_STR = "Désolé ! On sait que vous avez faim. Mais la cafétéria n'est ouverte que pendant les périodes scolaires de 12h à 13h.";
@@ -133,7 +134,7 @@ public class Constants {
 
     public static final int ERROR_UNPAID = 4;
     public static final String ERROR_UNPAID_STR = "Hey, vous êtes interdits de commande ! En effet, vous avez un repas (ou plus) de non réglé(s). \n" +
-                                                    "Venez nous voir le plus rapidement possible afin de nous rembourser.";
+            "Venez nous voir le plus rapidement possible afin de nous rembourser.";
 
     public static final int ERROR_APP_PB = 6;
     public static final String ERROR_APP_PB_STR = "Le système est en maintenance pour la version Android, nous sommes en train de corriger ça.\n" +

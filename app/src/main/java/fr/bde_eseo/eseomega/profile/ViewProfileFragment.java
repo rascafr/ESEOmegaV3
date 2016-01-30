@@ -240,7 +240,7 @@ public class ViewProfileFragment extends Fragment {
                 materialDialog.dismiss();
                 materialDialog = new MaterialDialog.Builder(getActivity())
                         .title("Erreur de déconnexion")
-                        .content("Impossible d'accéder au serveur.\nVeuiller vérifier votre connexion au réseau puis réessayer.\n" + retCode + ", " + err)
+                        .content("Impossible d'accéder au serveur.\nVeuiller vérifier votre connexion au réseau puis réessayer.")
                         .negativeText("Fermer")
                         .cancelable(false)
                         .show();

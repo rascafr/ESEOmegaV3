@@ -259,4 +259,8 @@ public class UserProfile {
         registerProfileInPrefs(context);
     }
 
+    public boolean isPushRegistered() {
+        return pushToken != null && pushToken.length() > 0;
+    }
+
 }

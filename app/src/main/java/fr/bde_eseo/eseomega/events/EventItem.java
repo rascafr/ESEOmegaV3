@@ -74,9 +74,7 @@ public class EventItem {
         JSONArray tickets = obj.getJSONArray(JSON_KEY_ARRAY_TICKETS);
         for (int i=0;i<tickets.length();i++) {
             SubEventItem sei = new SubEventItem(tickets.getJSONObject(i));
-            if (sei.isAvailable()) {
-                subEventItems.add(sei);
-            }
+            subEventItems.add(sei);
         }
     }
 

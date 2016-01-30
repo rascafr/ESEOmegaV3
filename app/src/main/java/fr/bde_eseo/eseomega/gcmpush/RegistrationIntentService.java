@@ -101,8 +101,8 @@ public class RegistrationIntentService extends IntentService {
      */
     private void sendRegistrationToServer(String token, Context ctx) {
         // Add custom implementation, as needed.
-        GcmPushToken asyncPushToken = new GcmPushToken(ctx);
-        asyncPushToken.execute(token);
+        GcmPushToken asyncPushToken = new GcmPushToken(ctx, token);
+        asyncPushToken.execute();
     }
 
     private class AsyncPushToken extends AsyncTask<String, String, String> {
@@ -134,9 +134,12 @@ public class RegistrationIntentService extends IntentService {
     private class GcmPushToken extends AsyncTask <String,String,String> {
 
         private Context ctx;
+        private UserProfile profile;
+        private String token;
 
-        public GcmPushToken (Context ctx) {
+        public GcmPushToken (Context ctx, String token) {
             this.ctx = ctx;
+            this.token = token;
         }
 
         @Override
@@ -158,6 +161,11 @@ public class RegistrationIntentService extends IntentService {
             }
 
             if (retCode == 1) {
+
+                // Save token into profile
+                profile.setPushToken(token);
+                profile.registerProfileInPrefs(ctx);
+
                 // Notify UI that registration has completed, so the progress indicator can be hidden.
                 sharedPreferences.edit().putBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, true).apply();
             } else {
@@ -172,7 +180,7 @@ public class RegistrationIntentService extends IntentService {
         protected String doInBackground(String... params) {
 
             String pushResult = null;
-            UserProfile profile = new UserProfile();
+            profile = new UserProfile();
             profile.readProfilePromPrefs(RegistrationIntentService.this);
 
             if (profile.isCreated()) {
@@ -180,19 +188,15 @@ public class RegistrationIntentService extends IntentService {
                 pairs.put(RegistrationIntentService.this.getResources().getString(R.string.client), profile.getId());
                 pairs.put(RegistrationIntentService.this.getResources().getString(R.string.password), profile.getPassword());
                 pairs.put(RegistrationIntentService.this.getResources().getString(R.string.os), Constants.APP_ID);
-                pairs.put(RegistrationIntentService.this.getResources().getString(R.string.token), params[0]);
+                pairs.put(RegistrationIntentService.this.getResources().getString(R.string.token), token);
                 pairs.put(RegistrationIntentService.this.getResources().getString(R.string.hash), EncryptUtils.sha256(
                         getResources().getString(R.string.MESSAGE_SYNC_PUSH) +
                                 profile.getId() +
                                 profile.getPassword() +
                                 Constants.APP_ID +
-                                params[0]));
+                                token));
 
                 pushResult = ConnexionUtils.postServerData(Constants.URL_API_PUSH_REGISTER, pairs, RegistrationIntentService.this);
-
-                // Save token into profile
-                profile.setPushToken(params[0]);
-                profile.registerProfileInPrefs(ctx);
             }
 
             return pushResult;
