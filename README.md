@@ -7,19 +7,18 @@ Application Android du BDE ESEOmega (2015 - 2016) :
 
 Note : Ceci est le dépôt utilisé en ce moment (phase de tests + release)
 
-- 07/01/2015 : Passage à l'API LaCommande entièrement effectué (iOS + Android) → Les URL en v21 sont donc dépréciées
+- 07/01/2016 : Passage à l'API LaCommande entièrement effectué (iOS + Android) → Les URL en v21 sont donc dépréciées
+- 23/03/2016 : Passage à l'API HTTPS SSL 2.0 (plus sécurisé, les services ne craignent plus WireShark désormais), notif push améliorées, plans ESEO, images news ok
 
-A venir :
-- Edition Ingénews ✓ Nouveau style "grille" (+ favoris ?)
-- News ESEOmega en webview ✓
+Dernières modifs :
+- Edition Ingénews, nouveau style "grille" ✓
+- News ESEOmega en webview + les images chargent bien ! ✓
 - Fermeture cafet depuis serveur uniquement ✓
 - Paiement Cafet depuis Lydia ✓
-- Paiement Events depuis Lydia ✓ (Manquent : timeout 10 minutes et vérification event.php chargé)
+- Paiement Events depuis Lydia ✓
 - Préférences de l'app : page de démarrage, mises à jour auto, etc ... ✓
-
-Restant :
-- News images
-- Plans ESEO
+- Plans ESEO : salles et map en HD ✓
+- Les notifications GCM puvent se déroûler désormais ✓
 
 En pause :
 - Nouveau design / Thème sombre (Autre branche)
