@@ -195,7 +195,7 @@ public class OrderHistoryFragment extends Fragment {
                             .negativeText("D'accord")
                             .cancelable(false)
                             .show();
-                } else if (!tzStr.equalsIgnoreCase(Constants.TZ_ID_PARIS)) {
+                } else if (false && !tzStr.equalsIgnoreCase(Constants.TZ_ID_PARIS)) {
                     new MaterialDialog.Builder(getActivity())
                             .title("Erreur")
                             .content("L'accès à la Cafet ne peut se faire depuis un autre pays que la France.\nEnvoyez nous une carte postale !")

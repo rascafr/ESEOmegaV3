@@ -149,7 +149,7 @@ public class TicketHistoryActivity extends AppCompatActivity {
                             .negativeText("D'accord")
                             .cancelable(false)
                             .show();
-                } else if (!tzStr.equalsIgnoreCase(Constants.TZ_ID_PARIS)) {
+                } else if (false  && !tzStr.equalsIgnoreCase(Constants.TZ_ID_PARIS)) {
                     new MaterialDialog.Builder(context)
                             .title("Erreur")
                             .content("L'accès aux réservations ne peut se faire depuis un autre pays que la France.\nEnvoyez nous une carte postale !")

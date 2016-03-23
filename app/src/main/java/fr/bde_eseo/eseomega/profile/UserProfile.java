@@ -27,7 +27,7 @@ public class UserProfile {
     private String id;
     private String email;
     private String encodedPassword;
-    private boolean isCreated;
+    private boolean isCreated, hasGuyAccess;
     private String picturePath;
     private String pushToken;
     private String phoneNumber; // Lydia oblige
@@ -44,6 +44,7 @@ public class UserProfile {
         this.encodedPassword = EncryptUtils.sha256(ctx.getResources().getString(R.string.MESSAGE_PASS_USER) + encodedPassword);
         this.isCreated = true;
         this.picturePath = "";
+        this.hasGuyAccess = false;
     }
 
     public String getPushToken() {
@@ -223,6 +224,7 @@ public class UserProfile {
         prefs_Write.putString(Constants.PREFS_USER_PROFILE_ID, this.id);
         prefs_Write.putString(Constants.PREFS_USER_PROFILE_PASSWORD, this.encodedPassword);
         prefs_Write.putBoolean(Constants.PREFS_USER_PROFILE_EXISTS, this.isCreated);
+        prefs_Write.putBoolean(Constants.PREFS_USER_PROFILE_GUY_ACCESS, this.hasGuyAccess);
         prefs_Write.putString(Constants.PREFS_USER_PROFILE_PICTURE, this.picturePath);
         prefs_Write.putString(Constants.PREFS_USER_PROFILE_PUSH_TOKEN, this.pushToken);
         prefs_WriteSingle.putString(Constants.PREFS_LYDIA_PHONE, this.phoneNumber);
@@ -242,6 +244,7 @@ public class UserProfile {
         this.encodedPassword = prefs_Read.getString(Constants.PREFS_USER_PROFILE_PASSWORD, "");
         this.id = prefs_Read.getString(Constants.PREFS_USER_PROFILE_ID, "");
         this.isCreated = prefs_Read.getBoolean(Constants.PREFS_USER_PROFILE_EXISTS, false);
+        this.hasGuyAccess = prefs_Read.getBoolean(Constants.PREFS_USER_PROFILE_GUY_ACCESS, false);
         this.picturePath = prefs_Read.getString(Constants.PREFS_USER_PROFILE_PICTURE, "");
         this.pushToken = prefs_Read.getString(Constants.PREFS_USER_PROFILE_PUSH_TOKEN, "");
         this.phoneNumber = prefs_Single.getString(Constants.PREFS_LYDIA_PHONE, "");
@@ -250,6 +253,7 @@ public class UserProfile {
     public void removeProfileFromPrefs (Context context) {
         // remove user name, id, mail and reset Profile_exists
         this.isCreated = false;
+        this.hasGuyAccess = false;
         this.name = "";
         this.id = "";
         this.email = "";
@@ -263,4 +267,15 @@ public class UserProfile {
         return pushToken != null && pushToken.length() > 0;
     }
 
+    public void enableGuy () {
+        this.hasGuyAccess = true;
+    }
+
+    public void disableGuy () {
+        this.hasGuyAccess = false;
+    }
+
+    public boolean hasGuyAccess() {
+        return hasGuyAccess;
+    }
 }

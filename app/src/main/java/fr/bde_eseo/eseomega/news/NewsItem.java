@@ -59,6 +59,7 @@ public class NewsItem {
         // TODO parse data and fill imgLinks
         this.imgLinks = new ArrayList<>();
         imgLinks.add(headerImg);
+        /*
 
         // All img are like <img ... >
         if (this.data != null) {
@@ -80,7 +81,7 @@ public class NewsItem {
                     }
                 }
             }
-        }
+        }*/
     }
 
     public NewsItem (String name, String author, String html, String link, ArrayList<String> imgLinks) {
@@ -125,8 +126,10 @@ public class NewsItem {
 
     public NewsItem (JSONObject obj) throws JSONException {
         this(obj.getString("titre"), obj.getString("date"), obj.getString("auteur"),
-                obj.getString("lien"), obj.getString("contenuformat"),
-                obj.getString("contenuimg"), obj.getString("img"));
+                obj.getString("lien"), obj.getString("resume"),
+                obj.getString("content"), obj.getString("img"));
+
+        Log.d("NEWS", "Add : " + obj.getString("titre"));
     }
 
     private Date getParsedDate (String d) {

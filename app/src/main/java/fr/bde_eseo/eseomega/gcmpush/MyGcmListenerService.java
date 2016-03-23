@@ -36,6 +36,7 @@ import fr.bde_eseo.eseomega.R;
 import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.GantierActivity;
 import fr.bde_eseo.eseomega.MainActivity;
+import fr.bde_eseo.eseomega.profile.UserProfile;
 
 public class MyGcmListenerService extends GcmListenerService {
 
@@ -95,6 +96,8 @@ public class MyGcmListenerService extends GcmListenerService {
      */
     private void sendNotification(int intentID, String title, String message, double versionPush) {
 
+        Log.d("DBG", "Notification GCM : " + intentID + ", " + title + ", " + message);
+
         // prepare intent
         Intent intent = null;
         if (versionPush > Constants.NOTIF_VERSION) {
@@ -118,6 +121,20 @@ public class MyGcmListenerService extends GcmListenerService {
                     intent.putExtra(Constants.KEY_MAIN_MESSAGE, message);
                 }
                 break;
+            case Constants.NOTIF_GANTIER_ENABLE:
+                // Enable in prefs the game access
+                UserProfile userProfileEn = new UserProfile();
+                userProfileEn.readProfilePromPrefs(this);
+                userProfileEn.enableGuy();
+                userProfileEn.registerProfileInPrefs(this);
+                break;
+            case Constants.NOTIF_GANTIER_DISABLE:
+                // Enable in prefs the game access
+                UserProfile userProfileDis = new UserProfile();
+                userProfileDis.readProfilePromPrefs(this);
+                userProfileDis.disableGuy();
+                userProfileDis.registerProfileInPrefs(this);
+                break;
             case Constants.NOTIF_GANTIER:
                 intent = new Intent(this, GantierActivity.class);
                 intent.putExtra(Constants.KEY_GANTIER_INTENT, intentID);
@@ -132,7 +149,7 @@ public class MyGcmListenerService extends GcmListenerService {
                 break;
         }
 
-        // Attach intent to notification
+        // Attach intent to notification, only if has intent
         if (intent != null) {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_ONE_SHOT);

@@ -74,14 +74,6 @@ public class ViewNewsActivityMaterial extends AppCompatActivity {
         }
 
         if (newsItem != null) {
-            /*mAdapter = new MyImageAdapter();
-            recList = (RecyclerView) findViewById(R.id.recyList);
-            recList.setAdapter(mAdapter);
-            recList.setVisibility(View.VISIBLE);
-            recList.setHasFixedSize(true);
-            LinearLayoutManager llm = new LinearLayoutManager(this);
-            llm.setOrientation(LinearLayoutManager.HORIZONTAL);
-            recList.setLayoutManager(llm);*/
             imageView = (ImageView) findViewById(R.id.imgHeaderNews);
             ImageLoader imageLoader = ImageLoader.getInstance();
             // Load image, decode it to Bitmap and return Bitmap to callback
@@ -110,6 +102,8 @@ public class ViewNewsActivityMaterial extends AppCompatActivity {
                 }
             });
             webView.setLongClickable(false);
+            //webView.getSettings().setBuiltInZoomControls(true);
+            webView.getSettings().setJavaScriptEnabled(true);
             webView.loadData("<body style=\"margin:20px 10px 20px 10px\">" + newsItem.getData() + "</body>", "text/html; charset=UTF-8", null);
             //mAdapter.notifyDataSetChanged();
         }
@@ -152,50 +146,6 @@ public class ViewNewsActivityMaterial extends AppCompatActivity {
 
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    /**
-     * Image list adapter
-     */
-    private class MyImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new NewsImageHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.itemview_image, parent, false));
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            return 0;
-        }
-
-        @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            final String link = newsItem.getImgLinks().get(position);
-            NewsImageHolder nih = (NewsImageHolder) holder;
-            ImageLoader.getInstance().displayImage(link, nih.img);
-            nih.img.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent myIntent = new Intent(ViewNewsActivityMaterial.this, ImageViewActivity.class);
-                    myIntent.putExtra(Constants.KEY_IMG, link);
-                    startActivity(myIntent);
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return (newsItem != null && newsItem.getImgLinks() != null)?newsItem.getImgLinks().size():0;
-        }
-
-        private class NewsImageHolder extends RecyclerView.ViewHolder {
-            protected ImageView img;
-            public NewsImageHolder (View itemView) {
-                super(itemView);
-                img = (ImageView) itemView.findViewById(R.id.imgItem);
-            }
         }
     }
 }

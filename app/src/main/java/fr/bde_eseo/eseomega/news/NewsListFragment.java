@@ -13,6 +13,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -178,6 +179,8 @@ public class NewsListFragment extends Fragment {
             if (obj != null) {
                 try {
                     JSONArray array = obj.getJSONArray("articles");
+
+                    Log.d("JSON", "Read : " + array.length() + " articles");
                     //newsItems.clear();
                     // Cannot happen : obj is different from null so there are news in cache or freshly fetched !
                     /*    newsItems.add(new NewsItem("Dernière mise à jour : " +

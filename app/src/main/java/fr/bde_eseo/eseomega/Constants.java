@@ -34,6 +34,7 @@ public class Constants {
     public static final String PREFS_USER_PROFILE_PICTURE = "model.UserProfile.PICTURE";
     //public static final String PREFS_USER_PROFILE_PUSH_TOKEN = "model.UserProfile.PUSHTOKEN";
     public static final String PREFS_USER_PROFILE_PUSH_TOKEN = "model.UserProfile.PUSHTOKEN_V3";
+    public static final String PREFS_USER_PROFILE_GUY_ACCESS = "model.UserProfile.GUY_ACCESS";
     //public static final String PREFS_USER_PROFILE_PHONE = "model.UserProfile.PHONE"; // On stocke pas !
 
     // SharedPref class
@@ -50,6 +51,8 @@ public class Constants {
     public static final int NOTIF_TIPS = 5;
     public static final int NOTIF_UPDATE = 21;
     public static final int NOTIF_GANTIER = 42;
+    public static final int NOTIF_GANTIER_ENABLE = 85;
+    public static final int NOTIF_GANTIER_DISABLE = 86;
     public static final int NOTIF_CONNECT = 99;
     public static final double NOTIF_VERSION = 1.0; // Notification is valid if V_Push_App >= V_Push_Server
     public static final String NOTIF_UPDATE_TITLE = "Impossible de recevoir les notifications";
@@ -60,7 +63,8 @@ public class Constants {
     public static final String TAG_FRAGMENT_ORDER_TABS = "fragment.tabs.order";
 
     // URL's
-    public static final String URL_SERVER = "http://217.199.187.59/francoisle.fr/";
+    //public static final String URL_SERVER = "http://217.199.187.59/francoisle.fr/";
+    public static final String URL_SERVER = "https://web59.secure-secure.co.uk/francoisle.fr/"; // secure way
     public static final String URL_ASSETS = URL_SERVER + "lacommande/assets/";
 
     /**
@@ -104,7 +108,8 @@ public class Constants {
 
 
     // Data from Naudet-Sonasi
-    public static final String URL_SERVERBIS = "http://79.170.44.147/eseonews.fr/";
+    //public static final String URL_SERVERBIS = "http://79.170.44.147/eseonews.fr/";
+    public static final String URL_SERVERBIS = URL_SERVER + "eseonews/";
     public static final String URL_JSON_SPONSORS = URL_SERVERBIS + "jsondata/sponsors_data/sponsors.json";
     public static final String URL_JSON_EVENTS = URL_SERVERBIS + "jsondata/events_data/events.json";
     public static final String URL_JSON_CLUBS = URL_SERVERBIS + "jsondata/clubs_data/clubs.json";

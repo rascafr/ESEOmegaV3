@@ -1,4 +1,4 @@
-# ESEOmegaV3
+# ESEOmegaV2
 Application Android du BDE ESEOmega (2015 - 2016) : 
 - News
 - Events
