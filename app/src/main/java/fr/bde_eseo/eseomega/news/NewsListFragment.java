@@ -179,8 +179,6 @@ public class NewsListFragment extends Fragment {
             if (obj != null) {
                 try {
                     JSONArray array = obj.getJSONArray("articles");
-
-                    Log.d("JSON", "Read : " + array.length() + " articles");
                     //newsItems.clear();
                     // Cannot happen : obj is different from null so there are news in cache or freshly fetched !
                     /*    newsItems.add(new NewsItem("Dernière mise à jour : " +

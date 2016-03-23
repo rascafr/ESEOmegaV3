@@ -96,8 +96,6 @@ public class MyGcmListenerService extends GcmListenerService {
      */
     private void sendNotification(int intentID, String title, String message, double versionPush) {
 
-        Log.d("DBG", "Notification GCM : " + intentID + ", " + title + ", " + message);
-
         // prepare intent
         Intent intent = null;
         if (versionPush > Constants.NOTIF_VERSION) {

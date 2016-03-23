@@ -248,8 +248,6 @@ public class ConnectProfileFragment extends Fragment {
                     // Start IntentService to register this application with GCM.
                     Intent intent = new Intent(getActivity(), RegistrationIntentService.class);
                     getActivity().startService(intent);
-
-                    Log.d("DBG", "Intent started ! " + intent);
                 }
             } else {
 

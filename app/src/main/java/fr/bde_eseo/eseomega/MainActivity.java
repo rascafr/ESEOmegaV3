@@ -21,7 +21,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,7 +29,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
@@ -45,6 +43,7 @@ import java.util.ArrayList;
 
 import fr.bde_eseo.eseomega.events.tickets.TicketHistoryActivity;
 import fr.bde_eseo.eseomega.gcmpush.RegistrationIntentService;
+import fr.bde_eseo.eseomega.plans.PlansActivity;
 import fr.bde_eseo.eseomega.settings.SettingsFragment;
 import fr.bde_eseo.eseomega.slidingmenu.NavDrawerListAdapter;
 import fr.bde_eseo.eseomega.community.CommunityFragment;
@@ -373,7 +372,7 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (fragPosition == 1) getMenuInflater().inflate(R.menu.menu_ingenews, menu); // with Ingenews option
+        if (fragPosition == 1) getMenuInflater().inflate(R.menu.menu_fragnews, menu); // with Ingenews option
         else if (fragPosition == 2) getMenuInflater().inflate(R.menu.menu_event, menu); // with Event buy option
         else getMenuInflater().inflate(R.menu.main_less, menu); // without Ingenews
         return true;
@@ -405,6 +404,12 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
                             }
                         })
                         .show();
+                return true;
+
+            // Plans du bâtiment : perds pas le nord
+            case R.id.action_plans:
+                Intent intentPlans = new Intent(MainActivity.this, PlansActivity.class);
+                startActivity(intentPlans);
                 return true;
 
             // Ingénews : news du club du même nom, m'voyez

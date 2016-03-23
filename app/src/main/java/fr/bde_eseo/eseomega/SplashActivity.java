@@ -37,8 +37,6 @@ public class SplashActivity extends Activity {
         profile = new UserProfile();
         profile.readProfilePromPrefs(this);
 
-        Log.d("GUY", "GuyGame access : " + profile.hasGuyAccess());
-
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.idLoad);
 
         // Initialize preference objects

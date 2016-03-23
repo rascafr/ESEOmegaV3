@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">ESEOmega</string>
     <string name="app_name_inge">Éditions Ingénews</string>
+    <string name="app_name_plans">Salles ESEO Angers</string>
     <string name="app_name_order">Votre commande</string>
     <string name="app_name_tickets">Vos réservations</string>
     <string name="app_name_sales">Faire une réservation</string>
@@ -19,12 +20,14 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_ingenews">Éditions Ingénews</string>
+    <string name="action_plans">Plan des salles</string>
     <string name="action_info">À propos</string>
     <string name="action_ticketevent">Vos réservations</string>
     <string name="action_read">Fermer</string>
     <string name="action_share">Partager</string>
     <string name="action_lydia">Payer avec Lydia</string>
     <string name="action_browser">Ouvrir dans le navigateur</string>
+    <string name="action_plans_details">Afficher le plan complet</string>
     <string name="text_example">I\'m an example text inside an example fragment !</string>
     <string name="action_settings">Settings</string>
     <string name="draweritemTest">Pietra B</string>
@@ -174,6 +177,9 @@ Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. N
     <string name="empty_header_inge">Aucune édition Ingénews trouvée</string>
     <string name="empty_desc_inge">L\'équipe d\'Ingénews n\'a peut être pas encore mis en ligne leur édition !\nAu passage, vérifiez votre connexion internet.</string>
     <string name="warn_text_inge">Cette page regroupe l\'ensemble des éditions Ingénews que le club a mis en ligne sur nos serveurs.\nESEOmega n\'est en aucun cas responsable du contenu proposé.</string>
+
+    <string name="empty_header_plans">Aucune salle trouvée</string>
+    <string name="empty_desc_plans">Le bâtiment ESEO a peut-être été détruit, ou alors c\'est que votre connexion internet est pas au top de sa forme ...</string>
 
     <string name="order_cancel_title">Annuler la commande ?</string>
     <string name="order_cancel_message">Vous êtes sur le point de vider définitivement votre panier.\nEn êtes-vous sûr ?</string>
