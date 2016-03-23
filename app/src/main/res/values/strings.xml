@@ -162,6 +162,9 @@ Duis mollis nulla sit amet turpis ullamcorper, bibendum volutpat justo auctor. N
     <string name="empty_header_order">Vous n\'avez pas acheté de places</string>
     <string name="empty_desc_order">Tapez sur le bouton + pour commander, vos places s\'afficheront ici</string>
 
+    <string name="empty_header_presales">Aucune réservation disponible</string>
+    <string name="empty_desc_presales">Il n\'est actuellement pas possible de réserver une place depuis cette page.</string>
+
     <string name="empty_header_noorder">Vous n\'êtes pas connecté</string>
     <string name="empty_desc_noorder">La commande d\'une place ne peut se faire anonymement.</string>
 

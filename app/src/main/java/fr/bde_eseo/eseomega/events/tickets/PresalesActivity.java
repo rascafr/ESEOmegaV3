@@ -3,6 +3,7 @@ package fr.bde_eseo.eseomega.events.tickets;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +16,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -62,6 +65,10 @@ public class PresalesActivity extends AppCompatActivity {
     // User profile
     private UserProfile userProfile;
 
+    // UI
+    private TextView tvNo1, tvNo2;
+    private ImageView imgNo;
+
     // Adapter / recycler
     private MyPresalesAdapter mAdapter;
     private RecyclerView recList;
@@ -84,8 +91,24 @@ public class PresalesActivity extends AppCompatActivity {
         userProfile = new UserProfile();
         userProfile.readProfilePromPrefs(context);
 
+        // Get layout
+        tvNo1 = (TextView) findViewById(R.id.tvListNothing);
+        tvNo2 = (TextView) findViewById(R.id.tvListNothing2);
+        imgNo = (ImageView) findViewById(R.id.imgNoPresale);
+
         // Get current events / tickets
         fillArray();
+
+        // Init views
+        if (ticketPictItems.size() == 0) {
+            tvNo1.setVisibility(View.VISIBLE);
+            tvNo2.setVisibility(View.VISIBLE);
+            imgNo.setVisibility(View.VISIBLE);
+        } else {
+            tvNo1.setVisibility(View.GONE);
+            tvNo2.setVisibility(View.GONE);
+            imgNo.setVisibility(View.GONE);
+        }
 
         // Init adapter / recycler view
         mAdapter = new MyPresalesAdapter(context);

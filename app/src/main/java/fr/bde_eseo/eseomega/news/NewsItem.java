@@ -128,8 +128,6 @@ public class NewsItem {
         this(obj.getString("titre"), obj.getString("date"), obj.getString("auteur"),
                 obj.getString("lien"), obj.getString("resume"),
                 obj.getString("content"), obj.getString("img"));
-
-        Log.d("NEWS", "Add : " + obj.getString("titre"));
     }
 
     private Date getParsedDate (String d) {

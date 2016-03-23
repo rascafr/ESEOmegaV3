@@ -164,7 +164,8 @@ public class MyGcmListenerService extends GcmListenerService {
                     .setColor(this.getResources().getColor(R.color.md_blue_800))
                     .setVibrate(pattern)
                     .setSound(defaultSoundUri)
-                    .setContentIntent(pendingIntent);
+                    .setContentIntent(pendingIntent)
+                    .setStyle(new NotificationCompat.BigTextStyle().bigText(message));
 
             // Big icon for previous version (older than Lollipop)
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {

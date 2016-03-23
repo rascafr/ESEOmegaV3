@@ -15,4 +15,42 @@
         android:layout_alignParentStart="true"
         android:visibility="visible"/>
 
+    <RelativeLayout
+        android:id="@+id/relativeLayout7"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="20dp">
+
+        <ImageView
+            android:id="@+id/imgNoPresale"
+            android:layout_width="wrap_content"
+            android:layout_height="85dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="14dp"
+            android:src="@drawable/ic_no_ticket"/>
+
+        <TextView
+            android:id="@+id/tvListNothing"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/imgNoPresale"
+            android:layout_marginBottom="14dp"
+            android:gravity="center"
+            android:text="@string/empty_header_presales"
+            android:textSize="18dp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tvListNothing2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvListNothing"
+            android:gravity="center"
+            android:text="@string/empty_desc_presales"
+            android:textColor="@color/text_light_header"/>
+
+    </RelativeLayout>
+
 </RelativeLayout>
