@@ -54,7 +54,7 @@ public class Constants {
     public static final int NOTIF_GANTIER_ENABLE = 85;
     public static final int NOTIF_GANTIER_DISABLE = 86;
     public static final int NOTIF_CONNECT = 99;
-    public static final double NOTIF_VERSION = 1.0; // Notification is valid if V_Push_App >= V_Push_Server
+    public static final double NOTIF_VERSION = 1.1; // Notification is valid if V_Push_App >= V_Push_Server
     public static final String NOTIF_UPDATE_TITLE = "Impossible de recevoir les notifications";
     public static final String NOTIF_UPDATE_TEXT = "Merci de mettre l'application à jour depuis le Play Store.";
     public static final int NOTIF_UPDATE_FORCE = 147; // local only
