@@ -229,9 +229,10 @@ public class LydiaActivity extends AppCompatActivity {
                     // Check if phone is correct
                     if (userProfile.verifyPhoneNumber(clientPhone)) {
 
+                        userProfile.setPhoneNumber(clientPhone); // bug correction 3.+
+
                         // Save it to preferences if checkbox checked
                         if (checkRememberPhone.isChecked()) {
-                            userProfile.setPhoneNumber(clientPhone);
                             userProfile.registerProfileInPrefs(context);
                         }
 

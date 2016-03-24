@@ -74,7 +74,8 @@ public class DataManager {
 
     public void fillData (JSONArray array) {
 
-        if (array != null) {
+        // Check initialization
+        if (array != null && ingredients != null && menus != null && elements != null && categories != null) {
 
             try {
 
