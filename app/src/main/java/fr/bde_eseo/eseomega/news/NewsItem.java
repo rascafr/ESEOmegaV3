@@ -21,6 +21,7 @@ public class NewsItem {
     private String name, strDate, author, link, data, shData, frenchStr, headerImg;
     private boolean isFooter;
     private boolean isHeader;
+    private boolean isLoading;
     private Date date;
 
     public boolean isFooter() {
@@ -32,6 +33,15 @@ public class NewsItem {
     public NewsItem() {
         isFooter = true;
         isHeader = false;
+        isLoading = false;
+    }
+
+    public boolean isLoading() {
+        return isLoading;
+    }
+
+    public void setIsLoading(boolean isLoading) {
+        this.isLoading = isLoading;
     }
 
     public boolean isHeader() {

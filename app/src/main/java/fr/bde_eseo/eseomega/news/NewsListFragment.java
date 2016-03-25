@@ -1,5 +1,6 @@
 package fr.bde_eseo.eseomega.news;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -7,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
@@ -18,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -63,7 +66,7 @@ public class NewsListFragment extends Fragment {
     private File cacheFileEseo;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_news_list, container, false);
 
         // View
@@ -92,7 +95,7 @@ public class NewsListFragment extends Fragment {
         recList.setAdapter(mAdapter);
         recList.setHasFixedSize(false);
         recList.addItemDecoration(new DividerItemDecoration(getActivity(), R.drawable.drawer_divider));
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        final LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recList.setLayoutManager(llm);
         mAdapter.notifyDataSetChanged();
@@ -115,6 +118,39 @@ public class NewsListFragment extends Fragment {
                     asyncJSONNews.execute(Constants.URL_NEWS_ANDROID + "height=5&ptr=0");
                 } else {
                     swipeRefreshLayout.setRefreshing(false);
+                }
+            }
+        });
+
+        // Infinite loading system
+        recList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if (dy > 0) {
+
+                    // check bottom
+                    if ((llm.getChildCount() + llm.findFirstVisibleItemPosition()) >= llm.getItemCount()) {
+
+                        // check last item is "add"
+                        int endPos = newsItems.size()-1;
+
+                        if (newsItems.get(endPos).isFooter() && !newsItems.get(endPos).isLoading()) {
+                            newsItems.get(endPos).setIsLoading(true);
+                            mAdapter.notifyItemChanged(endPos);
+
+                            new Handler().postDelayed(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    AsyncJSONNews asyncJSONNews = new AsyncJSONNews(false, true);
+                                    ptr++;
+                                    asyncJSONNews.execute(Constants.URL_NEWS_ANDROID + "height=5&ptr=" + ptr);
+                                }
+                            }, 1000); // pour pas être trop violent
+                        }
+                    }
                 }
             }
         });
@@ -164,8 +200,8 @@ public class NewsListFragment extends Fragment {
             if (newsItems != null) {
                 if (!addMore)
                     newsItems.clear();
-                else
-                    newsItems.remove(newsItems.size()-1);
+                /*else
+                    newsItems.remove(newsItems.size()-1);*/
             }
             img.setVisibility(View.GONE);
             tv1.setVisibility(View.GONE);
@@ -178,16 +214,24 @@ public class NewsListFragment extends Fragment {
         protected void onPostExecute(JSONObject obj) {
             if (obj != null) {
                 try {
+
+                    if (addMore) newsItems.remove(newsItems.size()-1);
+
                     JSONArray array = obj.getJSONArray("articles");
                     //newsItems.clear();
                     // Cannot happen : obj is different from null so there are news in cache or freshly fetched !
                     /*    newsItems.add(new NewsItem("Dernière mise à jour : " +
                             prefs_Read.getString(Constants.PREFS_NEWS_LAST_DOWNLOAD_DATE, "jamais")));*/
 
+                    if (loadedFromCache) {
+                        newsItems.clear();
+                        newsItems.add(new NewsItem("Dernière mise à jour : " + prefs_Read.getString(Constants.PREFS_NEWS_LAST_DOWNLOAD_DATE, "jamais")));
+                    }
+
                     if (ptr == 0) {
                         if (loadedFromCache) {
-                            newsItems.add(new NewsItem("Dernière mise à jour : " +
-                            prefs_Read.getString(Constants.PREFS_NEWS_LAST_DOWNLOAD_DATE, "jamais")));
+                            //newsItems.add(new NewsItem("Dernière mise à jour : " +
+                            //prefs_Read.getString(Constants.PREFS_NEWS_LAST_DOWNLOAD_DATE, "jamais")));
                         } else {
                             prefs_Write.putString(Constants.PREFS_NEWS_LAST_DOWNLOAD_DATE, Utilities.getCalendarAsString());
                             prefs_Write.apply();
@@ -296,16 +340,15 @@ public class NewsListFragment extends Fragment {
             final NewsItem ni = newsItems.get(position);
 
             if (ni.isFooter()) {
+
                 NewsFooterHolder nfh = (NewsFooterHolder) holder;
-                nfh.cardView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        AsyncJSONNews asyncJSONNews = new AsyncJSONNews(false, true);
-                        ptr++;
-                        asyncJSONNews.execute(Constants.URL_NEWS_ANDROID + "height=5&ptr=" + ptr);
-                        Toast.makeText(ctx, "Chargement ...", Toast.LENGTH_SHORT).show();
-                    }
-                });
+
+                if (ni.isLoading()) {
+                    nfh.progressMore.setVisibility(View.VISIBLE);
+                } else {
+                    nfh.progressMore.setVisibility(View.INVISIBLE);
+                }
+
             } else if (ni.isHeader()) {
                 NewsHeaderHolder nhh = (NewsHeaderHolder) holder;
                 nhh.tvLast.setText(ni.getName());
@@ -361,11 +404,12 @@ public class NewsListFragment extends Fragment {
 
         private class NewsFooterHolder extends RecyclerView.ViewHolder {
 
-            protected CardView cardView;
+            protected ProgressBar progressMore;
 
             public NewsFooterHolder (View itemView) {
                 super(itemView);
-                cardView = (CardView) itemView.findViewById(R.id.card_view);
+                progressMore = (ProgressBar) itemView.findViewById(R.id.progressNewsMore);
+                progressMore.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.md_blue_800), PorterDuff.Mode.SRC_IN);
             }
 
         }

@@ -104,7 +104,8 @@ public class ViewNewsActivityMaterial extends AppCompatActivity {
             webView.setLongClickable(false);
             //webView.getSettings().setBuiltInZoomControls(true);
             webView.getSettings().setJavaScriptEnabled(true);
-            webView.loadData("<body style=\"margin:20px 10px 20px 10px\">" + newsItem.getData() + "</body>", "text/html; charset=UTF-8", null);
+            webView.loadData("" +
+                    "<body style=\"margin:20px 10px 20px 10px\"><style>img {max-width:98%;}</style>" + newsItem.getData() + "</body>", "text/html; charset=UTF-8", null);
             //mAdapter.notifyDataSetChanged();
         }
     }
