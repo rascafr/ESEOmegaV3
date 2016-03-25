@@ -1,4 +1,4 @@
-# ESEOmegaV2
+# ESEOmegaV3 - 3.2
 Application Android du BDE ESEOmega (2015 - 2016) : 
 - News
 - Events
@@ -12,13 +12,13 @@ Note : Ceci est le dépôt utilisé en ce moment (phase de tests + release)
 
 Dernières modifs :
 - Edition Ingénews, nouveau style "grille" ✓
-- News ESEOmega en webview + les images chargent bien ! ✓
+- News ESEOmega en webview + les images chargent bien ! + wrap dans la largeur + chargement infini automatique ✓
 - Fermeture cafet depuis serveur uniquement ✓
 - Paiement Cafet depuis Lydia ✓
 - Paiement Events depuis Lydia ✓
 - Préférences de l'app : page de démarrage, mises à jour auto, etc ... ✓
 - Plans ESEO : salles et map en HD ✓
-- Les notifications GCM puvent se déroûler désormais ✓
+- Les notifications GCM peuvent se déroûler désormais ✓
 
 En pause :
 - Nouveau design / Thème sombre (Autre branche)
