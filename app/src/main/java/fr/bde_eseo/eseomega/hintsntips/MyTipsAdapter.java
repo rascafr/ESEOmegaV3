@@ -1,26 +1,21 @@
 package fr.bde_eseo.eseomega.hintsntips;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import fr.bde_eseo.eseomega.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import fr.bde_eseo.eseomega.R;
 
 /**
  * Created by Rascafr on 11/08/2015.
@@ -29,7 +24,6 @@ public class MyTipsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private ArrayList<SponsorItem> sponsorItems;
     private Context ctx;
-    private DisplayImageOptions options;
     private float px;
     private Drawable drawable;
     private MyGetter myGetter;
@@ -44,16 +38,6 @@ public class MyTipsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         drawable = ctx.getResources().getDrawable(R.drawable.ic_green_avantage);
         drawable.setBounds(0,0,(int)px,(int)px);
-        this.options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.ic_loading)
-                .showImageForEmptyUri(R.drawable.ic_loading)
-                .showImageOnFail(R.drawable.ic_loading)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .considerExifParams(true)
-                .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2)
-                .bitmapConfig(Bitmap.Config.ALPHA_8)
-                .build();
         myGetter = new MyGetter();
     }
 
@@ -102,7 +86,7 @@ public class MyTipsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             svh.offers.setText(Html.fromHtml(tv, myGetter, null));
         }
 
-        ImageLoader.getInstance().displayImage(si.getImg(), svh.imageView, options);
+        Picasso.with(ctx).load(si.getImg()).into(svh.imageView);
     }
 
     private class MyGetter implements Html.ImageGetter {

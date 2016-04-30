@@ -1,7 +1,6 @@
 package fr.bde_eseo.eseomega.community;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -19,9 +18,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -211,20 +208,8 @@ public class CommunityFragment extends Fragment {
      */
     private class MyCommunityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-        private DisplayImageOptions options;
-
         public MyCommunityAdapter () {
-            this.options = new DisplayImageOptions.Builder()
-                    .showImageOnLoading(R.drawable.solid_loading_background)
-                    .showImageForEmptyUri(R.drawable.solid_loading_background)
-                    .showImageOnFail(R.drawable.solid_loading_background)
-                    .cacheInMemory(true)
-                    .cacheOnDisk(true)
-                    .considerExifParams(true)
-                    .resetViewBeforeLoading(true)
-                    .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2)
-                    .bitmapConfig(Bitmap.Config.RGB_565)
-                    .build();
+
         }
 
         @Override
@@ -248,7 +233,7 @@ public class CommunityFragment extends Fragment {
             } else {
                 cvh.cardView.setPreventCornerOverlap(true); // Only supported if Android Version is >= Lollipop
             }
-            ImageLoader.getInstance().displayImage(ci.getImg(), cvh.img, options);
+            Picasso.with(getActivity()).load(ci.getImg()).placeholder(R.drawable.solid_loading_background).error(R.drawable.solid_loading_background).into(cvh.img);
         }
 
         @Override

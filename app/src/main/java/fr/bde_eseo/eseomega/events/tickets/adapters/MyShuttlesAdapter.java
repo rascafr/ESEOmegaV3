@@ -7,17 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
 
 import fr.bde_eseo.eseomega.R;
 import fr.bde_eseo.eseomega.events.tickets.model.CheckShuttleItem;
-import fr.bde_eseo.eseomega.events.tickets.model.ShuttleItem;
-import fr.bde_eseo.eseomega.events.tickets.model.TicketPictItem;
 
 /**
  * Created by Rascafr on 11/01/2016.

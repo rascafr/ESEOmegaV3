@@ -31,24 +31,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
 import java.io.File;
 import java.util.ArrayList;
 
-import fr.bde_eseo.eseomega.events.tickets.TicketHistoryActivity;
-import fr.bde_eseo.eseomega.gcmpush.RegistrationIntentService;
-import fr.bde_eseo.eseomega.plans.PlansActivity;
-import fr.bde_eseo.eseomega.settings.SettingsFragment;
-import fr.bde_eseo.eseomega.slidingmenu.NavDrawerListAdapter;
 import fr.bde_eseo.eseomega.community.CommunityFragment;
 import fr.bde_eseo.eseomega.events.EventsFragment;
+import fr.bde_eseo.eseomega.events.tickets.TicketHistoryActivity;
 import fr.bde_eseo.eseomega.gcmpush.QuickstartPreferences;
+import fr.bde_eseo.eseomega.gcmpush.RegistrationIntentService;
 import fr.bde_eseo.eseomega.hintsntips.TipsFragment;
 import fr.bde_eseo.eseomega.ingenews.IngeListActivity;
 import fr.bde_eseo.eseomega.interfaces.OnItemAddToCart;
@@ -56,11 +47,14 @@ import fr.bde_eseo.eseomega.interfaces.OnUserProfileChange;
 import fr.bde_eseo.eseomega.lacommande.DataManager;
 import fr.bde_eseo.eseomega.lacommande.OrderHistoryFragment;
 import fr.bde_eseo.eseomega.lacommande.OrderTabsFragment;
-import fr.bde_eseo.eseomega.slidingmenu.NavDrawerItem;
 import fr.bde_eseo.eseomega.news.NewsListFragment;
+import fr.bde_eseo.eseomega.plans.PlansActivity;
 import fr.bde_eseo.eseomega.profile.ConnectProfileFragment;
 import fr.bde_eseo.eseomega.profile.UserProfile;
 import fr.bde_eseo.eseomega.profile.ViewProfileFragment;
+import fr.bde_eseo.eseomega.settings.SettingsFragment;
+import fr.bde_eseo.eseomega.slidingmenu.NavDrawerItem;
+import fr.bde_eseo.eseomega.slidingmenu.NavDrawerListAdapter;
 import fr.bde_eseo.eseomega.utils.ImageUtils;
 import fr.bde_eseo.eseomega.utils.Utilities;
 import fr.bde_eseo.eseomega.version.AsyncCheckVersion;
@@ -296,21 +290,6 @@ public class MainActivity extends AppCompatActivity implements OnUserProfileChan
             // on first time display view for first nav item
             displayView(intendID); // Note : 0 is profile
         }
-
-        // UNIVERSAL IMAGE LOADER SETUP
-        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
-                .cacheOnDisc(true).cacheInMemory(true)
-                .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2)
-                .displayer(new FadeInBitmapDisplayer(300)).build();
-
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
-                getApplicationContext())
-                .defaultDisplayImageOptions(defaultOptions)
-                .memoryCache(new WeakMemoryCache())
-                .discCacheSize(100 * 1024 * 1024).build();
-
-        ImageLoader.getInstance().init(config);
-        // END - UNIVERSAL IMAGE LOADER SETUP
 
         // If needed, show a welcome message
         // Why did I used to save version here ?...

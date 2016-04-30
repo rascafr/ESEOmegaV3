@@ -1,10 +1,8 @@
 package fr.bde_eseo.eseomega.news;
 
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,21 +13,15 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import fr.bde_eseo.eseomega.R;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,6 +31,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import fr.bde_eseo.eseomega.Constants;
+import fr.bde_eseo.eseomega.R;
 import fr.bde_eseo.eseomega.hintsntips.DividerItemDecoration;
 import fr.bde_eseo.eseomega.utils.JSONUtils;
 import fr.bde_eseo.eseomega.utils.Utilities;
@@ -296,7 +289,6 @@ public class NewsListFragment extends Fragment {
 
     public class MyNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-        private DisplayImageOptions options;
         private Context ctx;
 
         private final static int TYPE_NORMAL = 0;
@@ -305,16 +297,6 @@ public class NewsListFragment extends Fragment {
 
         public MyNewsAdapter (Context ctx) {
             this.ctx = ctx;
-            this.options = new DisplayImageOptions.Builder()
-                    .showImageOnLoading(R.drawable.solid_loading_background)
-                    .showImageForEmptyUri(R.drawable.solid_loading_background)
-                    .showImageOnFail(R.drawable.solid_loading_background)
-                    .cacheInMemory(true)
-                    .cacheOnDisk(true)
-                    .considerExifParams(true)
-                    .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2)
-                    .bitmapConfig(Bitmap.Config.RGB_565)
-                    .build();
         }
 
         @Override
@@ -358,7 +340,7 @@ public class NewsListFragment extends Fragment {
                 nh.tvName.setText(ni.getName());
                 nh.tvContent.setText(Html.fromHtml(ni.getShData()));
                 nh.tvDateAuthor.setText("Par " + ni.getAuthor() + " | " + ni.getFrenchStr());
-                ImageLoader.getInstance().displayImage(ni.getHeaderImg(), nh.imgHeader, options);
+                Picasso.with(ctx).load(ni.getHeaderImg()).placeholder(R.drawable.solid_loading_background).error(R.drawable.solid_loading_background).into(nh.imgHeader);
                 nh.cardView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

@@ -4,24 +4,22 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.R;
@@ -75,12 +73,21 @@ public class ViewNewsActivityMaterial extends AppCompatActivity {
 
         if (newsItem != null) {
             imageView = (ImageView) findViewById(R.id.imgHeaderNews);
-            ImageLoader imageLoader = ImageLoader.getInstance();
             // Load image, decode it to Bitmap and return Bitmap to callback
-            imageLoader.loadImage(newsItem.getImgLinks().get(0), new SimpleImageLoadingListener() {
+            Picasso.with(this).load(newsItem.getImgLinks().get(0)).into(new Target() {
                 @Override
-                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                public void onBitmapLoaded(Bitmap loadedImage, Picasso.LoadedFrom from) {
                     imageView.setImageBitmap(Blur.fastblur(ViewNewsActivityMaterial.this, loadedImage, 12)); // seems ok
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+
                 }
             });
             tvName = (TextView) findViewById(R.id.tvTitle);

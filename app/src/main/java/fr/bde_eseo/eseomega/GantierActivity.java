@@ -2,6 +2,7 @@ package fr.bde_eseo.eseomega;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -13,24 +14,22 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -80,6 +79,8 @@ public class GantierActivity extends Activity implements SensorEventListener {
     public static final float FILTER_COEFFICIENT = 0.97f;
     private Timer fuseTimer = new Timer();
 
+    // MP3 Player
+    private MediaPlayer mediaPlayer;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,15 +100,16 @@ public class GantierActivity extends Activity implements SensorEventListener {
         profile = new UserProfile();
         profile.readProfilePromPrefs(this);
 
-        /*
-        senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_GAME);*/
-        initListeners();
+        // Create media player only if not playing
+        if (mediaPlayer == null)
+            mediaPlayer = new MediaPlayer();
+    }
 
-        // wait for one second until gyroscope and magnetometer/accelerometer
-        // data is initialised then scedule the complementary filter task
-        fuseTimer.scheduleAtFixedRate(new calculateFusedOrientationTask(),
-                1000, TIME_CONSTANT);
+    @Override
+    public void onBackPressed() {
+        finish();
+        if (mediaPlayer != null)
+            mediaPlayer.reset();
     }
 
     public void initListeners() {
@@ -201,13 +203,40 @@ public class GantierActivity extends Activity implements SensorEventListener {
         super.onPause();
         // unregister sensor listeners to prevent the activity from draining the device's battery.
         senSensorManager.unregisterListener(this);
+        if (mediaPlayer != null)
+            mediaPlayer.pause();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        // restore the sensor listeners when user resumes the application.
+
+        /*
+        senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_GAME);*/
         initListeners();
+
+        // wait for one second until gyroscope and magnetometer/accelerometer
+        // data is initialised then scedule the complementary filter task
+        fuseTimer.scheduleAtFixedRate(new calculateFusedOrientationTask(),
+                1000, TIME_CONSTANT);
+
+        // if not playing
+        if (!mediaPlayer.isPlaying()) {
+            AssetFileDescriptor descriptor = null;
+            try {
+                descriptor = getAssets().openFd("wabe.mp3");
+                mediaPlayer.setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
+                descriptor.close();
+                mediaPlayer.prepare();
+                mediaPlayer.setLooping(true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Start music !
+        mediaPlayer.start();
     }
 
     @Override
@@ -512,6 +541,8 @@ public class GantierActivity extends Activity implements SensorEventListener {
                             if (x >= marginB1 && x < marginB1+bpQuit.getWidth() && y >= marginBB1 && y <= marginBB1+bpQuit.getHeight()) {
                                 thread.setRunning(false);
                                 senSensorManager.unregisterListener(GantierActivity.this);
+                                if (mediaPlayer != null)
+                                    mediaPlayer.reset();
                                 GantierActivity.this.finish();
                             } else if (x >= marginB2 && x < marginB2+bpRestart.getWidth() && y >= marginBB2 && y <= marginBB2+bpRestart.getHeight()) {
                                 thread.setStatus(GPGameThread.GAME_PLAY);
@@ -997,9 +1028,10 @@ public class GantierActivity extends Activity implements SensorEventListener {
 
                     HashMap<String, String> pairs = new HashMap<>();
                     pairs.put(GantierActivity.this.getResources().getString(R.string.client), profile.getId());
-                    pairs.put(GantierActivity.this.getResources().getString(R.string.score), "" + score);
+                    pairs.put(GantierActivity.this.getResources().getString(R.string.password), profile.getPassword());
+                    pairs.put(GantierActivity.this.getResources().getString(R.string.score), String.valueOf(score));
                     pairs.put(GantierActivity.this.getResources().getString(R.string.hash),
-                            EncryptUtils.sha256(GantierActivity.this.getResources().getString(R.string.HEADER_SYNC_SCORES) + profile.getId() + score));
+                            EncryptUtils.sha256(GantierActivity.this.getResources().getString(R.string.HEADER_SYNC_SCORES) + profile.getId() + score + profile.getPassword()));
 
                     return ConnexionUtils.postServerData(Constants.URL_API_GANTIER_SCORES, pairs, GantierActivity.this);
                 }

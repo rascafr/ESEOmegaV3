@@ -1,7 +1,5 @@
 package fr.bde_eseo.eseomega.news;
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,8 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-
-import fr.bde_eseo.eseomega.Constants;
 
 /**
  * Created by Rascafr on 25/08/2015.
@@ -62,7 +58,7 @@ public class NewsItem {
         this.author = author;
         this.link = link;
         this.data = data;
-        this.shData = shData;
+        this.shData = shData.trim();
         this.date = getParsedDate(strDate);
         this.frenchStr = getFrenchDate(strDate);
         this.headerImg = headerImg;

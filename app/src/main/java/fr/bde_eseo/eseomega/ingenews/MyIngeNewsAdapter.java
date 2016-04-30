@@ -13,7 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -26,7 +26,6 @@ public class MyIngeNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private ArrayList<IngenewsItem> ingenewsItems;
     private Context ctx;
-    private ImageLoader imageLoader;
 
     public ArrayList<IngenewsItem> getIngenewsItems() {
         return ingenewsItems;
@@ -39,7 +38,6 @@ public class MyIngeNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public MyIngeNewsAdapter(Context ctx, ArrayList<IngenewsItem> ingenewsItems) {
         this.ingenewsItems = ingenewsItems;
         this.ctx = ctx;
-        this.imageLoader = ImageLoader.getInstance();
     }
 
     @Override
@@ -60,7 +58,7 @@ public class MyIngeNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         inivh.details.setText(ii.getDetails());
 
         if (ii.getImgLink() != null && ii.getImgLink().length() > 0)
-            imageLoader.displayImage(ii.getImgLink(), inivh.imgThumb);
+            Picasso.with(ctx).load(ii.getImgLink()).placeholder(R.drawable.solid_loading_background).error(R.drawable.solid_loading_background).into(inivh.imgThumb);
         else
             inivh.imgThumb.setImageDrawable(ctx.getResources().getDrawable(R.drawable.ic_file));
 

@@ -8,12 +8,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 import fr.bde_eseo.eseomega.R;
-import fr.bde_eseo.eseomega.events.tickets.model.EventTicketItem;
 import fr.bde_eseo.eseomega.events.tickets.model.TicketPictItem;
 
 /**
@@ -55,7 +54,7 @@ public class MyPresalesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         pvh.vDesc.setText(tpi.getDescription());
         pvh.vPrice.setText("À partir de " + tpi.getLowPrice());
 
-        ImageLoader.getInstance().displayImage(tpi.getImgUrl(), pvh.vImg);
+        Picasso.with(context).load(tpi.getImgUrl()).into(pvh.vImg);
     }
 
     @Override

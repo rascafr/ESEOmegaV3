@@ -7,37 +7,29 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.system.ErrnoException;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-
-import fr.bde_eseo.eseomega.R;
-
-import fr.bde_eseo.eseomega.Constants;
-import fr.bde_eseo.eseomega.gcmpush.RegistrationIntentService;
-import fr.bde_eseo.eseomega.interfaces.OnUserProfileChange;
-import fr.bde_eseo.eseomega.utils.ConnexionUtils;
-import fr.bde_eseo.eseomega.utils.EncryptUtils;
-import fr.bde_eseo.eseomega.utils.Utilities;
-
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.ConnectException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+
+import fr.bde_eseo.eseomega.Constants;
+import fr.bde_eseo.eseomega.R;
+import fr.bde_eseo.eseomega.gcmpush.RegistrationIntentService;
+import fr.bde_eseo.eseomega.interfaces.OnUserProfileChange;
+import fr.bde_eseo.eseomega.utils.ConnexionUtils;
+import fr.bde_eseo.eseomega.utils.EncryptUtils;
+import fr.bde_eseo.eseomega.utils.Utilities;
 
 /**
  * Created by François on 13/04/2015.
@@ -215,6 +207,7 @@ public class ConnectProfileFragment extends Fragment {
 
             String res, info = "";
             int status = 0;
+            boolean gantier = false;
 
             // Vérification des données reçues
             if (Utilities.isNetworkDataValid(result)) {
@@ -226,6 +219,7 @@ public class ConnectProfileFragment extends Fragment {
                     if (status == 1) {
                         JSONObject data = obj.getJSONObject("data");
                         userName = data.getString("username");
+                        gantier = data.getBoolean("gantier");
                         info = data.getString("info");
                     }
                 } catch (JSONException e) {
@@ -239,6 +233,7 @@ public class ConnectProfileFragment extends Fragment {
                 // On crée le profil
                 // Le nom / prénom de l'utilisateur est stocké dans le champ "username" du JSON retourné
                 profile = new UserProfile(ctx, userName, userID, userPassword);
+                if (gantier) profile.enableGuy();
                 profile.guessEmailAddress();
                 profile.registerProfileInPrefs(getActivity());
 

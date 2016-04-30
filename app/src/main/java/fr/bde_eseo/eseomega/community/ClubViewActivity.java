@@ -2,20 +2,18 @@ package fr.bde_eseo.eseomega.community;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,18 +25,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
-
-import fr.bde_eseo.eseomega.R;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fr.bde_eseo.eseomega.Constants;
+import fr.bde_eseo.eseomega.R;
 import fr.bde_eseo.eseomega.news.ImageViewActivity;
 import fr.bde_eseo.eseomega.utils.Blur;
 import fr.bde_eseo.eseomega.utils.Utilities;
@@ -53,7 +47,6 @@ public class ClubViewActivity extends AppCompatActivity {
     private ClubItem clubItem;
     private TextView tvDesc, tvNoMember;
     private ImageView imgClub, iWeb, iFb, iTw, iSnap, iMail, iLinked, iPhone, iYou, iInsta;
-    private DisplayImageOptions options;
     private ArrayList<MixedItem> items;
     private MyMembersAdapter mAdapter;
     private RecyclerView recList;
@@ -76,7 +69,7 @@ public class ClubViewActivity extends AppCompatActivity {
         // Get parameters
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
-            if(extras == null) {
+            if (extras == null) {
                 Toast.makeText(ClubViewActivity.this, "Erreur de l'application (c'est pas normal)", Toast.LENGTH_SHORT).show();
                 finish();
             } else {
@@ -104,26 +97,25 @@ public class ClubViewActivity extends AppCompatActivity {
         iInsta = (ImageView) findViewById(R.id.icoInsta);
 
         tvDesc.setText(clubItem.getDetails());
-        options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.solid_loading_background)
-                .showImageForEmptyUri(R.drawable.solid_loading_background)
-                .showImageOnFail(R.drawable.solid_loading_background)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .considerExifParams(true)
-                .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2)
-                .bitmapConfig(Bitmap.Config.RGB_565)
-                .build();
-
-        ImageLoader imageLoader = ImageLoader.getInstance();
 
         // Load image, decode it to Bitmap and return Bitmap to callback
-        imageLoader.loadImage(clubItem.getImg(), new SimpleImageLoadingListener() {
+        Picasso.with(this).load(clubItem.getImg()).into(new Target() {
             @Override
-            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+            public void onBitmapLoaded(Bitmap loadedImage, Picasso.LoadedFrom from) {
                 imgClub.setImageBitmap(Blur.fastblur(ClubViewActivity.this, loadedImage, 12)); // seems ok
             }
+
+            @Override
+            public void onBitmapFailed(Drawable errorDrawable) {
+
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+            }
         });
+
 
         // Image visibility
         if (clubItem.hasWeb()) iWeb.setVisibility(View.VISIBLE);
@@ -166,11 +158,11 @@ public class ClubViewActivity extends AppCompatActivity {
         recList.setLayoutManager(llm);
 
         // Fill data array with Data Holder's objects
-        for (int m=0;m<clubItem.getModules().size();m++) {
+        for (int m = 0; m < clubItem.getModules().size(); m++) {
             ClubItem.ModuleItem mi = clubItem.getModules().get(m);
             items.add(new MixedItem(mi.getName()));
 
-            for (int mm=0;mm<mi.getMembers().size();mm++) {
+            for (int mm = 0; mm < mi.getMembers().size(); mm++) {
                 ClubItem.ModuleItem.TeamItem ti = mi.getMembers().get(mm);
                 items.add(new MixedItem(ti.getName(), ti.getDetail(), ti.getImg()));
             }
@@ -205,7 +197,7 @@ public class ClubViewActivity extends AppCompatActivity {
         iTw.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("twitter://user?screen_name="+clubItem.getTwitter()));
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("twitter://user?screen_name=" + clubItem.getTwitter()));
                 if (intent.resolveActivity(getPackageManager()) != null)
                     startActivity(intent);
                 else
@@ -246,7 +238,7 @@ public class ClubViewActivity extends AppCompatActivity {
         iInsta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("instagram://user?username="+clubItem.getInstagram()));
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("instagram://user?username=" + clubItem.getInstagram()));
                 if (intent.resolveActivity(getPackageManager()) != null)
                     startActivity(intent);
                 else
@@ -363,15 +355,9 @@ public class ClubViewActivity extends AppCompatActivity {
 
         private final static int TYPE_MODULE = 0;
         private final static int TYPE_MEMBER = 1;
-        private DisplayImageOptions options;
 
-        public MyMembersAdapter () {
-            this.options = new DisplayImageOptions.Builder()
-                    .cacheInMemory(true)
-                    .cacheOnDisk(true)
-                    .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2)
-                    .bitmapConfig(Bitmap.Config.RGB_565)
-                    .build();
+        public MyMembersAdapter() {
+
         }
 
         @Override
@@ -387,7 +373,8 @@ public class ClubViewActivity extends AppCompatActivity {
                 //String s = mi.getDesc();
                 //mvh.desc.setText(s!=null&&s.length()>0?s:"Membre");
                 mvh.desc.setText(Html.fromHtml(mi.getDesc()));
-                ImageLoader.getInstance().displayImage(mi.getImgLink(), mvh.img, options);
+                if (mi.getImgLink().length() > 0) // placeholder(R.drawable.solid_loading_background).error(R.drawable.solid_loading_background).
+                    Picasso.with(ClubViewActivity.this).load(mi.getImgLink()).into(mvh.img);
             }
         }
 
@@ -401,7 +388,7 @@ public class ClubViewActivity extends AppCompatActivity {
 
         @Override
         public int getItemViewType(int position) {
-            return items.get(position).isModule()?TYPE_MODULE:TYPE_MEMBER;
+            return items.get(position).isModule() ? TYPE_MODULE : TYPE_MEMBER;
         }
 
         @Override
@@ -436,14 +423,16 @@ public class ClubViewActivity extends AppCompatActivity {
     }
 
     // Intent to browser
-    public void intentToBrowser (String url) {
+    public void intentToBrowser(String url) {
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse(url));
         startActivity(i);
     }
 
-    /** Open another app.
-     * @param context current Context, like Activity, App, or Service
+    /**
+     * Open another app.
+     *
+     * @param context     current Context, like Activity, App, or Service
      * @param packageName the full package name of the app to open
      * @return true if likely successful, false if unsuccessful
      */
