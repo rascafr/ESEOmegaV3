@@ -1,8 +1,3 @@
-
-/**
- * Created by Rascafr on 30/08/2015.
- */
-
 /*
  * TouchImageView.java
  * By: Michael Ortiz
@@ -17,31 +12,30 @@
 
 package fr.bde_eseo.eseomega.news;
 
-    import android.annotation.TargetApi;
-    import android.content.Context;
-    import android.content.res.Configuration;
-    import android.graphics.Bitmap;
-    import android.graphics.Canvas;
-    import android.graphics.Matrix;
-    import android.graphics.PointF;
-    import android.graphics.RectF;
-    import android.graphics.drawable.Drawable;
-    import android.net.Uri;
-    import android.os.Build;
-    import android.os.Build.VERSION;
-    import android.os.Build.VERSION_CODES;
-    import android.os.Bundle;
-    import android.os.Parcelable;
-    import android.util.AttributeSet;
-    import android.util.Log;
-    import android.view.GestureDetector;
-    import android.view.MotionEvent;
-    import android.view.ScaleGestureDetector;
-    import android.view.View;
-    import android.view.animation.AccelerateDecelerateInterpolator;
-    import android.widget.ImageView;
-    import android.widget.OverScroller;
-    import android.widget.Scroller;
+import android.annotation.TargetApi;
+import android.content.Context;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.PointF;
+import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
+import android.os.Bundle;
+import android.os.Parcelable;
+import android.util.AttributeSet;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
+import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.ImageView;
+import android.widget.OverScroller;
+import android.widget.Scroller;
 
 public class TouchImageView extends ImageView {
 

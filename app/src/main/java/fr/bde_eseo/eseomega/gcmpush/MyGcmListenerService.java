@@ -27,15 +27,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.gcm.GcmListenerService;
-import fr.bde_eseo.eseomega.R;
 
 import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.GantierActivity;
 import fr.bde_eseo.eseomega.MainActivity;
+import fr.bde_eseo.eseomega.R;
 import fr.bde_eseo.eseomega.profile.UserProfile;
 
 public class MyGcmListenerService extends GcmListenerService {

@@ -1,6 +1,5 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".ingenews.IngeListActivity">
+<menu xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ingenews.IngeListActivity">
 
     <!--<item android:id="@+id/action_share"
         android:title="@string/action_share"

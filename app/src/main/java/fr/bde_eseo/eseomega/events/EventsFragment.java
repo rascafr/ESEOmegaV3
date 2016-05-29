@@ -1,3 +1,20 @@
+/**
+ * Copyright (C) 2016 - François LEPAROUX
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package fr.bde_eseo.eseomega.events;
 
 import android.content.ActivityNotFoundException;
@@ -20,8 +37,6 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import fr.bde_eseo.eseomega.R;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import fr.bde_eseo.eseomega.Constants;
+import fr.bde_eseo.eseomega.R;
 import fr.bde_eseo.eseomega.events.tickets.model.TicketStore;
 import fr.bde_eseo.eseomega.listeners.RecyclerItemClickListener;
 import fr.bde_eseo.eseomega.utils.JSONUtils;
