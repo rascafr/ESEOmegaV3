@@ -57,7 +57,7 @@ import fr.bde_eseo.eseomega.utils.ConnexionUtils;
 import fr.bde_eseo.eseomega.utils.Utilities;
 
 /**
- * Created by Rascafr on 11/01/2016.
+ * Created by François L. on 11/01/2016.
  * Liste les évenements que l'utilisateur peut acheter
  * <p/>
  * Événements (liste) → type de place (dialogue) → Activité de choix de la navette (si il y a navette) → Paiement Lydia

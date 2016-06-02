@@ -18,7 +18,7 @@
 package fr.bde_eseo.eseomega.events.tickets.model;
 
 /**
- * Created by Rascafr on 13/01/2016.
+ * Created by François L. on 13/01/2016.
  * Décris une navette
  */
 public class CheckShuttleItem {

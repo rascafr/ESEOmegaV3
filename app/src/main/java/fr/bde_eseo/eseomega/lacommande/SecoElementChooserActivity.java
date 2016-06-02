@@ -1,16 +1,16 @@
 /**
  * Copyright (C) 2016 - François LEPAROUX
- * <p/>
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * <p/>
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * <p/>
+ * <p>
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -40,7 +40,7 @@ import fr.bde_eseo.eseomega.lacommande.model.LacmdMenu;
 import fr.bde_eseo.eseomega.lacommande.model.LacmdRoot;
 
 /**
- * Created by Rascafr on 24/08/2015.
+ * Created by François L. on 24/08/2015.
  * Displays a list of items associated with bundled data
  * Used to display checkboxes with elements inside
  */
@@ -82,19 +82,19 @@ public class SecoElementChooserActivity extends AppCompatActivity {
         currentElements = 0;
 
         // Add elemnts without ingredients to list's dataset
-        for (int i=0;i<DataManager.getInstance().getElements().size();i++) {
+        for (int i = 0; i < DataManager.getInstance().getElements().size(); i++) {
             if (DataManager.getInstance().getElements().get(i).hasIngredients() == 0 &&
                     DataManager.getInstance().getElements().get(i).getOutofmenu() == 0)
                 checkboxItems.add(
-                    new CheckboxItem(
-                        DataManager.getInstance().getElements().get(i).getName(),
-                        DataManager.getInstance().getElements().get(i).getIdstr(),
-                        DataManager.getInstance().getElements().get(i).getPrice()
-                    )
+                        new CheckboxItem(
+                                DataManager.getInstance().getElements().get(i).getName(),
+                                DataManager.getInstance().getElements().get(i).getIdstr(),
+                                DataManager.getInstance().getElements().get(i).getPrice()
+                        )
                 );
         }
 
-        for (int i=0;i<DataManager.getInstance().getMenu().getItems().size();i++) {
+        for (int i = 0; i < DataManager.getInstance().getMenu().getItems().size(); i++) {
             LacmdRoot element = DataManager.getInstance().getMenu().getItems().get(i);
             if (element.hasIngredients() == 0) {
                 if (element.getName().length() > 0) {
@@ -109,33 +109,11 @@ public class SecoElementChooserActivity extends AppCompatActivity {
         tvStackMoreText.setVisibility(View.INVISIBLE);
         tvStackMorePrice.setVisibility(View.INVISIBLE);
 
-        // Get parameters
-        /*
-        if (savedInstanceState == null) {
-            Bundle extras = getIntent().getExtras();
-            if(extras == null) {
-                Toast.makeText(SecoElementChooserActivity.this, "Erreur de l'application (c'est pas normal)", Toast.LENGTH_SHORT).show();
-                finish();
-            } else {
-                menuID = extras.getString(Constants.KEY_MENU_ID);
-                menu = DataManager.getInstance().getMenuFromID(menuID);
-                //elemPos = extras.getInt(Constants.KEY_ELEMENT_POSITION);
-                //element = new LacmdElement(DataManager.getInstance().getElementFromID(elementID));
-                getSupportActionBar().setTitle(TITLE_BASE);
-                Log.d("INTENT", menuID);
-            }
-        } else {
-            //elementID = (String) savedInstanceState.getSerializable(Constants.KEY_ELEMENT_ID);
-            //elemPos = (int) savedInstanceState.getSerializable(Constants.KEY_ELEMENT_POSITION);
-            //element = new LacmdElement(DataManager.getInstance().getElementFromID(elementID));
-            getSupportActionBar().setTitle(TITLE_BASE);
-        }*/
-
         getSupportActionBar().setTitle(TITLE_BASE);
         menu = DataManager.getInstance().getMenu();
         maxElements = menu.getMaxSecoElem();
         tvIngredients.setText("Vous devez choisir " + maxElements +
-                " élément" + (maxElements>0?"s":"") +
+                " élément" + (maxElements > 0 ? "s" : "") +
                 " dans la liste ci-dessous.");
 
         // Validation
@@ -156,7 +134,7 @@ public class SecoElementChooserActivity extends AppCompatActivity {
                 if (currentElements == maxElements) {
 
                     // Remove old items
-                    for (int i=0;i<DataManager.getInstance().getMenu().getItems().size();i++) {
+                    for (int i = 0; i < DataManager.getInstance().getMenu().getItems().size(); i++) {
                         LacmdRoot element = DataManager.getInstance().getMenu().getItems().get(i);
                         if (element.hasIngredients() == 0) {
                             DataManager.getInstance().getMenu().getItems().remove(i);
@@ -171,14 +149,7 @@ public class SecoElementChooserActivity extends AppCompatActivity {
                                     new LacmdElement(DataManager.getInstance().getElementFromID(checkboxItems.get(i).getIdstr())));
                         }
                     }
-                    //element.setItems(items);
 
-                /*if (elemPos == -1) {
-                    Toast.makeText(SecoElementChooserActivity.this, "\"" + element.getName() + "\" a été ajouté au panier", Toast.LENGTH_SHORT).show();
-                    DataManager.getInstance().addCartItem(element);
-                } else {
-                    DataManager.getInstance().getMenu().getItems().set(elemPos, element);
-                }*/
                     SecoElementChooserActivity.this.finish();
                 } else {
                     Toast.makeText(SecoElementChooserActivity.this, "Vous devez sélectionner tous vos éléments.", Toast.LENGTH_SHORT).show();
@@ -188,7 +159,7 @@ public class SecoElementChooserActivity extends AppCompatActivity {
     }
 
 
-    private class CheckboxListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
+    private class CheckboxListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -206,10 +177,10 @@ public class SecoElementChooserActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         CheckBox cb = (CheckBox) v;
-                        currentElements += cb.isChecked()?1:-1;
+                        currentElements += cb.isChecked() ? 1 : -1;
                         if (currentElements > maxElements) {
                             cb.setChecked(false);
-                            currentElements --;
+                            currentElements--;
                             Toast.makeText(SecoElementChooserActivity.this, "Vous avez attend le nombre max d'éléments", Toast.LENGTH_SHORT).show();
                         }
                         checkboxItems.get(position).setChecked(cb.isChecked());
@@ -242,8 +213,8 @@ public class SecoElementChooserActivity extends AppCompatActivity {
         }
     }
 
-    private void setArrayCheck (String idstr) {
-        for (int i=0;i<checkboxItems.size();i++) {
+    private void setArrayCheck(String idstr) {
+        for (int i = 0; i < checkboxItems.size(); i++) {
             if (checkboxItems.get(i).getIdstr().equals(idstr)) {
                 checkboxItems.get(i).setChecked(true);
             }
@@ -255,11 +226,11 @@ public class SecoElementChooserActivity extends AppCompatActivity {
         private String more;
         private boolean visible;
 
-        public CheckboxItem (String name, String id, double price) {
+        public CheckboxItem(String name, String id, double price) {
             super(name, id, 0, 0, price, LacmdIngredient.ID_CAT_INGREDIENT);
             checked = false;
             this.visible = false;
-            this.more = this.price == 0.0?"":"+" + new DecimalFormat("0.00").format(this.price) + "€";
+            this.more = this.price == 0.0 ? "" : "+" + new DecimalFormat("0.00").format(this.price) + "€";
         }
 
         public boolean isVisible() {

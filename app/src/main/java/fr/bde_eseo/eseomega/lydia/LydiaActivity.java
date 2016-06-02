@@ -55,7 +55,7 @@ import fr.bde_eseo.eseomega.utils.EncryptUtils;
 import fr.bde_eseo.eseomega.utils.Utilities;
 
 /**
- * Created by Rascafr on 05/01/2016.
+ * Created by François L. on 05/01/2016.
  * Activité permettant de vérifier si, lors du retour de l'app Lydia, la commande a bien été passée
  * + également passer une demande de paiement + redir Lydia
  * V1.2

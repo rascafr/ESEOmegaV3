@@ -46,7 +46,7 @@ import fr.bde_eseo.eseomega.utils.JSONUtils;
 import fr.bde_eseo.eseomega.utils.Utilities;
 
 /**
- * Created by Rascafr on 22/12/2015.
+ * Created by François L. on 22/12/2015.
  * Donne la liste des éditions ingénews disponibles
  */
 public class IngeListActivity extends AppCompatActivity {

@@ -49,7 +49,7 @@ import fr.bde_eseo.eseomega.utils.JSONUtils;
 import fr.bde_eseo.eseomega.utils.Utilities;
 
 /**
- * Created by Rascafr on 31/08/2015.
+ * Created by François L. on 31/08/2015.
  */
 public class CommunityFragment extends Fragment {
 

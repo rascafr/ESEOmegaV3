@@ -48,7 +48,7 @@ import fr.bde_eseo.eseomega.utils.JSONUtils;
 import fr.bde_eseo.eseomega.utils.Utilities;
 
 /**
- * Created by Rascafr on 11/08/2015.
+ * Created by François L. on 11/08/2015.
  * Displays Hints And Tips from partners
  */
 public class TipsFragment extends Fragment {

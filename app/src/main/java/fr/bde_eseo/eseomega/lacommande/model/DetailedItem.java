@@ -23,7 +23,7 @@ import org.json.JSONObject;
 import fr.bde_eseo.eseomega.Constants;
 
 /**
- * Created by Rascafr on 20/07/2015.
+ * Created by François L. on 20/07/2015.
  */
 public class DetailedItem extends HistoryItem {
 

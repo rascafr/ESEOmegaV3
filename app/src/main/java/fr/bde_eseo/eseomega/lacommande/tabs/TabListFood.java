@@ -49,14 +49,13 @@ import fr.bde_eseo.eseomega.listeners.RecyclerItemClickListener;
 import fr.bde_eseo.eseomega.utils.JSONUtils;
 
 /**
- * Created by Rascafr
+ * Created by François L.
  * Used to display categories to user : menus, drinks, sandwiches ...
  * Before display : Fill DataManager's database
  *
  * On item click -> new activity with element's list
  *
  * Get all content by parsing JSON over network
- * TODO : security
  */
 
 public class TabListFood extends Fragment {
@@ -195,28 +194,6 @@ public class TabListFood extends Fragment {
                 // Associate data with Adapter
                 mAdapter.setFoodListArray(DataManager.getInstance().getCategories());
                 mAdapter.notifyDataSetChanged();
-                /*
-
-                Log.d("JSON", "\n-- Categories --\n");
-                for (int i=0;i<DataManager.getInstance().getCategories().size();i++) {
-                    Log.d("JSON", "  " + DataManager.getInstance().getCategories().get(i).toString() + "\n");
-                }
-
-                Log.d("JSON", "\n-- Menus --\n");
-                for (int i=0;i<DataManager.getInstance().getMenus().size();i++) {
-                    Log.d("JSON", "  " + DataManager.getInstance().getMenus().get(i).toString() + "\n");
-                }
-
-                Log.d("JSON", "\n-- Elements --\n");
-                for (int i=0;i<DataManager.getInstance().getElements().size();i++) {
-                    Log.d("JSON", "  " + DataManager.getInstance().getElements().get(i).toString() + "\n");
-                }
-
-                Log.d("JSON", "\n-- Ingredients --\n");
-                for (int i=0;i<DataManager.getInstance().getIngredients().size();i++) {
-                    Log.d("JSON", "  " + DataManager.getInstance().getIngredients().get(i).toString() + "\n");
-                }
-                */
 
                 // Set GUI data
                 tvNetStatus.setText("Connexion effectuée !");

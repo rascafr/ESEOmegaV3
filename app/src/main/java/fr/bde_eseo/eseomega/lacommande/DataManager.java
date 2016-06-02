@@ -30,7 +30,7 @@ import fr.bde_eseo.eseomega.lacommande.model.LacmdMenu;
 import fr.bde_eseo.eseomega.lacommande.model.LacmdRoot;
 
 /**
- * Created by Rascafr on 22/07/2015.
+ * Created by François L. on 22/07/2015.
  * Used to store data with prices, images, etc.
  */
 public class DataManager {
@@ -147,45 +147,6 @@ public class DataManager {
         return categories;
     }
 
-    // Convert Menus Array into charsequence []
-    @Deprecated
-    public CharSequence[] menusToCharSequences() {
-        CharSequence cs[] = new CharSequence[menus.size()];
-        for (int i=0;i<menus.size();i++) {
-            cs[i] = menus.get(0).getName();
-        }
-        return cs;
-    }
-
-    // Convert Elements Array into charsequence []
-    @Deprecated
-    public CharSequence[] elementsToCharSequences() {
-        CharSequence cs[] = new CharSequence[elements.size()];
-        for (int i=0;i<elements.size();i++) {
-            cs[i] = elements.get(0).getName();
-        }
-        return cs;
-    }
-
-    // Convert Array into charsequence [] associated with category ID
-    public CharSequence[] arrayToCharSequences(String catID) {
-
-        ArrayList<String> names = new ArrayList<>();
-
-        // If cat_menu : Disp all of the menus
-        if (catID.equals(ENTRY_MENU_ID))
-            for (int i=0;i<menus.size();i++)
-                names.add(menus.get(i).getName());
-
-        // Else, it could be any kind of element
-        else
-            for (int i=0;i<elements.size();i++)
-                if (elements.get(i).getIdcat().equals(catID))
-                    names.add(elements.get(i).getName());
-
-        return names.toArray(new CharSequence[names.size()]);
-    }
-
     // Return an array in relationship with category ID
     public ArrayList<LacmdRoot> arrayToCatArray (String catID) {
         ArrayList<LacmdRoot> roots = new ArrayList<>();
@@ -223,11 +184,6 @@ public class DataManager {
     // Increments number of items
     public void addCartItem (LacmdRoot root) {
         cartArray.add(new LacmdRoot(root)); // HARDWARE COPY -> TODO
-    }
-
-    // Removes an item
-    public void removeCartItem (int index) {
-        cartArray.remove(index);
     }
 
     // Calculates the cart's price

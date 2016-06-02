@@ -27,7 +27,7 @@ import fr.bde_eseo.eseomega.Constants;
 import fr.bde_eseo.eseomega.R;
 
 /**
- * Created by Rascafr on 30/08/2015.
+ * Created by François L. on 30/08/2015.
  */
 public class ImageViewActivity extends AppCompatActivity {
 

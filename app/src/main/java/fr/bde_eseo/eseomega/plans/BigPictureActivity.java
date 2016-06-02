@@ -26,7 +26,7 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import fr.bde_eseo.eseomega.R;
 
 /**
- * Created by root on 23/03/16.
+ * Created by François L. on 23/03/16.
  */
 public class BigPictureActivity extends AppCompatActivity {
 

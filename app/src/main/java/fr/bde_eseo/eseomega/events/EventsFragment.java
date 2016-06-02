@@ -53,7 +53,7 @@ import fr.bde_eseo.eseomega.utils.JSONUtils;
 import fr.bde_eseo.eseomega.utils.Utilities;
 
 /**
- * Created by Rascafr on 14/08/2015.
+ * Created by François L. on 14/08/2015.
  * Displays Events
  */
 public class EventsFragment extends Fragment {

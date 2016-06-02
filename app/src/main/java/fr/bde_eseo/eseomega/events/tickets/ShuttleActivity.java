@@ -44,7 +44,7 @@ import fr.bde_eseo.eseomega.events.tickets.model.SubEventItem;
 import fr.bde_eseo.eseomega.events.tickets.model.TicketStore;
 
 /**
- * Created by Rascafr on 13/01/2016.
+ * Created by François L. on 13/01/2016.
  * Affiche les navettes disponibles pour un ticket précisé
  */
 public class ShuttleActivity extends AppCompatActivity {

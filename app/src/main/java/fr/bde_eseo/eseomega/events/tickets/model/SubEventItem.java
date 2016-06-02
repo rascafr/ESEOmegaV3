@@ -24,7 +24,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
- * Created by Rascafr on 11/01/2016.
+ * Created by François L. on 11/01/2016.
  */
 public class SubEventItem {
 

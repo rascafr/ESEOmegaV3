@@ -34,7 +34,7 @@ import fr.bde_eseo.eseomega.slidingtab.SlidingTabLayout;
 import fr.bde_eseo.eseomega.slidingtab.ViewPagerAdapter;
 
 /**
- * Created by Rascafr on 21/07/2015.
+ * Created by François L. on 21/07/2015.
  */
 public class OrderTabsFragment extends Fragment {
 

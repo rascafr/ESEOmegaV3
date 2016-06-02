@@ -63,7 +63,7 @@ import fr.bde_eseo.eseomega.utils.EncryptUtils;
 import fr.bde_eseo.eseomega.utils.Utilities;
 
 /**
- * Created by Rascafr on 10/01/2016.
+ * Created by François L. on 10/01/2016.
  * Affiche les détails d'une commande / permet de payer. Style clear material design.
  */
 public class OrderDetailsActivity extends AppCompatActivity {
@@ -421,11 +421,5 @@ public class OrderDetailsActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return date;
-    }
-
-    public String getFrenchDate(String strDate) {
-        Date d = getParsedDate(strDate);
-        SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd MMMM yyyy", Locale.FRANCE);
-        return sdf.format(d);
     }
 }

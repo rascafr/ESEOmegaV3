@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import fr.bde_eseo.eseomega.R;
 
 /**
- * Created by Rascafr on 23/03/2016.
+ * Created by François L. on 23/03/2016.
  */
 public class MyRoomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 

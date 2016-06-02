@@ -29,7 +29,7 @@ import fr.bde_eseo.eseomega.R;
 import fr.bde_eseo.eseomega.lacommande.model.LacmdRoot;
 
 /**
- * Created by Rascafr on 19/08/2015.
+ * Created by François L. on 19/08/2015.
  * Simple adapter for cart's items easy view
  */
 public class MyCartAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {

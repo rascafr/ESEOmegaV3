@@ -37,7 +37,7 @@ import fr.bde_eseo.eseomega.utils.ConnexionUtils;
 import fr.bde_eseo.eseomega.utils.Utilities;
 
 /**
- * Created by Rascafr on 10/01/2016.
+ * Created by François L. on 10/01/2016.
  * Permet de vérifier en tâche asynchrone si l'application dispose bien de la dernière version disponible.
  */
 public class AsyncCheckVersion extends AsyncTask<String, String, String> {

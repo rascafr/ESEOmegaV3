@@ -35,7 +35,7 @@ import java.util.Locale;
 import fr.bde_eseo.eseomega.events.tickets.model.SubEventItem;
 
 /**
- * Created by Rascafr on 14/08/2015.
+ * Created by François L. on 14/08/2015.
  */
 public class EventItem {
 

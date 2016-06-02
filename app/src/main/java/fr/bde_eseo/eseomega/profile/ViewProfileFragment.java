@@ -58,7 +58,7 @@ import fr.bde_eseo.eseomega.utils.ImageUtils;
 import fr.bde_eseo.eseomega.utils.Utilities;
 
 /**
- * Created by Rascafr on 29/07/2015.
+ * Created by François L. on 29/07/2015.
  */
 public class ViewProfileFragment extends Fragment {
 

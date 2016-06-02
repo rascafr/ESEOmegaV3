@@ -24,7 +24,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 /**
- * Created by Rascafr on 31/08/2015.
+ * Created by François L. on 31/08/2015.
  *
  */
 public class ClubItem {

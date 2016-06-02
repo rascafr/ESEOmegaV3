@@ -22,7 +22,7 @@ import java.text.DecimalFormat;
 import fr.bde_eseo.eseomega.events.EventItem;
 
 /**
- * Created by Rascafr on 13/01/2016.
+ * Created by François L. on 13/01/2016.
  */
 public class TicketPictItem {
 

@@ -134,15 +134,8 @@ public class Constants {
     public static final String URL_JSON_INGENEWS = URL_SERVERBIS + "jsondata/ingenews_data/ingenews.php";
     public static final String URL_JSON_PLANS = URL_SERVERBIS + "jsondata/salles_data/salles.json";
 
-    // JSON TAG
-    public static final String JSON_TAG_CAT = "categories";
-    public static final String JSON_TAG_CAT_NAME = "name";
-    public static final String JSON_TAG_CAT_PRICE = "firstPrice";
-    public static final String JSON_TAG_CAT_IMGURL = "imgUrl";
-    public static final String JSON_TAG_CAT_BRIEF = "briefText";
-    public static final String JSON_TAG_ITEMS = "items";
-
     // Errors
+    // TODO move this into XML
     public static final int ERROR_TIMESTAMP = 1;
     public static final String ERROR_TIMESTAMP_STR = "On dirait que votre smartphone n'est pas à l'heure.\n" +
             "Bien tenté, mais vous ne pouvez pas tricher pour commander à la cafet avant les autres.\n(Et puis de toute manière ça sert à rien)";

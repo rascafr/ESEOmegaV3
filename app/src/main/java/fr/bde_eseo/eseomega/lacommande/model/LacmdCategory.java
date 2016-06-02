@@ -25,7 +25,7 @@ import java.text.DecimalFormat;
 import fr.bde_eseo.eseomega.Constants;
 
 /**
- * Created by Rascafr on 21/07/2015.
+ * Created by François L. on 21/07/2015.
  */
 public class LacmdCategory {
 
@@ -34,14 +34,6 @@ public class LacmdCategory {
     private double beginPrice;
     private String smallText;
     private String catname;
-
-    public LacmdCategory(String name, String imgUrl, double beginPrice, String smallText, String catname) {
-        this.name = name;
-        this.imgUrl = imgUrl;
-        this.beginPrice = beginPrice;
-        this.smallText = smallText;
-        this.catname = catname;
-    }
 
     public LacmdCategory(JSONObject obj) throws JSONException {
         this.name = obj.getString("name");
@@ -57,10 +49,6 @@ public class LacmdCategory {
 
     public String getImgUrl() {
         return Constants.URL_ASSETS + imgUrl;
-    }
-
-    public double getBeginPrice() {
-        return beginPrice;
     }
 
     public String getBeginPriceAsStr() {

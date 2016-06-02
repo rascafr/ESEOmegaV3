@@ -39,7 +39,7 @@ import fr.bde_eseo.eseomega.lacommande.model.LacmdIngredient;
 import fr.bde_eseo.eseomega.lacommande.model.LacmdRoot;
 
 /**
- * Created by Rascafr on 18/08/2015.
+ * Created by François L. on 18/08/2015.
  * Displays a list of items associated with bundled data
  * Used to display checkboxes with ingredients inside
  */
@@ -105,7 +105,6 @@ public class IngredientsChooserActivity extends AppCompatActivity {
                 elemPos = extras.getInt(Constants.KEY_ELEMENT_POSITION);
                 element = new LacmdElement(DataManager.getInstance().getElementFromID(elementID));
                 getSupportActionBar().setTitle(TITLE_BASE + element.getName());
-                //Log.d("INTENT", elementID + " - " + elemPos);
             }
         } else {
             elementID = (String) savedInstanceState.getSerializable(Constants.KEY_ELEMENT_ID);
@@ -167,7 +166,6 @@ public class IngredientsChooserActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         CheckBox cb = (CheckBox) v;
                         checkboxItems.get(position).setChecked(cb.isChecked());
-                        boolean isfree = checkboxItems.get(position).getPrice() == 0;
                         currentElements += cb.isChecked()?1:-1;
                         if (currentElements > maxElements) {
                             supplMore = checkboxItems.get(position).getPrice()*(currentElements - maxElements);

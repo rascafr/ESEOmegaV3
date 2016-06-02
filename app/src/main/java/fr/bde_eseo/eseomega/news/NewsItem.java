@@ -28,7 +28,7 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * Created by Rascafr on 25/08/2015.
+ * Created by François L. on 25/08/2015.
  */
 public class NewsItem {
     private String name, strDate, author, link, data, shData, frenchStr, headerImg;

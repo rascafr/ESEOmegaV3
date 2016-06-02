@@ -29,7 +29,7 @@ import java.util.Locale;
 import fr.bde_eseo.eseomega.events.EventItem;
 
 /**
- * Created by Rascafr on 11/01/2016.
+ * Created by François L. on 11/01/2016.
  * Décrit un achat de place
  */
 public class EventTicketItem {

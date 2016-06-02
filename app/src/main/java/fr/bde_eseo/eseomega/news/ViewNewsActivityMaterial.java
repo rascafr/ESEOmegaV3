@@ -44,7 +44,7 @@ import fr.bde_eseo.eseomega.utils.Blur;
 import fr.bde_eseo.eseomega.utils.Utilities;
 
 /**
- * Created by Rascafr on 30/08/2015.
+ * Created by François L. on 30/08/2015.
  */
 public class ViewNewsActivityMaterial extends AppCompatActivity {
 

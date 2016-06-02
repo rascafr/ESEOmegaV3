@@ -26,7 +26,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 
 /**
- * Created by Rascafr on 11/08/2015.
+ * Created by François L. on 11/08/2015.
  */
 public class JSONUtils {
 

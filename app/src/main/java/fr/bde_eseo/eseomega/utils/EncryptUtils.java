@@ -25,7 +25,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
 
 /**
- * Created by Rascafr on 06/07/2015.
+ * Created by François L. on 06/07/2015.
  * V2.0 : uses SHA-256
  */
 public class EncryptUtils {

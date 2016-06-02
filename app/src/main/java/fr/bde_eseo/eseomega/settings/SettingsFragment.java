@@ -23,7 +23,7 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 import fr.bde_eseo.eseomega.R;
 
 /**
- * Created by Rascafr on 23/12/2015.
+ * Created by François L. on 23/12/2015.
  * Manage app's settings :
  * - First window to display
  * - App Theme

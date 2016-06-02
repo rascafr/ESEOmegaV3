@@ -21,7 +21,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
- * Created by Rascafr on 18/08/2015.
+ * Created by François L. on 18/08/2015.
  * Classe mère pour l'héritage et la récupération de paramètres communs menus / élements
  */
 public class LacmdRoot {
@@ -35,14 +35,6 @@ public class LacmdRoot {
 
     public void setItems(ArrayList<LacmdRoot> items) {
         this.items = items;
-    }
-
-    public void setHasIngredients(int hasIngredients) {
-        this.hasIngredients = hasIngredients;
-    }
-
-    public void setHasElements(int hasElements) {
-        this.hasElements = hasElements;
     }
 
     public int hasIngredients() {
@@ -94,10 +86,6 @@ public class LacmdRoot {
     public String getName() {
 
         return name;
-    }
-
-    public void setIdstr(String idstr) {
-        this.idstr = idstr;
     }
 
     public String getIdstr() {

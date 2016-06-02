@@ -22,7 +22,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 
 /**
- * Created by Rascafr on 10/08/2015.
+ * Created by François L. on 10/08/2015.
  */
 public class ImageUtils {
 

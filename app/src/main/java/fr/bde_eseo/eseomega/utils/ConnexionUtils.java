@@ -34,7 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by Rascafr on 31/07/2015.
+ * Created by François L. on 31/07/2015.
  * Use the class to connect to network (in AsyncTask)
  */
 public class ConnexionUtils {

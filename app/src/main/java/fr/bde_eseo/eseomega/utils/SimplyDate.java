@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * Created by Rascafr on 23/12/2015.
+ * Created by François L. on 23/12/2015.
  * Simple date / time delay container
  */
 public class SimplyDate {

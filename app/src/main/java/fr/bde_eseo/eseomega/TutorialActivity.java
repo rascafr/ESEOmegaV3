@@ -25,7 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 /**
- * Created by Rascafr on 18/01/2016.
+ * Created by François L. on 18/01/2016.
  * Activité qui montre les fonctionnalités de l'app au 1er lancement, puis redirection vers MainActivity
  */
 public class TutorialActivity extends AppCompatActivity {

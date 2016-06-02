@@ -63,7 +63,7 @@ import fr.bde_eseo.eseomega.utils.EncryptUtils;
 import fr.bde_eseo.eseomega.utils.Utilities;
 
 /**
- * Created by Rascafr on 11/01/2016.
+ * Created by François L. on 11/01/2016.
  * Donne l'historique des achats de l'utilisateur
  */
 public class TicketHistoryActivity extends AppCompatActivity {

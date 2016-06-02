@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import fr.bde_eseo.eseomega.R;
 
 /**
- * Created by Rascafr on 11/08/2015.
+ * Created by François L. on 11/08/2015.
  */
 public class MyIngeNewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 

@@ -23,7 +23,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 /**
- * Created by root on 23/03/16.
+ * Created by François L. on 23/03/16.
  */
 public class RoomItem {
 

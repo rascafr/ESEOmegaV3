@@ -26,7 +26,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 /**
- * Created by Rascafr on 20/07/2015.
+ * Created by François L. on 20/07/2015.
  */
 public class HistoryItem {
 
@@ -53,16 +53,6 @@ public class HistoryItem {
         this.commandModulo = commandModulo;
         this.commandStr = commandStr;
     }
-
-    /*
-    @Deprecated
-    public HistoryItem (String commandName, int commandStatus, double commandPrice, String commandDate) {
-        this.commandName = commandName;
-        this.commandStatus = commandStatus;
-        this.commandPrice = commandPrice;
-        this.commandDate = commandDate;
-        this.isHeader = false;
-    }*/
 
     // Command for today
     public HistoryItem (String commandName, int commandStatus, double commandPrice) {
@@ -133,26 +123,6 @@ public class HistoryItem {
 
     public int getCommandNumber() {
         return commandNumber;
-    }
-
-    /*public String getCommandNumberAsString() {
-        return "№" + commandNumber;
-    }*/
-
-    public void setCommandName(String commandName) {
-        this.commandName = commandName;
-    }
-
-    public void setCommandStatus(int commandStatus) {
-        this.commandStatus = commandStatus;
-    }
-
-    public void setCommandDate(String commandDate) {
-        this.commandDate = commandDate;
-    }
-
-    public void setCommandPrice(double commandPrice) {
-        this.commandPrice = commandPrice;
     }
 
     public String toString() {

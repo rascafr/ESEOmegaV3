@@ -20,7 +20,7 @@ package fr.bde_eseo.eseomega.hintsntips;
 import java.util.ArrayList;
 
 /**
- * Created by Rascafr on 11/08/2015.
+ * Created by François L. on 11/08/2015.
  */
 public class SponsorItem {
 

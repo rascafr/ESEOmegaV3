@@ -25,7 +25,7 @@ import android.view.View;
 import android.webkit.WebView;
 
 /**
- * Created by Rascafr on 13/12/2015.
+ * Created by François L. on 13/12/2015.
  */
 public class WebViewTitle extends WebView {
 

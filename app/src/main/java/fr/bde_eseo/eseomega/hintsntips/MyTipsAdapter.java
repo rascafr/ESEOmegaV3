@@ -35,7 +35,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import fr.bde_eseo.eseomega.R;
 
 /**
- * Created by Rascafr on 11/08/2015.
+ * Created by François L. on 11/08/2015.
  */
 public class MyTipsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 

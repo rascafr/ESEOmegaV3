@@ -25,7 +25,7 @@ import java.text.DecimalFormat;
 import fr.bde_eseo.eseomega.utils.SimplyDate;
 
 /**
- * Created by Rascafr on 22/12/2015.
+ * Created by François L. on 22/12/2015.
  * Sur la bonne idée de Mr Naudet
  */
 public class IngenewsItem {

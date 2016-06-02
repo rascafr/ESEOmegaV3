@@ -22,7 +22,7 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 
 /**
- * Created by Rascafr on 02/01/2016.
+ * Created by François L. on 02/01/2016.
  */
 public class SquareImageView extends ImageView {
 

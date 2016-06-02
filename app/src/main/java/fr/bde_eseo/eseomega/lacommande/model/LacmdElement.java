@@ -21,7 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by Rascafr on 17/08/2015.
+ * Created by François L. on 17/08/2015.
  */
 public class LacmdElement extends LacmdRoot {
     private String idcat;

@@ -57,7 +57,7 @@ import fr.bde_eseo.eseomega.utils.EncryptUtils;
 import fr.bde_eseo.eseomega.utils.Utilities;
 
 /**
- * Created by Rascafr on 15/08/2015.
+ * Created by François L. on 15/08/2015.
  */
 public class GantierActivity extends Activity implements SensorEventListener {
 

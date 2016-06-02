@@ -32,7 +32,7 @@ import fr.bde_eseo.eseomega.R;
 import fr.bde_eseo.eseomega.events.tickets.model.CheckShuttleItem;
 
 /**
- * Created by Rascafr on 11/01/2016.
+ * Created by François L. on 11/01/2016.
  * Adapter pour l'historique des commandes évènements
  */
 public class MyShuttlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
